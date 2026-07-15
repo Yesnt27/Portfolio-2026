@@ -1,0 +1,34 @@
+export const fuorisaloneImages = {
+  contentStrategy: "/images/fuorisalone/content-strategy.png",
+  figmaWorkspace: "/images/fuorisalone/figma-workspace.png",
+  iconUser: "/images/fuorisalone/icon-user.png",
+  iconGear: "/images/fuorisalone/icon-gear.png",
+  posterMain: "/images/fuorisalone/poster-main.png",
+  posterAhhhhh: "/images/fuorisalone/poster-ahhhhh.png",
+  posterFrame100: "/images/fuorisalone/poster-frame100.png",
+  posters: {
+    p43: "/images/fuorisalone/poster-43.png",
+    p45: "/images/fuorisalone/poster-45.png",
+    p46: "/images/fuorisalone/poster-46.png",
+    p47: "/images/fuorisalone/poster-47.png",
+    p53: "/images/fuorisalone/poster-53.png",
+    p54: "/images/fuorisalone/poster-54.png",
+    p55: "/images/fuorisalone/poster-55.png",
+    p56: "/images/fuorisalone/poster-56.png",
+    p60: "/images/fuorisalone/poster-60.png",
+    p61: "/images/fuorisalone/poster-61.png",
+    p62: "/images/fuorisalone/poster-62.png",
+    p64: "/images/fuorisalone/poster-64.png",
+  },
+  // Media slots you still need to add. Drop the files into
+  // public/images/fuorisalone/ using these exact names and they
+  // will appear automatically (placeholders show until then).
+  media: {
+    demoVideo: "/images/fuorisalone/demo-video.mp4",
+    screenRecording: "/images/fuorisalone/screen-recording.mp4",
+    districtSelection: "/images/fuorisalone/district-selection.png",
+    breraPage: "/images/fuorisalone/brera-page.png",
+    exhibitPage: "/images/fuorisalone/exhibit-page.png",
+    nextProject: "/images/fuorisalone/next-project.png",
+  },
+} as const;
