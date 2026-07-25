@@ -8,6 +8,16 @@
   --color-fuori-border: #999999;
   --font-display: var(--font-neue-haas), sans-serif;
   --font-body: var(--font-inter), sans-serif;
+
+  /* Spacing scale measured off the 1920px Figma frame. The vw term reproduces
+     the design ratio between the mobile floor and the 1920px ceiling. */
+  --spacing-gutter: clamp(1.5rem, 8.75vw, 10.5rem); /* 168px content inset */
+  --spacing-flow-xs: clamp(0.75rem, 1.56vw, 1.875rem); /* 30px  caption to media */
+  --spacing-flow-sm: clamp(1.25rem, 2.5vw, 3rem); /* 48px  within a group */
+  --spacing-flow-md: clamp(2.5rem, 5.87vw, 7rem); /* 90px  heading to body */
+  --spacing-flow-lg: clamp(3rem, 7.3vw, 8.75rem); /* 140px body to media */
+  --spacing-section: clamp(8rem, 18.75vw, 20rem); /* 200px section to section */
+  --spacing-section-lg: clamp(5rem, 12.5vw, 15rem); /* 240px major beat change */
 }
 
 /* ============================================

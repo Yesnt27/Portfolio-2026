@@ -33,13 +33,13 @@ function SocialRow({ links }: { links: { label: string; href: string }[] }) {
 
 export default function ConnectFooter() {
   return (
-    <footer className="bg-black px-[clamp(1.5rem,5vw,6rem)] pb-[clamp(4rem,8vw,8rem)] pt-[clamp(4rem,10vw,10rem)] text-white">
+    <footer className="bg-black px-gutter pb-flow-lg pt-section text-white">
       <h2 className="text-center font-display text-[clamp(3rem,8vw,7.5rem)] font-medium tracking-[-0.02em]">
         LETS CONNECT
       </h2>
 
       <nav
-        className="mx-auto mt-[clamp(2rem,4vw,3.5rem)] flex max-w-4xl flex-col items-center gap-6 font-display text-[clamp(1.25rem,2.5vw,2.5rem)] font-light"
+        className="mx-auto mt-flow-md flex max-w-4xl flex-col items-center gap-flow-sm font-display text-[clamp(1.25rem,2.5vw,2.5rem)] font-light"
         aria-label="Social links"
       >
         <SocialRow links={socialLinksRow1} />
