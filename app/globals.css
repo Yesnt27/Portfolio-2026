@@ -9,25 +9,52 @@
   --font-display: var(--font-neue-haas), sans-serif;
   --font-body: var(--font-inter), sans-serif;
 
-  /* Spacing scale measured off the 1920px Figma frame. The vw term reproduces
-     the design ratio between the mobile floor and the 1920px ceiling. */
-  --spacing-gutter: clamp(1.5rem, 8.75vw, 10.5rem); /* 168px content inset */
-  --spacing-flow-xs: clamp(0.75rem, 1.56vw, 1.875rem); /* 30px  caption to media */
-  --spacing-flow-sm: clamp(1.25rem, 2.5vw, 3rem); /* 48px  within a group */
-  --spacing-flow-md: clamp(2.5rem, 5.87vw, 7rem); /* 90px  heading to body */
-  --spacing-flow-lg: clamp(3rem, 7.3vw, 8.75rem); /* 140px body to media */
-  --spacing-section: clamp(8rem, 18.75vw, 20rem); /* 200px section to section */
-  --spacing-section-lg: clamp(5rem, 12.5vw, 15rem); /* 240px major beat change */
+  /* Shared page shell. max-w-page + mx-auto centers the 1920 Figma frame on
+     wider monitors instead of letting each section invent its own width. */
+  --container-page: 1920px;
+
+  /*
+    Spacing is a % of the design FRAME, not the raw viewport.
+
+    Why min(100vw, 1920px) instead of plain vw?
+    - Below 1920px: min() resolves to 100vw, so gaps still shrink with the window.
+    - Above 1920px: min() locks to 1920px — the same width as max-w-page — so
+      gutters and flow/section gaps match the centered column and stop growing
+      into the empty side margins of an ultrawide screen.
+
+    Plain Xvw was the bug: on a 2560px window, 18.75vw wants to be 480px even
+    though the content column only occupies the middle 1920px. The old clamp()
+    max capped that, but navbar/footer used different clamps, so the page no
+    longer shared one centered rhythm.
+
+    Formula: clamp(mobile floor, frame * (figmaPx / 1920), figmaPx as rem)
+  */
+  --spacing-gutter: clamp(1.5rem, calc(min(100vw, 1920px) * 168 / 1920), 10.5rem); /* 168px */
+  --spacing-flow-xs: clamp(0.75rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem); /* 30px */
+  --spacing-flow-sm: clamp(1.5rem, calc(min(100vw, 1920px) * 56 / 1920), 3.5rem); /* 56px */
+  --spacing-flow-md: clamp(3rem, calc(min(100vw, 1920px) * 140 / 1920), 8.75rem); /* 140px */
+  --spacing-flow-lg: clamp(4rem, calc(min(100vw, 1920px) * 180 / 1920), 11.25rem); /* 180px */
+  --spacing-section: clamp(9rem, calc(min(100vw, 1920px) * 360 / 1920), 22.5rem); /* 360px */
+  --spacing-section-lg: clamp(12rem, calc(min(100vw, 1920px) * 600 / 1920), 40rem); 
 }
 
 /* ============================================
    Portfolio - Global Styles
    ============================================ */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/*
+  IMPORTANT: do not use an unlayered `* { margin: 0 }` here.
+  Tailwind utilities (like .mx-auto) live in @layer. Unlayered rules win over
+  layered ones, so a raw margin reset was killing margin-inline: auto and
+  pinning max-w-page sections (Implementation, Intro, etc.) to the left on
+  wide monitors. Put base resets inside @layer base so utilities still win.
+*/
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 :root {
@@ -40,6 +67,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keeps mx-auto centering stable when a vertical scrollbar appears/disappears.
+     Without this, 100vw-based math can shift the page a few pixels sideways. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -114,7 +144,7 @@ body {
 
 .hero-name-line {
   display: block;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(2rem, 8vw, 5rem);
   font-weight: 700;
   line-height: 1;
   color: #ff4d6d;
@@ -130,6 +160,7 @@ body {
 
   .hero-name {
     align-items: center;
+    font-size: clamp(1.5rem, 8vw, 4rem);
   }
 }
 
@@ -244,10 +275,12 @@ body {
 
 /* ---- Footer ---- */
 .footer {
-  padding: 2rem;
+  margin-left: 0 auto;
+  padding: 3rem;
   text-align: center;
   border-top: var(--wireframe-border);
   background: #fff;
+  justify-content: center;
 }
 
 .footer p {
@@ -317,7 +350,7 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
   list-style: none;
-  margin-top: 0.5rem;
+  margin-top: 5rem;
 }
 
 .project-tags li {

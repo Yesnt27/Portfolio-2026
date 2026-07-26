@@ -10,7 +10,9 @@ type FuorisaloneProjectProps = {
   project: Project;
 };
 
-const SECTION = "mx-auto max-w-[1920px] px-gutter";
+/* max-w-page = --container-page. w-full is required so the box still fills up
+   to that cap; mx-auto then centers the leftover space on wide monitors. */
+const SECTION = "mx-auto w-full max-w-page px-gutter";
 
 
 
@@ -62,7 +64,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
 
       {/* Figma opens on the video at y:254, directly under the 167px navbar, at
           x:-6 w:1932 so it overhangs the gutter rather than sitting inside it. */}
-      <figure className="mx-auto mt-flow-md w-full max-w-[1920px]">
+      <figure className="mx-auto mt-flow-md w-full max-w-page">
         <ProjectMedia
           kind="video"
           src={media.demoVideo}
@@ -123,7 +125,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
 
         {/* Featured posters row */}
         <div className="mx-auto mt-flow-lg flex flex-col items-center justify-center gap-flow-md sm:flex-row sm:items-start">
-          <div className="relative aspect-[467/604] w-full max-w-[467px] overflow-hidden border border-fuori-grey bg-white">
+          <div className="relative aspect-[441/605] w-full max-w-[441px] overflow-hidden border border-fuori-grey">
             <Image
               src={fuorisaloneImages.posterMain}
               alt="Fuorisalone 2024 main poster design"
@@ -259,7 +261,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section-lg`} aria-labelledby="implementation-heading">
         <h2
           id="implementation-heading"
-          className="mx-auto max-w-[976px] text-center font-body text-[clamp(2.5rem,5.2vw,6.25rem)] font-bold leading-tight text-white"
+          className="mx-auto max-w-[976px] text-center font-body text-[clamp(2.5rem,5.2vw,10rem)] font-bold leading-tight text-white"
         >
           Implementation and Website flow
         </h2>
@@ -333,7 +335,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
             kind="image"
             src={media.nextProject}
             label="Next project preview"
-            aspectClass="aspect-[1567/778]"
+            aspectClass="aspect-[2245/1295]"
             maxWidthClass="max-w-[1567px]"
             borderClass=""
           />

@@ -29,6 +29,6 @@ export const fuorisaloneImages = {
     districtSelection: "/images/fuorisalone/district-selection.png",
     breraPage: "/images/fuorisalone/brera-page.png",
     exhibitPage: "/images/fuorisalone/exhibit-page.png",
-    nextProject: "/images/fuorisalone/next-project.png",
+    nextProject: "/images/fuorisalone/sol_project_title.png",
   },
 } as const;

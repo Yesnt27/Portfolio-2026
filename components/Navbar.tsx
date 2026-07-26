@@ -14,7 +14,7 @@ export default function Navbar({ variant = "home", theme = "light" }: NavbarProp
     return (
       <header className="sticky top-0 z-50 bg-black">
         <nav
-          className="mx-auto flex max-w-[1920px] items-center gap-[clamp(2rem,6vw,5.25rem)] px-[clamp(1.5rem,5vw,6rem)] py-[clamp(2rem,4vw,3.75rem)] font-display text-[clamp(1.5rem,2.5vw,2.5rem)] font-light text-white"
+          className="mx-auto flex w-full max-w-page items-center gap-[clamp(2rem,calc(min(100vw,2560px)*84/1920),7rem)] px-gutter py-[clamp(2rem,calc(min(100vw,2560px)*60/1920),5rem)] font-display text-[clamp(1.5rem,calc(min(100vw,2560px)*40/1920),3.35rem)] font-light text-white"
           aria-label="Main navigation"
         >
           <Link href={homeHref} className="transition-opacity hover:opacity-70">
