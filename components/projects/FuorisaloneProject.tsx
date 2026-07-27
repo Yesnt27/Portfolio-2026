@@ -28,7 +28,7 @@ function SectionHeading({
   return (
     <h2
       id={id}
-      className={`text-center font-body text-[clamp(2rem,4.2vw,5rem)] font-bold uppercase tracking-tight ${className}`}
+      className={`text-center font-body text-[clamp(1.75rem,3.4vw,4rem)] font-bold uppercase tracking-tight ${className}`}
     >
       {children}
     </h2>
@@ -76,35 +76,35 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       </figure>
 
       {/* Hero */}
-      <header className={`${SECTION} mt-flow-lg`}>
+      <header className={`${SECTION} mt-flow-md`}>
         {/* The title runs full width, then the year drops into a row it shares
             with the summary: "2024" ends near x:420 and the paragraph starts at
             x:550, so the two sit side by side under a full-width first line.
             display:contents puts both heading lines directly on the grid while
             keeping them inside a single h1. */}
-        <div className="lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:gap-x-flow-lg">
-          <h1 className="contents font-display text-[clamp(3.5rem,8.5vw,8.125rem)] font-medium leading-[1.05] tracking-[-0.02em] text-fuori-blue">
+        <div className="lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:gap-x-flow-lg lg:gap-y-flow-md">
+          <h1 className="contents font-display text-[clamp(4rem,9.5vw,9.5rem)] font-medium leading-[1.05] tracking-[-0.02em] text-fuori-blue">
             <span className="block lg:col-span-2">Fuorisalone Microsite</span>
             <span className="block">2024</span>
           </h1>
 
-          <p className="mt-flow-sm max-w-[1022px] font-body text-[clamp(1.25rem,2.6vw,3.125rem)] font-black leading-snug text-white lg:mt-0">
+          <p className="mt-flow-md max-w-[1022px] font-body text-[clamp(1.125rem,2.1vw,2.5rem)] font-black leading-snug text-white lg:mt-0">
             Experimental website for visitors of Fuorisalone design district 2024 and
             encapsulating all its exhibits with concise UX/UI design.
           </p>
         </div>
 
         {/* Right-aligned to the gutter in Figma (details end at x:1746). */}
-        <div className="mt-flow-lg flex flex-col items-end gap-flow-xs text-right font-body font-normal leading-relaxed text-white">
-          <p className="text-[clamp(1.25rem,1.82vw,2.1875rem)]">Team</p>
-          <p className="text-[clamp(1rem,1.56vw,1.875rem)]">
+        <div className="mt-flow-md flex flex-col items-end gap-flow-xs text-right font-body font-normal leading-relaxed text-white">
+          <p className="text-[clamp(1rem,1.45vw,1.75rem)]">Team</p>
+          <p className="text-[clamp(0.875rem,1.25vw,1.5rem)]">
             5 design coordinators &middot; No designated roles &middot; Collaborative work
           </p>
         </div>
 
         <a
           href={prototypeLink}
-          className="mt-section inline-block font-body text-[clamp(1.5rem,4.17vw,5rem)] font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-flow-lg inline-block font-body text-[clamp(1.25rem,3vw,3.5rem)] font-normal text-white transition-opacity hover:opacity-70"
         >
           final prototype →
         </a>
@@ -114,7 +114,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section`} aria-labelledby="intro-heading">
         <SectionHeading id="intro-heading">INTRO</SectionHeading>
 
-        <p className="mx-auto mt-flow-md max-w-[1052px] text-center font-body text-[clamp(1.125rem,2vw,1.875rem)] font-medium leading-relaxed text-fuori-grey">
+        <p className="mx-auto mt-flow-sm max-w-[1052px] text-center font-body text-[clamp(1rem,1.35vw,1.5rem)] font-medium leading-relaxed text-fuori-grey">
           Many modern day websites tend to overachieve on certain aspects including
           visual design, without emphasis on the overarching user experience that can
           enhance the navigation experience with minimal interruptions. We aimed to
@@ -124,8 +124,8 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
         </p>
 
         {/* Featured posters row */}
-        <div className="mx-auto mt-flow-lg flex flex-col items-center justify-center gap-flow-md sm:flex-row sm:items-start">
-          <div className="relative aspect-[441/605] w-full max-w-[441px] overflow-hidden border border-fuori-grey">
+        <div className="mx-auto mt-flow-md flex flex-col items-center justify-center gap-flow-sm sm:flex-row sm:items-start">
+          <div className="relative aspect-[441/605] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
             <Image
               src={fuorisaloneImages.posterMain}
               alt="Fuorisalone 2024 main poster design"
@@ -134,7 +134,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
               sizes="(max-width: 640px) 100vw, 33vw"
             />
           </div>
-          <div className="relative aspect-[441/605] w-full max-w-[441px] overflow-hidden border border-fuori-grey">
+          <div className="relative aspect-[441/605] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
             <Image
               src={fuorisaloneImages.posterFrame100}
               alt="Fuorisalone poster iteration"
@@ -143,7 +143,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
               sizes="(max-width: 640px) 100vw, 33vw"
             />
           </div>
-          <div className="relative aspect-[441/604] w-full max-w-[441px] overflow-hidden border border-fuori-grey">
+          <div className="relative aspect-[441/604] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
             <Image
               src={fuorisaloneImages.posterAhhhhh}
               alt="Fuorisalone experimental poster"
@@ -154,7 +154,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           </div>
         </div>
 
-        <p className="mt-flow-sm text-center font-body text-[clamp(1.25rem,2.1vw,2.5rem)] font-medium text-fuori-grey">
+        <p className="mt-flow-sm text-center font-body text-[clamp(1rem,1.4vw,1.5rem)] font-medium text-fuori-grey">
           Exploring styles through initial iterations of high-fidelity posters
         </p>
       </section>
@@ -180,7 +180,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           ))}
         </div>
 
-        <p className="mt-flow-sm text-center font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium text-fuori-grey">
+        <p className="mt-flow-sm text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey">
           A snippet of our prototype work and graphic assets
         </p>
       </section>
@@ -189,26 +189,26 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section`} aria-labelledby="process-heading">
         <SectionHeading id="process-heading">PROCESS</SectionHeading>
 
-        <ol className="mx-auto mt-flow-md flex max-w-[900px] list-decimal flex-col gap-flow-md pl-8 text-center marker:text-fuori-grey">
-          <li className="font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium leading-relaxed text-fuori-grey">
+        <ol className="mx-auto mt-flow-sm flex max-w-[860px] list-decimal flex-col gap-flow-sm pl-8 text-center marker:text-fuori-grey">
+          <li className="font-body text-[clamp(0.9375rem,1.25vw,1.375rem)] font-medium leading-relaxed text-fuori-grey">
             Each group member worked collaboratively, aligning tasks with our
             respective strengths.
           </li>
-          <li className="font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium leading-relaxed text-fuori-grey">
+          <li className="font-body text-[clamp(0.9375rem,1.25vw,1.375rem)] font-medium leading-relaxed text-fuori-grey">
             Design process covered work on posters (more experimental), which then
             translated onto inspiration for our site which can be iterated on and
             narrowed in further.
           </li>
         </ol>
 
-        <figure className="mt-flow-lg">
-          <div className="relative mx-auto aspect-[1512/1239] w-full max-w-[1512px] overflow-hidden border border-[#a8a8a8]">
+        <figure className="mt-flow-md">
+          <div className="relative mx-auto aspect-[1512/1239] w-full max-w-[1120px] overflow-hidden border border-[#a8a8a8]">
             <Image
               src={fuorisaloneImages.figmaWorkspace}
               alt="Figma workspace showing mobile screen artboards connected by user flow lines"
               fill
               className="object-cover object-top"
-              sizes="(max-width: 1512px) 100vw, 1512px"
+              sizes="(max-width: 1120px) 100vw, 1120px"
             />
           </div>
         </figure>
@@ -218,7 +218,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section`} aria-labelledby="content-strategy-heading">
         <SectionHeading id="content-strategy-heading">CONTENT STRATEGY</SectionHeading>
 
-        <p className="mx-auto mt-flow-md max-w-[943px] text-center font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium leading-relaxed text-white">
+        <p className="mx-auto mt-flow-sm max-w-[860px] text-center font-body text-[clamp(0.9375rem,1.2vw,1.375rem)] font-medium leading-relaxed text-white">
           We realized that in order to create a concise and natural experience for
           visitors, we needed to define a scope for our site, which involved creating
           user flows to visualize what people would experience to determine what
@@ -226,31 +226,31 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           the content directions that guided the information displayed.
         </p>
 
-        <figure className="mt-flow-lg">
-          <div className="relative mx-auto aspect-[1006/566] w-full max-w-[1006px] overflow-hidden border border-fuori-border">
+        <figure className="mt-flow-md">
+          <div className="relative mx-auto aspect-[1006/566] w-full max-w-[820px] overflow-hidden border border-fuori-border">
             <Image
               src={fuorisaloneImages.contentStrategy}
               alt="Content strategy diagram showing exhibition, artist, and detail user flow"
               fill
               className="object-cover"
-              sizes="(max-width: 1006px) 100vw, 1006px"
+              sizes="(max-width: 820px) 100vw, 820px"
             />
           </div>
-          <figcaption className="mx-auto mt-flow-xs max-w-[726px] text-center font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium text-fuori-grey-light">
+          <figcaption className="mx-auto mt-flow-xs max-w-[680px] text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey-light">
             A slide from our presentation deck outlining our user information flow in
             website navigation.
           </figcaption>
         </figure>
 
-        <figure className="mt-flow-lg">
+        <figure className="mt-flow-md">
           <ProjectMedia
             kind="video"
             src={media.screenRecording}
             label="Screen recording of early prototype"
             aspectClass="aspect-[1418/801]"
-            maxWidthClass="max-w-[1418px]"
+            maxWidthClass="max-w-[1120px]"
           />
-          <figcaption className="mt-flow-sm text-center font-body text-[clamp(1rem,1.5vw,1.875rem)] font-medium text-fuori-grey">
+          <figcaption className="mt-flow-sm text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey">
             A preview of our district selection page from one of our earlier design
             iterations
           </figcaption>
@@ -261,19 +261,19 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section-lg`} aria-labelledby="implementation-heading">
         <h2
           id="implementation-heading"
-          className="mx-auto max-w-[976px] text-center font-body text-[clamp(2.5rem,5.2vw,10rem)] font-bold leading-tight text-white"
+          className="mx-auto max-w-[860px] text-center font-body text-[clamp(1.875rem,3.4vw,4rem)] font-bold leading-tight text-white"
         >
           Implementation and Website flow
         </h2>
 
-        <p className="mx-auto mt-flow-md max-w-[1232px] text-center font-body text-[clamp(1.5rem,1.5vw,2rem)] font-medium leading-relaxed text-white">
+        <p className="mx-auto mt-flow-sm max-w-[1000px] text-center font-body text-[clamp(0.9375rem,1.2vw,1.375rem)] font-medium leading-relaxed text-white">
           After all ideations and directions were established, I set about implementing
           the design using Figma prototype mode. We set about creating 3 main flows for
           the website:
         </p>
 
         <nav
-          className="mt-flow-sm flex flex-wrap items-center justify-center gap-x-[clamp(1rem,4vw,5rem)] gap-y-3 font-body text-[clamp(1.25rem,2.1vw,2.5rem)] font-medium text-white"
+          className="mt-flow-sm flex flex-wrap items-center justify-center gap-x-[clamp(0.75rem,2.8vw,3.5rem)] gap-y-3 font-body text-[clamp(1rem,1.5vw,1.75rem)] font-medium text-white"
           aria-label="Website flow"
         >
           <span>Homepage</span>
@@ -283,27 +283,27 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           <span>Exhibit Showcase</span>
         </nav>
 
-        <div className="mt-flow-md flex flex-col items-center gap-flow-lg">
+        <div className="mt-flow-sm flex flex-col items-center gap-flow-md">
           <ProjectMedia
             kind="image"
             src={media.districtSelection}
             label="District selection page mockup"
             aspectClass="aspect-[1520/950]"
-            maxWidthClass="max-w-[1520px]"
+            maxWidthClass="max-w-[1120px]"
           />
           <ProjectMedia
             kind="image"
             src={media.breraPage}
             label="Brera district page mockup"
             aspectClass="aspect-[1520/893]"
-            maxWidthClass="max-w-[1520px]"
+            maxWidthClass="max-w-[1120px]"
           />
           <ProjectMedia
             kind="image"
             src={media.exhibitPage}
             label="Exhibit page mockup"
             aspectClass="aspect-[1522/952]"
-            maxWidthClass="max-w-[1522px]"
+            maxWidthClass="max-w-[1120px]"
           />
         </div>
       </section>
@@ -314,7 +314,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           KEY TAKEAWAYS
         </SectionHeading>
 
-        <p className="mx-auto mt-flow-md max-w-[1419px] text-center font-body text-[clamp(1.25rem,2.1vw,2.5rem)] font-medium leading-relaxed text-white">
+        <p className="mx-auto mt-flow-sm max-w-[1200px] text-center font-body text-[clamp(1rem,1.5vw,1.75rem)] font-medium leading-relaxed text-white">
           Designing interactions and site creation is a process. Working with new design
           features in Figma in tandem with brand identity and user flow across multiple
           weeks, It allows me to create a proper prototype showcasing experimental
@@ -326,7 +326,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${SECTION} mt-section flex flex-col items-center`}>
         <Link
           href="/#projects"
-          className="font-body text-[clamp(1.5rem,2.6vw,3.125rem)] font-medium text-white transition-opacity hover:opacity-70"
+          className="font-body text-[clamp(1.25rem,2vw,2.5rem)] font-medium text-white transition-opacity hover:opacity-70"
         >
           Next project →
         </Link>
@@ -336,7 +336,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
             src={media.nextProject}
             label="Next project preview"
             aspectClass="aspect-[2245/1295]"
-            maxWidthClass="max-w-[1567px]"
+            maxWidthClass="max-w-[1200px]"
             borderClass=""
           />
         </div>

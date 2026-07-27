@@ -7,7 +7,7 @@
   --color-fuori-grey-light: #a0a0a0;
   --color-fuori-border: #999999;
   --font-display: var(--font-neue-haas), sans-serif;
-  --font-body: var(--font-inter), sans-serif;
+  --font-body: var(--font-satoshi), sans-serif;
 
   /* Shared page shell. max-w-page + mx-auto centers the 1920 Figma frame on
      wider monitors instead of letting each section invent its own width. */
@@ -29,13 +29,13 @@
 
     Formula: clamp(mobile floor, frame * (figmaPx / 1920), figmaPx as rem)
   */
-  --spacing-gutter: clamp(1.5rem, calc(min(100vw, 1920px) * 168 / 1920), 10.5rem); /* 168px */
-  --spacing-flow-xs: clamp(0.75rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem); /* 30px */
-  --spacing-flow-sm: clamp(1.5rem, calc(min(100vw, 1920px) * 56 / 1920), 3.5rem); /* 56px */
-  --spacing-flow-md: clamp(3rem, calc(min(100vw, 1920px) * 140 / 1920), 8.75rem); /* 140px */
-  --spacing-flow-lg: clamp(4rem, calc(min(100vw, 1920px) * 180 / 1920), 11.25rem); /* 180px */
-  --spacing-section: clamp(9rem, calc(min(100vw, 1920px) * 360 / 1920), 22.5rem); /* 360px */
-  --spacing-section-lg: clamp(12rem, calc(min(100vw, 1920px) * 600 / 1920), 40rem); 
+  --spacing-gutter: clamp(1.25rem, calc(min(100vw, 1920px) * 120 / 1920), 7.5rem); /* 120px */
+  --spacing-flow-xs: clamp(0.625rem, calc(min(100vw, 1920px) * 24 / 1920), 1.5rem); /* 24px */
+  --spacing-flow-sm: clamp(1rem, calc(min(100vw, 1920px) * 40 / 1920), 2.5rem); /* 40px */
+  --spacing-flow-md: clamp(2rem, calc(min(100vw, 1920px) * 96 / 1920), 6rem); /* 96px */
+  --spacing-flow-lg: clamp(2.5rem, calc(min(100vw, 1920px) * 120 / 1920), 7.5rem); /* 120px */
+  --spacing-section: clamp(5rem, calc(min(100vw, 1920px) * 200 / 1920), 12.5rem); /* 200px */
+  --spacing-section-lg: clamp(6rem, calc(min(100vw, 1920px) * 264 / 1920), 16.5rem); /* 264px */
 }
 
 /* ============================================

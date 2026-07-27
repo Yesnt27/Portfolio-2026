@@ -9,6 +9,23 @@ const inter = Inter({
   display: "swap",
 });
 
+const satoshi = localFont({
+  src: [
+    {
+      path: "../fonts/Satoshi-Variable.ttf",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Satoshi-VariableItalic.ttf",
+      weight: "300 900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
+});
+
 const neueHaasGrotesk = localFont({
   src: [
     {
@@ -53,7 +70,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${neueHaasGrotesk.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${neueHaasGrotesk.variable} ${inter.variable} ${satoshi.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
