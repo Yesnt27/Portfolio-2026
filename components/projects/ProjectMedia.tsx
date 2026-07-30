@@ -10,6 +10,9 @@ type ProjectMediaProps = {
   maxWidthClass?: string;
   borderClass?: string;
   poster?: string;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
 };
 
 export default function ProjectMedia({
@@ -20,6 +23,9 @@ export default function ProjectMedia({
   maxWidthClass = "max-w-[1520px]",
   borderClass = "border border-fuori-grey",
   poster,
+  autoPlay = false,
+  loop = false,
+  muted = false,
 }: ProjectMediaProps) {
   const [failed, setFailed] = useState(false);
 
@@ -53,9 +59,12 @@ export default function ProjectMedia({
       ) : (
         <video
           className="absolute inset-0 h-full w-full object-cover"
-          controls
+          controls={!autoPlay}
+          autoPlay={autoPlay}
+          loop={loop}
+          muted={muted || autoPlay}
           playsInline
-          preload="metadata"
+          preload={autoPlay ? "auto" : "metadata"}
           poster={poster}
           aria-label={label}
           onError={() => setFailed(true)}

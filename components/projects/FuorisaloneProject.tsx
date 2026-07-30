@@ -4,6 +4,7 @@ import ConnectFooter from "@/components/ConnectFooter";
 import Navbar from "@/components/Navbar";
 import ProjectMedia from "@/components/projects/ProjectMedia";
 import { fuorisaloneImages } from "@/lib/fuorisalone-images";
+import { solImages } from "@/lib/sol-images";
 import type { Project } from "@/lib/projects";
 
 type FuorisaloneProjectProps = {
@@ -285,25 +286,34 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
 
         <div className="mt-flow-sm flex flex-col items-center gap-flow-md">
           <ProjectMedia
-            kind="image"
+            kind="video"
             src={media.districtSelection}
-            label="District selection page mockup"
+            label="District selection page prototype"
             aspectClass="aspect-[1520/950]"
             maxWidthClass="max-w-[1120px]"
+            autoPlay
+            loop
+            muted
           />
           <ProjectMedia
-            kind="image"
-            src={media.breraPage}
-            label="Brera district page mockup"
+            kind="video"
+            src={media.districtShowcase}
+            label="Brera district page prototype"
             aspectClass="aspect-[1520/893]"
             maxWidthClass="max-w-[1120px]"
+            autoPlay
+            loop
+            muted
           />
           <ProjectMedia
-            kind="image"
-            src={media.exhibitPage}
-            label="Exhibit page mockup"
+            kind="video"
+            src={media.exhibitShowcase}
+            label="Exhibit page prototype"
             aspectClass="aspect-[1522/952]"
             maxWidthClass="max-w-[1120px]"
+            autoPlay
+            loop
+            muted
           />
         </div>
       </section>
@@ -333,7 +343,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
         <div className="mt-flow-sm w-full">
           <ProjectMedia
             kind="image"
-            src={media.nextProject}
+            src={solImages.projectTitle}
             label="Next project preview"
             aspectClass="aspect-[2245/1295]"
             maxWidthClass="max-w-[1200px]"

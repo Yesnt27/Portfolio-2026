@@ -20,15 +20,11 @@ export const fuorisaloneImages = {
     p62: "/images/fuorisalone/poster-62.png",
     p64: "/images/fuorisalone/poster-64.png",
   },
-  // Media slots you still need to add. Drop the files into
-  // public/images/fuorisalone/ using these exact names and they
-  // will appear automatically (placeholders show until then).
   media: {
     demoVideo: "/images/fuorisalone/demo-video.mp4",
-    screenRecording: "/images/fuorisalone/screen-recording.mp4",
-    districtSelection: "/images/fuorisalone/district-selection.png",
-    breraPage: "/images/fuorisalone/brera-page.png",
-    exhibitPage: "/images/fuorisalone/exhibit-page.png",
-    nextProject: "/images/fuorisalone/sol_project_title.png",
+    screenRecording: "/images/fuorisalone/district-selection.mp4",
+    districtSelection: "/images/fuorisalone/district-selection.mp4",
+    districtShowcase: "/images/fuorisalone/district-showcase.mp4",
+    exhibitShowcase: "/images/fuorisalone/exhibit-showcase.mp4",
   },
 } as const;
