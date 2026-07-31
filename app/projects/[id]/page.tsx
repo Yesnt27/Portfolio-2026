@@ -37,7 +37,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const ProjectTemplate = getProjectTemplate(project.template);
-  const hasCustomShell = project.template === "fuorisalone";
+  const hasCustomShell =
+    project.template === "fuorisalone" || project.template === "sol";
 
   if (hasCustomShell) {
     return <ProjectTemplate project={project} />;

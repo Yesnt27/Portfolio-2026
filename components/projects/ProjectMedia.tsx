@@ -29,7 +29,9 @@ export default function ProjectMedia({
 }: ProjectMediaProps) {
   const [failed, setFailed] = useState(false);
 
-  const frameClass = `relative mx-auto w-full overflow-hidden ${maxWidthClass} ${borderClass} ${aspectClass}`;
+  /* No mx-auto: Figma left-aligns every media frame inside the content column,
+     so callers decide alignment. */
+  const frameClass = `relative w-full overflow-hidden ${maxWidthClass} ${borderClass} ${aspectClass}`;
 
   if (failed) {
     return (

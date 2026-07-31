@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ConnectFooter from "@/components/ConnectFooter";
 import Navbar from "@/components/Navbar";
+import PosterParallax from "@/components/projects/PosterParallax";
 import ProjectMedia from "@/components/projects/ProjectMedia";
 import { fuorisaloneImages } from "@/lib/fuorisalone-images";
 import { solImages } from "@/lib/sol-images";
@@ -11,61 +12,68 @@ type FuorisaloneProjectProps = {
   project: Project;
 };
 
-/* max-w-page = --container-page. w-full is required so the box still fills up
-   to that cap; mx-auto then centers the leftover space on wide monitors. */
-const SECTION = "mx-auto w-full max-w-page px-gutter";
+/*
+  Figma (node 309:95) insets the body column 277px into the 1920px frame and
+  left-aligns it. The right side only needs enough room to keep the widest
+  measure (1419px copy) off the edge, which is why the two paddings differ.
+*/
+const COLUMN = "mx-auto w-full max-w-page pl-content pr-gutter";
+const EDGE = "mx-auto w-full max-w-page pl-edge pr-gutter";
 
+/* Every screenshot and screen recording sits in the same 1267 x 713 frame. */
+const MEDIA_FRAME = "relative w-full max-w-media overflow-hidden aspect-[1267/713]";
 
-
-function SectionHeading({
-  children,
-  id,
-  className = "text-white",
+function SectionIntro({
+  eyebrow,
+  heading,
+  headingId,
 }: {
-  children: React.ReactNode;
-  id?: string;
-  className?: string;
+  eyebrow: string;
+  heading: string;
+  headingId: string;
 }) {
   return (
-    <h2
-      id={id}
-      className={`text-center font-body text-[clamp(1.75rem,3.4vw,4rem)] font-bold uppercase tracking-tight ${className}`}
-    >
+    <>
+      <p className="font-body text-fuori-body font-bold text-fuori-grey">{eyebrow}</p>
+      <h2
+        id={headingId}
+        className="mt-fuori-2xs max-w-copy font-body text-fuori-h2 font-bold leading-[1.25] text-white"
+      >
+        {heading}
+      </h2>
+    </>
+  );
+}
+
+/* Captions are centered under the media column rather than the whole frame. */
+function Caption({ children }: { children: React.ReactNode }) {
+  return (
+    <figcaption className="mt-fuori-xs w-full max-w-media text-center font-body text-fuori-body font-medium text-fuori-grey">
       {children}
-    </h2>
+    </figcaption>
   );
 }
 
 export default function FuorisaloneProject({ project }: FuorisaloneProjectProps) {
-  const { posters, media } = fuorisaloneImages;
+  const { media } = fuorisaloneImages;
   const prototypeLink = project.links.find((link) => link.primary)?.href ?? "#";
 
-  // Widths/heights are the intrinsic sizes from Figma. Carrying them through
-  // keeps each poster's aspect ratio correct and caps it at its designed size
-  // instead of stretching every image to the full column.
-  const collage = [
-    { src: posters.p43, alt: "Design reference poster 1", w: 279, h: 439 },
-    { src: posters.p47, alt: "Design reference poster 2", w: 217, h: 323 },
-    { src: posters.p64, alt: "Design reference poster 3", w: 411, h: 305 },
-    { src: posters.p56, alt: "Design reference poster 4", w: 251, h: 370 },
-    { src: posters.p55, alt: "Design reference poster 5", w: 343, h: 511 },
-    { src: posters.p46, alt: "Design reference poster 6", w: 271, h: 348 },
-    { src: fuorisaloneImages.posterFrame100, alt: "Design reference poster 7", w: 441, h: 605 },
-    { src: posters.p60, alt: "Design reference poster 8", w: 308, h: 434 },
-    { src: posters.p61, alt: "Design reference poster 9", w: 203, h: 299 },
-    { src: posters.p45, alt: "Design reference poster 10", w: 216, h: 294 },
-    { src: posters.p54, alt: "Design reference poster 11", w: 233, h: 341 },
-    { src: posters.p53, alt: "Design reference poster 12", w: 305, h: 451 },
-    { src: posters.p62, alt: "Design reference poster 13", w: 411, h: 302 },
+  /*
+    The three lead posters run as a grid whose columns carry their Figma widths,
+    so the 29px gutters and relative sizes survive at any screen width.
+  */
+  const leadPosters = [
+    { src: fuorisaloneImages.posterShowcase, alt: "Fuorisalone showcase poster", ratio: "467/604" },
+    { src: fuorisaloneImages.posterFrame100, alt: "Fuorisalone 2024 Milan Design Week poster", ratio: "441/605" },
+    { src: fuorisaloneImages.posterAhhhhh, alt: "Salone experimental poster", ratio: "441/604" },
   ];
 
   return (
     <article className="min-h-screen bg-black text-white">
       <Navbar variant="inner" theme="dark" />
 
-      {/* Figma opens on the video at y:254, directly under the 167px navbar, at
-          x:-6 w:1932 so it overhangs the gutter rather than sitting inside it. */}
-      <figure className="mx-auto mt-flow-md w-full max-w-page">
+      {/* Full-bleed opener: Figma runs it to x:-6 w:1932 so it overhangs the frame. */}
+      <figure className="mx-auto w-full max-w-page">
         <ProjectMedia
           kind="video"
           src={media.demoVideo}
@@ -77,45 +85,49 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       </figure>
 
       {/* Hero */}
-      <header className={`${SECTION} mt-flow-md`}>
-        {/* The title runs full width, then the year drops into a row it shares
-            with the summary: "2024" ends near x:420 and the paragraph starts at
-            x:550, so the two sit side by side under a full-width first line.
-            display:contents puts both heading lines directly on the grid while
-            keeping them inside a single h1. */}
-        <div className="lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:gap-x-flow-lg lg:gap-y-flow-md">
-          <h1 className="contents font-display text-[clamp(4rem,9.5vw,9.5rem)] font-medium leading-[1.05] tracking-[-0.02em] text-fuori-blue">
-            <span className="block lg:col-span-2">Fuorisalone Microsite</span>
-            <span className="block">2024</span>
-          </h1>
+      <header className={`${COLUMN} mt-fuori-xl`}>
+        <Image
+          src={fuorisaloneImages.logo}
+          alt="Fuorisalone logo"
+          width={234}
+          height={102}
+          className="h-auto w-full max-w-logo"
+          priority
+        />
 
-          <p className="mt-flow-md max-w-[1022px] font-body text-[clamp(1.125rem,2.1vw,2.5rem)] font-black leading-snug text-white lg:mt-0">
-            Experimental website for visitors of Fuorisalone design district 2024 and
-            encapsulating all its exhibits with concise UX/UI design.
-          </p>
-        </div>
+        <h1 className="mt-fuori-md font-display text-fuori-title font-medium leading-[1.15] tracking-[-0.01em] text-white">
+          {project.title}
+        </h1>
 
-        {/* Right-aligned to the gutter in Figma (details end at x:1746). */}
-        <div className="mt-flow-md flex flex-col items-end gap-flow-xs text-right font-body font-normal leading-relaxed text-white">
-          <p className="text-[clamp(1rem,1.45vw,1.75rem)]">Team</p>
-          <p className="text-[clamp(0.875rem,1.25vw,1.5rem)]">
-            5 design coordinators &middot; No designated roles &middot; Collaborative work
-          </p>
+        <p className="mt-fuori-sm max-w-[1022px] font-body text-fuori-body font-normal leading-[1.37] text-white">
+          Experimental website for visitors of Fuorisalone design district 2024 and
+          encapsulating all its exhibits with concise UX/UI design.
+        </p>
+
+        <p className="mt-fuori-sm font-body text-fuori-label font-bold text-white">Team</p>
+        <div className="mt-fuori-sm font-body text-fuori-body font-normal leading-[1.37] text-white">
+          <p>5 design coordinators (Me)</p>
+          <p>No designated roles</p>
+          <p>Collaborative work</p>
         </div>
 
         <a
           href={prototypeLink}
-          className="mt-flow-lg inline-block font-body text-[clamp(1.25rem,3vw,3.5rem)] font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-fuori-md inline-block font-body text-fuori-lead font-normal text-white transition-opacity hover:opacity-70"
         >
-          final prototype →
+          View the final prototype →
         </a>
       </header>
 
-      {/* Intro */}
-      <section className={`${SECTION} mt-section`} aria-labelledby="intro-heading">
-        <SectionHeading id="intro-heading">INTRO</SectionHeading>
+      {/* The Problem */}
+      <section className={`${COLUMN} mt-fuori-sm`} aria-labelledby="problem-heading">
+        <SectionIntro
+          eyebrow="The Problem"
+          heading="The issue of overdesigning and missing the target audience"
+          headingId="problem-heading"
+        />
 
-        <p className="mx-auto mt-flow-sm max-w-[1052px] text-center font-body text-[clamp(1rem,1.35vw,1.5rem)] font-medium leading-relaxed text-fuori-grey">
+        <p className="mt-fuori-md max-w-[1236px] font-body text-fuori-body font-medium leading-[1.37] text-white">
           Many modern day websites tend to overachieve on certain aspects including
           visual design, without emphasis on the overarching user experience that can
           enhance the navigation experience with minimal interruptions. We aimed to
@@ -124,102 +136,90 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           of UX/UI to create a site that is largely experimental and unique.
         </p>
 
-        {/* Featured posters row */}
-        <div className="mx-auto mt-flow-md flex flex-col items-center justify-center gap-flow-sm sm:flex-row sm:items-start">
-          <div className="relative aspect-[441/605] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
-            <Image
-              src={fuorisaloneImages.posterMain}
-              alt="Fuorisalone 2024 main poster design"
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, 33vw"
-            />
-          </div>
-          <div className="relative aspect-[441/605] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
-            <Image
-              src={fuorisaloneImages.posterFrame100}
-              alt="Fuorisalone poster iteration"
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, 33vw"
-            />
-          </div>
-          <div className="relative aspect-[441/604] w-full max-w-[360px] overflow-hidden border border-fuori-grey">
-            <Image
-              src={fuorisaloneImages.posterAhhhhh}
-              alt="Fuorisalone experimental poster"
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, 33vw"
-            />
-          </div>
-        </div>
-
-        <p className="mt-flow-sm text-center font-body text-[clamp(1rem,1.4vw,1.5rem)] font-medium text-fuori-grey">
-          Exploring styles through initial iterations of high-fidelity posters
-        </p>
-      </section>
-
-      {/* Collage */}
-      <section className={`${SECTION} mt-section-lg`} aria-label="Design reference images and graphic assets">
-        <div className="columns-2 gap-flow-sm sm:columns-3 lg:columns-5 [&>*]:mb-flow-sm">
-          {collage.map((item) => (
+        {/* Lead posters. Column tracks carry the Figma widths so the relative
+            sizes and 29px gutters hold at any screen width. */}
+        <div
+          className="mt-fuori-sm grid w-full max-w-posters gap-fuori-gap"
+          style={{ gridTemplateColumns: "467fr 441fr 441fr" }}
+        >
+          {leadPosters.map((poster) => (
             <div
-              key={item.src}
-              className="relative mx-auto w-full break-inside-avoid overflow-hidden"
-              style={{ maxWidth: item.w }}
+              key={poster.src}
+              className="relative border border-fuori-grey bg-white"
+              style={{ aspectRatio: poster.ratio }}
             >
               <Image
-                src={item.src}
-                alt={item.alt}
-                width={item.w}
-                height={item.h}
-                className="h-auto w-full object-cover"
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 285px"
+                src={poster.src}
+                alt={poster.alt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 33vw, 470px"
               />
             </div>
           ))}
         </div>
 
-        <p className="mt-flow-sm text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey">
-          A snippet of our prototype work and graphic assets
+        <p className="mt-fuori-xs w-full max-w-posters text-center font-body text-fuori-body font-medium text-fuori-grey">
+          Exploring styles through initial iterations of high-fidelity posters
         </p>
       </section>
 
-      {/* Process */}
-      <section className={`${SECTION} mt-section`} aria-labelledby="process-heading">
-        <SectionHeading id="process-heading">PROCESS</SectionHeading>
+      {/* Poster collage — scroll-driven parallax, centre poster held still.
+          Unlike the rest of the page this block is centered: Figma runs it from
+          x:77 to x:1842, so it sits evenly inside the frame. */}
+      <section
+        className="mx-auto mt-fuori-lg w-full max-w-page px-gutter"
+        aria-label="Poster iterations and graphic references"
+      >
+        <PosterParallax caption="Many, many poster iterations.." />
+      </section>
 
-        <ol className="mx-auto mt-flow-sm flex max-w-[860px] list-decimal flex-col gap-flow-sm pl-8 text-center marker:text-fuori-grey">
-          <li className="font-body text-[clamp(0.9375rem,1.25vw,1.375rem)] font-medium leading-relaxed text-fuori-grey">
-            Each group member worked collaboratively, aligning tasks with our
-            respective strengths.
-          </li>
-          <li className="font-body text-[clamp(0.9375rem,1.25vw,1.375rem)] font-medium leading-relaxed text-fuori-grey">
-            Design process covered work on posters (more experimental), which then
-            translated onto inspiration for our site which can be iterated on and
-            narrowed in further.
-          </li>
-        </ol>
+      {/* Research */}
+      <section className={`${COLUMN} mt-fuori-xl`} aria-labelledby="research-heading">
+        <SectionIntro
+          eyebrow="Research"
+          heading="Catering to user personas and iterative design principles"
+          headingId="research-heading"
+        />
 
-        <figure className="mt-flow-md">
-          <div className="relative mx-auto aspect-[1512/1239] w-full max-w-[1120px] overflow-hidden border border-[#a8a8a8]">
+        <p className="mt-fuori-xs max-w-[966px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+          Design process covered work on posters (more experimental), which then
+          translated onto inspiration for our site which can be iterated on and
+          narrowed in further.
+        </p>
+
+        <div className="mt-fuori-xs font-body text-fuori-sub font-medium leading-[1.37] text-fuori-grey">
+          <p>Goals:</p>
+          <ol className="mt-fuori-2xs list-decimal pl-[1.5em]">
+            <li>Understand personas to converge design decisions</li>
+            <li>Pinpoint important design principles to iterate on</li>
+          </ol>
+        </div>
+
+        <figure className="mt-fuori-sm">
+          {/* Figma clips this screenshot to the frame from the top edge. */}
+          <div className={`${MEDIA_FRAME} border border-[#a8a8a8] bg-white`}>
             <Image
               src={fuorisaloneImages.figmaWorkspace}
               alt="Figma workspace showing mobile screen artboards connected by user flow lines"
               fill
               className="object-cover object-top"
-              sizes="(max-width: 1120px) 100vw, 1120px"
+              sizes="(max-width: 1280px) 100vw, 1267px"
             />
           </div>
+          <Caption>A snippet of our prototype work and graphic assets</Caption>
         </figure>
       </section>
 
-      {/* Content Strategy */}
-      <section className={`${SECTION} mt-section`} aria-labelledby="content-strategy-heading">
-        <SectionHeading id="content-strategy-heading">CONTENT STRATEGY</SectionHeading>
+      {/* Content strategy */}
+      <section className={`${COLUMN} mt-fuori-lg`} aria-labelledby="content-strategy-heading">
+        <SectionIntro
+          eyebrow="Solution ideation"
+          heading="Defining content strategy for implementation"
+          headingId="content-strategy-heading"
+        />
 
-        <p className="mx-auto mt-flow-sm max-w-[860px] text-center font-body text-[clamp(0.9375rem,1.2vw,1.375rem)] font-medium leading-relaxed text-white">
+        <p className="mt-fuori-xs max-w-[943px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
           We realized that in order to create a concise and natural experience for
           visitors, we needed to define a scope for our site, which involved creating
           user flows to visualize what people would experience to determine what
@@ -227,129 +227,193 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           the content directions that guided the information displayed.
         </p>
 
-        <figure className="mt-flow-md">
-          <div className="relative mx-auto aspect-[1006/566] w-full max-w-[820px] overflow-hidden border border-fuori-border">
+        <figure className="mt-fuori-md">
+          <div className={`${MEDIA_FRAME} border border-fuori-border`}>
             <Image
               src={fuorisaloneImages.contentStrategy}
               alt="Content strategy diagram showing exhibition, artist, and detail user flow"
               fill
               className="object-cover"
-              sizes="(max-width: 820px) 100vw, 820px"
+              sizes="(max-width: 1280px) 100vw, 1267px"
             />
           </div>
-          <figcaption className="mx-auto mt-flow-xs max-w-[680px] text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey-light">
+          <figcaption className="mt-fuori-xs w-full max-w-media text-center font-body text-fuori-body font-medium text-fuori-grey-light">
             A slide from our presentation deck outlining our user information flow in
             website navigation.
           </figcaption>
         </figure>
+      </section>
 
-        <figure className="mt-flow-md">
+      {/* Prototypes and testing */}
+      <section className={`${COLUMN} mt-fuori-xl`} aria-labelledby="prototypes-heading">
+        <SectionIntro
+          eyebrow="Solution ideation"
+          heading="Prototypes and testing"
+          headingId="prototypes-heading"
+        />
+
+        <p className="mt-fuori-xs max-w-[1050px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+          After many long hours of iteration and wireframes, building from our previous
+          ideas, I consolidated our principles and brought them to life with an initial
+          prototype, to see how things would look like in practice and prepared for
+          feedback from users.
+        </p>
+
+        <figure className="mt-fuori-sm">
           <ProjectMedia
             kind="video"
-            src={media.screenRecording}
-            label="Screen recording of early prototype"
-            aspectClass="aspect-[1418/801]"
-            maxWidthClass="max-w-[1120px]"
+            src={media.prototypeVideo}
+            label="Fuorisalone prototype walkthrough"
+            aspectClass="aspect-[1267/713]"
+            maxWidthClass="max-w-media"
+            borderClass="border border-fuori-grey"
+            autoPlay
+            loop
+            muted
           />
-          <figcaption className="mt-flow-sm text-center font-body text-[clamp(0.875rem,1.15vw,1.25rem)] font-medium text-fuori-grey">
+          <Caption>
             A preview of our district selection page from one of our earlier design
             iterations
-          </figcaption>
+          </Caption>
         </figure>
       </section>
 
-      {/* Implementation */}
-      <section className={`${SECTION} mt-section-lg`} aria-labelledby="implementation-heading">
-        <h2
-          id="implementation-heading"
-          className="mx-auto max-w-[860px] text-center font-body text-[clamp(1.875rem,3.4vw,4rem)] font-bold leading-tight text-white"
-        >
-          Implementation and Website flow
-        </h2>
+      {/* Final solution */}
+      <section className={`${COLUMN} mt-fuori-lg`} aria-labelledby="implementation-heading">
+        <SectionIntro
+          eyebrow="Final Solution"
+          heading="Implementation and Website flow"
+          headingId="implementation-heading"
+        />
 
-        <p className="mx-auto mt-flow-sm max-w-[1000px] text-center font-body text-[clamp(0.9375rem,1.2vw,1.375rem)] font-medium leading-relaxed text-white">
-          After all ideations and directions were established, I set about implementing
-          the design using Figma prototype mode. We set about creating 3 main flows for
-          the website:
-        </p>
+        <div className="mt-fuori-xs flex max-w-media flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-white">
+          <p>
+            After taking in feedback about our initial prototype being the problem that
+            users would have to figure out which interactions to choose first and how to
+            get to them easier, we had to find a way to make that easier.
+          </p>
+          <p>
+            I chose to settle on a design that would use presentation principles to
+            garner interest and not have the user second guess which features they
+            missed. After the district showcase, I let them explore the different
+            sections via interactive features.
+          </p>
+        </div>
 
         <nav
-          className="mt-flow-sm flex flex-wrap items-center justify-center gap-x-[clamp(0.75rem,2.8vw,3.5rem)] gap-y-3 font-body text-[clamp(1rem,1.5vw,1.75rem)] font-medium text-white"
+          className="mt-fuori-md flex w-full max-w-media flex-wrap items-center justify-center gap-x-fuori-md gap-y-3 font-body text-fuori-body font-medium text-white"
           aria-label="Website flow"
         >
           <span>Homepage</span>
-          <span aria-hidden="true">→</span>
+          <span aria-hidden="true" className="text-fuori-h2">
+            →
+          </span>
           <span>District Page</span>
-          <span aria-hidden="true">→</span>
+          <span aria-hidden="true" className="text-fuori-h2">
+            →
+          </span>
           <span>Exhibit Showcase</span>
         </nav>
 
-        <div className="mt-flow-sm flex flex-col items-center gap-flow-md">
+        <figure className="mt-fuori-lg">
           <ProjectMedia
             kind="video"
             src={media.districtSelection}
             label="District selection page prototype"
-            aspectClass="aspect-[1520/950]"
-            maxWidthClass="max-w-[1120px]"
+            aspectClass="aspect-[1267/713]"
+            maxWidthClass="max-w-media"
+            borderClass="border border-fuori-grey"
             autoPlay
             loop
             muted
           />
+          <Caption>Updated and refined district selection page</Caption>
+        </figure>
+
+        <figure className="mt-fuori-lg">
           <ProjectMedia
             kind="video"
             src={media.districtShowcase}
-            label="Brera district page prototype"
-            aspectClass="aspect-[1520/893]"
-            maxWidthClass="max-w-[1120px]"
+            label="District showcase prototype"
+            aspectClass="aspect-[1267/713]"
+            maxWidthClass="max-w-media"
+            borderClass="border border-fuori-grey"
             autoPlay
             loop
             muted
           />
+          <Caption>Preview of district showcase and specific exhibits</Caption>
+        </figure>
+
+        <figure className="mt-fuori-lg">
           <ProjectMedia
             kind="video"
             src={media.exhibitShowcase}
             label="Exhibit page prototype"
-            aspectClass="aspect-[1522/952]"
-            maxWidthClass="max-w-[1120px]"
+            aspectClass="aspect-[1267/713]"
+            maxWidthClass="max-w-media"
+            borderClass="border border-fuori-grey"
             autoPlay
             loop
             muted
           />
+          <Caption>Specific exhibit features and booking details page</Caption>
+        </figure>
+      </section>
+
+      {/* Key learnings */}
+      <section className={`${COLUMN} mt-fuori-md`} aria-labelledby="learnings-heading">
+        <h2
+          id="learnings-heading"
+          className="font-body text-fuori-h2 font-black text-white"
+        >
+          Key Learnings
+        </h2>
+
+        <div className="mt-fuori-sm flex max-w-copy flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-white">
+          <p>
+            Designing interactions with constraints sharpens decisions. Working with new
+            design features in Figma in tandem with brand identity and user flow across
+            multiple weeks, It allows me to create from a set of trials that allows me to
+            find the best designs to iterate towards.
+          </p>
+          <p>
+            Don&rsquo;t be complacent with design. Good design is a process that requires
+            drawing inspiration and learning from previous works. As such, I could not
+            afford to be stagnant with my designs, but to always seek out and not assume
+            that my design is &ldquo;the current best design&rdquo; in my head.
+          </p>
+          <p>
+            Take your time. Styling and aesthetic are all aspects that take a good amount
+            of time and research, and if you leave out the people and interaction factors,
+            you&rsquo;ll start to deviate from who you are designing for and for what
+            purpose.
+          </p>
         </div>
       </section>
 
-      {/* Key Takeaways */}
-      <section className={`${SECTION} mt-section-lg`} aria-labelledby="takeaways-heading">
-        <SectionHeading id="takeaways-heading" className="font-black text-fuori-cyan">
-          KEY TAKEAWAYS
-        </SectionHeading>
-
-        <p className="mx-auto mt-flow-sm max-w-[1200px] text-center font-body text-[clamp(1rem,1.5vw,1.75rem)] font-medium leading-relaxed text-white">
-          Designing interactions and site creation is a process. Working with new design
-          features in Figma in tandem with brand identity and user flow across multiple
-          weeks, It allows me to create a proper prototype showcasing experimental
-          interactions with intention.
-        </p>
-      </section>
-
-      {/* Next Project */}
-      <section className={`${SECTION} mt-section flex flex-col items-center`}>
+      {/* Next project — breaks out to the shallower 173px inset */}
+      <section className={`${EDGE} mt-fuori-lg`}>
         <Link
           href="/#projects"
-          className="font-body text-[clamp(1.25rem,2vw,2.5rem)] font-medium text-white transition-opacity hover:opacity-70"
+          className="font-body text-fuori-next font-medium text-white transition-opacity hover:opacity-70"
         >
           Next project →
         </Link>
-        <div className="mt-flow-sm w-full">
-          <ProjectMedia
-            kind="image"
+
+        <Link
+          href="/projects/sol"
+          className="relative mt-fuori-sm block aspect-[1572/821] w-full max-w-next overflow-hidden transition-opacity hover:opacity-90"
+          aria-label="Go to Sol / Figbuild 2026 project"
+        >
+          <Image
             src={solImages.projectTitle}
-            label="Next project preview"
-            aspectClass="aspect-[2245/1295]"
-            maxWidthClass="max-w-[1200px]"
-            borderClass=""
+            alt="Next project preview: Sol"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1600px) 100vw, 1572px"
           />
-        </div>
+        </Link>
       </section>
 
       <ConnectFooter />

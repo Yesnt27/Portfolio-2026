@@ -1,3 +1,18 @@
 export const solImages = {
   projectTitle: "/images/sol/sol_project_title.png",
+  appIcon: "/images/sol/app-icon.png",
+  planet: "/images/sol/planet.png",
+  mindMap: "/images/sol/mind-map.png",
+  researchDiagram1: "/images/sol/research-diagram-1.png",
+  researchDiagram2: "/images/sol/research-diagram-2.png",
+  phoneWeekly: "/images/sol/phone-weekly.png",
+  phoneInsights: "/images/sol/phone-insights.png",
+  phoneHome: "/images/sol/phone-home.png",
+  useCases: "/images/sol/use-cases.png",
+  earpiece1: "/images/sol/earpiece-1.png",
+  earpiece2: "/images/sol/earpiece-2.png",
+  finalWeekly: "/images/sol/final-weekly.png",
+  finalHome: "/images/sol/final-home.png",
+  finalEarphones: "/images/sol/final-earphones.png",
+  demoVideo: "/images/sol/demo-video.mp4",
 } as const;

@@ -4,7 +4,7 @@ export type ProjectLink = {
   primary?: boolean;
 };
 
-export type ProjectTemplate = "default" | "fuorisalone";
+export type ProjectTemplate = "default" | "fuorisalone" | "sol";
 
 export type Project = {
   id: string;
@@ -56,21 +56,37 @@ export const projects: Project[] = [
     links: [{ label: "Final Prototype", href: "#", primary: true }],
   },
   {
-    id: "2",
-    eyebrow: "Project 2",
-    title: "Project 2",
-    lead: "Brief description for project 2.",
-    tags: ["Development"],
-    role: "Developer",
-    timeline: "2025",
-    tools: "HTML, CSS, JavaScript",
-    type: "Web App",
-    overview: ["Project 2 overview goes here."],
-    challenge: ["Project 2 challenge goes here."],
-    process: ["Project 2 process goes here."],
-    outcome: ["Project 2 outcome goes here."],
-    gallery: ["Image 1", "Image 2"],
-    links: [],
+    id: "sol",
+    template: "sol",
+    eyebrow: "Case Study",
+    title: "Figbuild 2026",
+    lead: "Sol is an app for tracking and logging various aspects of our mental state — an extension of metacognition for cognitive states, stress, and emotional intensity.",
+    tags: ["UI Design", "UX Research", "Product Design"],
+    role: "Designer",
+    timeline: "2026",
+    tools: "Figma, Figma Make",
+    type: "Case Study",
+    heroCaption: "Sol demo video",
+    overview: [
+      "Sol is an app for tracking and logging various aspects of our mental state.",
+    ],
+    challenge: [
+      "As AI takes over cognitive tasks, people need tools to monitor mental activity and stay intentional about cognitive habits.",
+    ],
+    process: [
+      "Research-backed design grounded in cognitive science, use cases, and iterative prototyping.",
+    ],
+    outcome: [
+      "A digital prototype and physical earpiece concept for observable, verifiable self-reflection.",
+    ],
+    gallery: ["Planet visualization", "Mind map", "Phone mockups", "Final app"],
+    links: [
+      { label: "Pitch Video", href: "https://youtu.be/z584bxLA1Tk", primary: true },
+      {
+        label: "Final Prototype",
+        href: "https://www.figma.com/make/41nk6eLAd5mQXfcBYmk1X6/Brain-Activity-Visualization-App",
+      },
+    ],
   },
   {
     id: "3",

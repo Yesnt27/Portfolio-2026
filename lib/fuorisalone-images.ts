@@ -1,9 +1,11 @@
 export const fuorisaloneImages = {
+  logo: "/images/fuorisalone/fuorisalone-logo.png",
   contentStrategy: "/images/fuorisalone/content-strategy.png",
   figmaWorkspace: "/images/fuorisalone/figma-workspace.png",
   iconUser: "/images/fuorisalone/icon-user.png",
   iconGear: "/images/fuorisalone/icon-gear.png",
-  posterMain: "/images/fuorisalone/poster-main.png",
+  /* Flattened export of the composed "Poster 1" frame (Figma node 309:134). */
+  posterShowcase: "/images/fuorisalone/poster-showcase.png",
   posterAhhhhh: "/images/fuorisalone/poster-ahhhhh.png",
   posterFrame100: "/images/fuorisalone/poster-frame100.png",
   posters: {
@@ -22,7 +24,7 @@ export const fuorisaloneImages = {
   },
   media: {
     demoVideo: "/images/fuorisalone/demo-video.mp4",
-    screenRecording: "/images/fuorisalone/district-selection.mp4",
+    prototypeVideo: "/images/fuorisalone/fuorisalone-prototype.mov",
     districtSelection: "/images/fuorisalone/district-selection.mp4",
     districtShowcase: "/images/fuorisalone/district-showcase.mp4",
     exhibitShowcase: "/images/fuorisalone/exhibit-showcase.mp4",
