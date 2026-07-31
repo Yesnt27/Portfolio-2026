@@ -81,6 +81,9 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           aspectClass="aspect-[1932/942]"
           maxWidthClass="max-w-none"
           borderClass="border-[3px] border-white"
+          autoPlay
+          loop
+          muted
         />
       </figure>
 
@@ -113,7 +116,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
 
         <a
           href={prototypeLink}
-          className="mt-fuori-md inline-block font-body text-fuori-lead font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-fuori-md inline-block font-body text-cta-lg font-normal text-white transition-opacity hover:opacity-70"
         >
           View the final prototype →
         </a>
@@ -396,7 +399,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       <section className={`${EDGE} mt-fuori-lg`}>
         <Link
           href="/#projects"
-          className="font-body text-fuori-next font-medium text-white transition-opacity hover:opacity-70"
+          className="font-body text-cta-sm font-medium text-white transition-opacity hover:opacity-70"
         >
           Next project →
         </Link>

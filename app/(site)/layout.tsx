@@ -1,5 +1,4 @@
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export default function SiteLayout({
   children,
@@ -8,9 +7,8 @@ export default function SiteLayout({
 }>) {
   return (
     <>
-      <Navbar variant="home" />
+      <Navbar variant="home" theme="dark" />
       {children}
-      <Footer />
     </>
   );
 }

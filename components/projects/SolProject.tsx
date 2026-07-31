@@ -72,6 +72,9 @@ export default function SolProject({ project }: SolProjectProps) {
           aspectClass="aspect-[1920/1080]"
           maxWidthClass="max-w-none"
           borderClass="border-[3px] border-white"
+          autoPlay
+          loop
+          muted
         />
       </figure>
 
@@ -107,7 +110,7 @@ export default function SolProject({ project }: SolProjectProps) {
           href={pitchLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-fuori-md inline-block font-body text-fuori-lead font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-fuori-md inline-block font-body text-cta-lg font-normal text-white transition-opacity hover:opacity-70"
         >
           View the pitch video →
         </a>
@@ -387,30 +390,29 @@ export default function SolProject({ project }: SolProjectProps) {
           href={prototypeLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-fuori-sm inline-block font-body text-fuori-h2 font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-fuori-sm inline-block font-body text-cta-md font-normal text-white transition-opacity hover:opacity-70"
         >
           View the final prototype →
         </a>
 
         <figure className="mt-fuori-md">
           {/*
-            Figma layout: left 722×958 weekly pair; right column matches that
-            height with 755×526 home screens and a merged earphones asset
-            (336×641) overlapping from the bottom.
+            Figma canvas: 1506×958 — left 722×958 weekly, right 755×958 split
+            into 755×526 home + 755×432 row with 358×431 earphones at bottom-left.
           */}
-          <div className="flex w-full max-w-[1506px] flex-col gap-fuori-sm lg:flex-row lg:items-stretch">
-            <div className="relative aspect-[722/958] w-full max-w-[722px] shrink-0 overflow-hidden border border-black bg-[#3a3a3a]">
-              <Image
-                src={solImages.finalWeekly}
-                alt="Final Sol weekly and comparison screens"
-                fill
-                className="object-cover"
-                sizes="722px"
-              />
-            </div>
-            <div className="relative aspect-[722/958] w-full max-w-[755px] lg:aspect-auto">
-              <div className="relative h-full w-full overflow-hidden lg:absolute lg:inset-0">
-                <div className="relative h-[54.9%] w-full overflow-hidden border border-black bg-[#3a3a3a]">
+          <div className="relative hidden aspect-[1506/958] w-full max-w-[1506px] lg:block">
+            <div className="absolute inset-0 grid grid-cols-[722fr_755fr] gap-fuori-gap">
+              <div className="relative min-h-0 overflow-hidden border border-black bg-[#3a3a3a]">
+                <Image
+                  src={solImages.finalWeekly}
+                  alt="Final Sol weekly and comparison screens"
+                  fill
+                  className="object-cover"
+                  sizes="722px"
+                />
+              </div>
+              <div className="relative min-h-0 grid grid-rows-[526fr_432fr]">
+                <div className="relative min-h-0 overflow-hidden border border-black bg-[#3a3a3a]">
                   <Image
                     src={solImages.finalHome}
                     alt="Final Sol home and insights screens"
@@ -419,16 +421,48 @@ export default function SolProject({ project }: SolProjectProps) {
                     sizes="755px"
                   />
                 </div>
-                <div className="absolute bottom-0 left-0 h-[66.9%] w-[44.5%] max-w-[336px]">
-                  <Image
-                    src={solImages.finalEarphones}
-                    alt="Sol earphones with gradient background"
-                    fill
-                    className="object-contain object-bottom"
-                    sizes="336px"
-                  />
+                <div className="relative min-h-0">
+                  <div className="absolute bottom-0 left-0 aspect-[358/431] w-[47.42%]">
+                    <Image
+                      src={solImages.finalEarphones}
+                      alt="Sol earphones with gradient background"
+                      fill
+                      className="object-cover object-bottom"
+                      sizes="358px"
+                    />
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-fuori-sm lg:hidden">
+            <div className="relative aspect-[722/958] w-full overflow-hidden border border-black bg-[#3a3a3a]">
+              <Image
+                src={solImages.finalWeekly}
+                alt="Final Sol weekly and comparison screens"
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
+            <div className="relative aspect-[755/526] w-full overflow-hidden border border-black bg-[#3a3a3a]">
+              <Image
+                src={solImages.finalHome}
+                alt="Final Sol home and insights screens"
+                fill
+                className="object-cover object-left-top"
+                sizes="100vw"
+              />
+            </div>
+            <div className="relative aspect-[358/431] w-[47.42%] overflow-hidden">
+              <Image
+                src={solImages.finalEarphones}
+                alt="Sol earphones with gradient background"
+                fill
+                className="object-cover object-bottom"
+                sizes="50vw"
+              />
             </div>
           </div>
           <Caption>Our final app implementation.</Caption>
@@ -467,7 +501,7 @@ export default function SolProject({ project }: SolProjectProps) {
       <section className={`${EDGE} mt-fuori-lg`}>
         <Link
           href="/#projects"
-          className="font-body text-fuori-next font-medium text-white transition-opacity hover:opacity-70"
+          className="font-body text-cta-sm font-medium text-white transition-opacity hover:opacity-70"
         >
           Next project →
         </Link>
