@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ResumeNavItem from "@/components/ResumeNavItem";
 
 type NavbarProps = {
   variant?: "home" | "inner";
@@ -8,7 +9,6 @@ type NavbarProps = {
 export default function Navbar({ variant = "home", theme = "light" }: NavbarProps) {
   const homeHref = variant === "home" ? "#home" : "/#home";
   const projectsHref = variant === "home" ? "#projects" : "/#projects";
-  const resumeHref = variant === "home" ? "/about" : "/about";
 
   if (theme === "dark") {
     return (
@@ -23,9 +23,7 @@ export default function Navbar({ variant = "home", theme = "light" }: NavbarProp
           <Link href={projectsHref} className="transition-opacity hover:opacity-70">
             Projects
           </Link>
-          <Link href={resumeHref} className="transition-opacity hover:opacity-70">
-            Resume
-          </Link>
+          <ResumeNavItem />
         </nav>
       </header>
     );
