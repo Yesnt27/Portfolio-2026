@@ -123,7 +123,7 @@ export default function SolProject({ project }: SolProjectProps) {
           heading="The Case for Quantification"
           headingId="problem-heading"
         />
-        <p className="mt-fuori-md max-w-[1052px] font-body text-fuori-body font-medium leading-[1.5] text-white">
+        <p className="mt-fuori-md max-w-[1052px] font-body text-fuori-sub font-medium leading-[1.75] text-white">
           Industrial technology freed people from needing physical labour to survive,
           leading many to compensate by exercising at gyms and monitoring their fitness.
           A similar shift is now happening with mental labour as AI takes over cognitive
@@ -139,7 +139,6 @@ export default function SolProject({ project }: SolProjectProps) {
           eyebrow="The Inspiration"
           heading="Defining a theme"
           headingId="inspiration-heading"
-          large
         />
         <p className="mt-fuori-xs max-w-[1018px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
           Sol takes its name from the sun, the soul, and the cyclical passage of time
@@ -169,7 +168,6 @@ export default function SolProject({ project }: SolProjectProps) {
           eyebrow="Design Decision"
           heading="Information management"
           headingId="design-decision-heading"
-          large
         />
 
         <div className="mt-fuori-sm grid w-full max-w-[1366px] gap-fuori-md lg:grid-cols-2">
@@ -271,7 +269,7 @@ export default function SolProject({ project }: SolProjectProps) {
           heading="Turning observations into verifiable insights"
           headingId="case-study-heading"
         />
-        <p className="mt-fuori-xs max-w-[1085px] font-body text-fuori-body font-medium leading-[1.37] text-white">
+        <p className="mt-fuori-xs max-w-[1085px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
           Taking users feedback about usability of the app, I took the time to add real
           time changes that are observable insights to reinforce the idea of the
           quantified self. In turn it helps give the user a sense that solidifies their
@@ -375,7 +373,7 @@ export default function SolProject({ project }: SolProjectProps) {
           heading="Observations, verifiable insights and self-reflection"
           headingId="final-solution-heading"
         />
-        <div className="mt-fuori-xs max-w-[1246px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+        <div className="mt-fuori-xs max-w-[1246px] font-body text-fuori-sub font-medium leading-[1.25] text-white">
           <p>
             To ground the product in real life use cases, I imagined how different users
             might interact with Sol day-to-day.
@@ -411,8 +409,8 @@ export default function SolProject({ project }: SolProjectProps) {
                   sizes="722px"
                 />
               </div>
-              <div className="relative min-h-0 grid grid-rows-[526fr_432fr]">
-                <div className="relative min-h-0 overflow-hidden border border-black bg-[#3a3a3a]">
+              <div className="relative min-h-0 grid grid-rows-[auto_1fr] gap-fuori-md">
+                <div className="relative aspect-[755/480] w-full overflow-hidden border border-black bg-[#3a3a3a]">
                   <Image
                     src={solImages.finalHome}
                     alt="Final Sol home and insights screens"

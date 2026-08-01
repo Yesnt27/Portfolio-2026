@@ -54,7 +54,7 @@ export default function ConnectFooter({ variant = "default" }: ConnectFooterProp
         )}
 
         <nav
-          className={`mx-auto flex max-w-4xl flex-col items-center gap-flow-sm font-display text-nav font-light ${
+          className={`mx-auto flex max-w-4xl flex-col items-center gap-flow-sm font-body text-fuori-body font-medium ${
             hideHeading ? "" : "mt-flow-md"
           }`}
           aria-label="Social links"
