@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  --color-page: #111111;
   --color-fuori-blue: #4f9cf4;
   --color-fuori-cyan: #27aae1;
   --color-fuori-grey: #a7a7a7;
@@ -125,6 +126,7 @@ body {
   font-family: var(--font-primary);
   line-height: 1.6;
   color: #333;
+  background: var(--color-page);
 }
 
 /* ---- Navbar ---- */

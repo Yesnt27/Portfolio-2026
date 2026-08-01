@@ -44,6 +44,11 @@ const neueHaasGrotesk = localFont({
       style: "normal",
     },
     {
+      path: "../fonts/NHaasGroteskDSPro-65Md.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
       path: "../fonts/NHaasGroteskDSPro-75Bd.otf",
       weight: "700",
       style: "normal",

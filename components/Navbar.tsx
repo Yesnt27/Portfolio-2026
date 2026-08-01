@@ -12,7 +12,7 @@ export default function Navbar({ variant = "home", theme = "light" }: NavbarProp
 
   if (theme === "dark") {
     return (
-      <header className="sticky top-0 z-50 bg-black">
+      <header className="sticky top-0 z-50 bg-page">
         <nav
           className="mx-auto flex w-full max-w-page items-center gap-nav-gap px-gutter py-nav-y font-display text-nav font-light text-white"
           aria-label="Main navigation"

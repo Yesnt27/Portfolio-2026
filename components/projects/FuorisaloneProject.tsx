@@ -69,7 +69,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
   ];
 
   return (
-    <article className="min-h-screen bg-black text-white">
+    <article className="min-h-screen bg-page text-white">
       <Navbar variant="inner" theme="dark" />
 
       {/* Full-bleed opener: Figma runs it to x:-6 w:1932 so it overhangs the frame. */}

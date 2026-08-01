@@ -52,7 +52,7 @@ export default function ResumeNavItem() {
           id={menuId}
           role="menu"
           aria-label="Resume options"
-          className="absolute left-0 top-[calc(100%+0.75rem)] z-[70] min-w-[12.5rem] border border-white/15 bg-black py-2 font-body text-[clamp(0.9375rem,calc(min(100vw,1920px)*22/1920),1.375rem)] font-medium shadow-[0_12px_40px_rgba(0,0,0,0.45)]"
+          className="absolute left-0 top-[calc(100%+0.75rem)] z-[70] min-w-[12.5rem] border border-white/15 bg-page py-2 font-body text-[clamp(0.9375rem,calc(min(100vw,1920px)*22/1920),1.375rem)] font-medium shadow-[0_12px_40px_rgba(0,0,0,0.45)]"
         >
           <a
             href={RESUME_PATH}

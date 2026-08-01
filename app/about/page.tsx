@@ -52,7 +52,7 @@ const collageTiles = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#111] text-white">
+    <main className="min-h-screen bg-page text-white">
       <Navbar variant="inner" theme="dark" />
 
       <section

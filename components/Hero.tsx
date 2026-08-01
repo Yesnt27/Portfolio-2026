@@ -5,7 +5,7 @@ import { homeImages } from "@/lib/home-images";
 export default function Hero() {
   return (
     <section id="home" className="mx-auto w-full max-w-page">
-      <figure className="relative aspect-[1920/1080] w-full overflow-hidden bg-[#111]">
+      <figure className="relative aspect-[1920/1080] w-full overflow-hidden bg-page">
         <Image
           src={homeImages.heroDrawing}
           alt="Illustration of Kenny holding a subway hand strap"

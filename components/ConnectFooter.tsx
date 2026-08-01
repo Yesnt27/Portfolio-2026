@@ -40,7 +40,7 @@ export default function ConnectFooter({ variant = "default" }: ConnectFooterProp
 
   return (
     <footer
-      className={`bg-black text-white ${
+      className={`bg-page text-white ${
         isLanding || isSocial
           ? "pb-[clamp(2rem,calc(min(100vw,1920px)*80/1920),5rem)] pt-[clamp(3rem,calc(min(100vw,1920px)*150/1920),9.375rem)]"
           : "pb-flow-lg pt-section"

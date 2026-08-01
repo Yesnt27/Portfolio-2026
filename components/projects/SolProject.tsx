@@ -60,7 +60,7 @@ export default function SolProject({ project }: SolProjectProps) {
     project.links.find((link) => link.label.toLowerCase().includes("prototype"))?.href ?? "#";
 
   return (
-    <article className="min-h-screen bg-black text-white">
+    <article className="min-h-screen bg-page text-white">
       <Navbar variant="inner" theme="dark" />
 
       {/* Full-bleed opener — Figma: 1920 x 1080 Sol demo video */}
