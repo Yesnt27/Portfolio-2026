@@ -27,12 +27,6 @@ const cards: ProjectCard[] = [
     videoSrc: solImages.demoVideo,
     enabled: true,
   },
-  {
-    id: "pet-adoption",
-    title: "Pet adoption website",
-    href: "#",
-    enabled: false,
-  },
 ];
 
 function ProjectMediaCard({ card }: { card: ProjectCard }) {
@@ -85,6 +79,7 @@ export default function ProjectsGrid() {
         {cards.map((card) => (
           <ProjectMediaCard key={card.id} card={card} />
         ))}
+        <div className="hidden md:block" aria-hidden="true" />
       </div>
     </section>
   );
