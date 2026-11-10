@@ -3,6 +3,7 @@ import Link from "next/link";
 import ConnectFooter from "@/components/ConnectFooter";
 import Navbar from "@/components/Navbar";
 import PosterParallax from "@/components/projects/PosterParallax";
+import ProcessSidebar from "@/components/projects/ProcessSidebar";
 import ProjectMedia from "@/components/projects/ProjectMedia";
 import { fuorisaloneImages } from "@/lib/fuorisalone-images";
 import { solImages } from "@/lib/sol-images";
@@ -19,6 +20,17 @@ type FuorisaloneProjectProps = {
 */
 const COLUMN = "mx-auto w-full max-w-page pl-content pr-gutter";
 const EDGE = "mx-auto w-full max-w-page pl-edge pr-gutter";
+
+/* Sidebar phases (Figma node 515:157). Each lights up when its first section
+   reaches the read line and stays lit until the next phase starts. */
+const PROCESS_STEPS = [
+  { label: "Ideation", sectionId: "problem" },
+  { label: "Research", sectionId: "research" },
+  { label: "Iteration", sectionId: "content-strategy" },
+];
+
+/* Clicking a sidebar label lands the section below the sticky navbar. */
+const ANCHOR = "scroll-mt-32";
 
 /* Every screenshot and screen recording sits in the same 1267 x 713 frame. */
 const MEDIA_FRAME = "relative w-full max-w-media overflow-hidden aspect-[1267/713]";
@@ -37,7 +49,7 @@ function SectionIntro({
       <p className="font-body text-fuori-body font-bold text-fuori-grey">{eyebrow}</p>
       <h2
         id={headingId}
-        className="mt-fuori-2xs max-w-copy font-body text-fuori-h2 font-bold leading-[1.25] text-white"
+        className="mt-fuori-2xs max-w-copy font-body text-fuori-h2 font-bold leading-[1.25] text-black"
       >
         {heading}
       </h2>
@@ -69,7 +81,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
   ];
 
   return (
-    <article className="min-h-screen bg-page text-white">
+    <article className="min-h-screen bg-paper text-black">
       <Navbar variant="inner" theme="dark" />
 
       {/* Full-bleed opener: Figma runs it to x:-6 w:1932 so it overhangs the frame. */}
@@ -87,8 +99,13 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
         />
       </figure>
 
+      {/* Hero through Key Learnings share one wrapper so the sidebar can stick
+          in the left gutter for exactly that stretch of the page. */}
+      <div className="relative mt-fuori-xl">
+      <ProcessSidebar steps={PROCESS_STEPS} endSectionId="learnings" />
+
       {/* Hero */}
-      <header className={`${COLUMN} mt-fuori-xl`}>
+      <header className={COLUMN}>
         <Image
           src={fuorisaloneImages.logo}
           alt="Fuorisalone logo"
@@ -98,17 +115,17 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           priority
         />
 
-        <h1 className="mt-fuori-md font-display text-fuori-title font-medium leading-[1.15] tracking-[-0.01em] text-white">
+        <h1 className="mt-fuori-md font-display text-fuori-title font-medium leading-[1.15] tracking-[-0.01em] text-black">
           {project.title}
         </h1>
 
-        <p className="mt-fuori-sm max-w-[1022px] font-body text-fuori-body font-normal leading-[1.37] text-white">
+        <p className="mt-fuori-sm max-w-[1022px] font-body text-fuori-body font-normal leading-[1.37] text-black">
           Experimental website for visitors of Fuorisalone design district 2024 and
           encapsulating all its exhibits with concise UX/UI design.
         </p>
 
-        <p className="mt-fuori-sm font-body text-fuori-label font-bold text-white">Team</p>
-        <div className="mt-fuori-sm font-body text-fuori-body font-normal leading-[1.37] text-white">
+        <p className="mt-fuori-sm font-body text-fuori-label font-bold text-black">Team</p>
+        <div className="mt-fuori-sm font-body text-fuori-body font-normal leading-[1.37] text-black">
           <p>5 design coordinators (Me)</p>
           <p>No designated roles</p>
           <p>Collaborative work</p>
@@ -116,21 +133,21 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
 
         <a
           href={prototypeLink}
-          className="mt-fuori-md inline-block font-body text-cta-lg font-normal text-white transition-opacity hover:opacity-70"
+          className="mt-fuori-md inline-block font-body text-cta-lg font-normal text-black transition-opacity hover:opacity-70"
         >
           View the final prototype →
         </a>
       </header>
 
       {/* The Problem */}
-      <section className={`${COLUMN} mt-fuori-sm`} aria-labelledby="problem-heading">
+      <section id="problem" className={`${COLUMN} ${ANCHOR} mt-fuori-sm`} aria-labelledby="problem-heading">
         <SectionIntro
           eyebrow="The Problem"
           heading="The issue of overdesigning and missing the target audience"
           headingId="problem-heading"
         />
 
-        <p className="mt-fuori-md max-w-[1236px] font-body text-fuori-body font-medium leading-[1.37] text-white">
+        <p className="mt-fuori-md max-w-[1236px] font-body text-fuori-body font-medium leading-[1.37] text-black">
           Many modern day websites tend to overachieve on certain aspects including
           visual design, without emphasis on the overarching user experience that can
           enhance the navigation experience with minimal interruptions. We aimed to
@@ -178,14 +195,14 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       </section>
 
       {/* Research */}
-      <section className={`${COLUMN} mt-fuori-xl`} aria-labelledby="research-heading">
+      <section id="research" className={`${COLUMN} ${ANCHOR} mt-fuori-xl`} aria-labelledby="research-heading">
         <SectionIntro
           eyebrow="Research"
           heading="Catering to user personas and iterative design principles"
           headingId="research-heading"
         />
 
-        <p className="mt-fuori-xs max-w-[966px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+        <p className="mt-fuori-xs max-w-[966px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
           Design process covered work on posters (more experimental), which then
           translated onto inspiration for our site which can be iterated on and
           narrowed in further.
@@ -215,14 +232,14 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       </section>
 
       {/* Content strategy */}
-      <section className={`${COLUMN} mt-fuori-lg`} aria-labelledby="content-strategy-heading">
+      <section id="content-strategy" className={`${COLUMN} ${ANCHOR} mt-fuori-lg`} aria-labelledby="content-strategy-heading">
         <SectionIntro
           eyebrow="Solution ideation"
           heading="Defining content strategy for implementation"
           headingId="content-strategy-heading"
         />
 
-        <p className="mt-fuori-xs max-w-[943px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+        <p className="mt-fuori-xs max-w-[943px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
           We realized that in order to create a concise and natural experience for
           visitors, we needed to define a scope for our site, which involved creating
           user flows to visualize what people would experience to determine what
@@ -255,7 +272,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           headingId="prototypes-heading"
         />
 
-        <p className="mt-fuori-xs max-w-[1050px] font-body text-fuori-sub font-medium leading-[1.37] text-white">
+        <p className="mt-fuori-xs max-w-[1050px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
           After many long hours of iteration and wireframes, building from our previous
           ideas, I consolidated our principles and brought them to life with an initial
           prototype, to see how things would look like in practice and prepared for
@@ -289,7 +306,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           headingId="implementation-heading"
         />
 
-        <div className="mt-fuori-xs flex max-w-media flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-white">
+        <div className="mt-fuori-xs flex max-w-media flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-black">
           <p>
             After taking in feedback about our initial prototype being the problem that
             users would have to figure out which interactions to choose first and how to
@@ -304,7 +321,7 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
         </div>
 
         <nav
-          className="mt-fuori-md flex w-full max-w-media flex-wrap items-center justify-center gap-x-fuori-md gap-y-3 font-body text-fuori-body font-medium text-white"
+          className="mt-fuori-md flex w-full max-w-media flex-wrap items-center justify-center gap-x-fuori-md gap-y-3 font-body text-fuori-body font-medium text-black"
           aria-label="Website flow"
         >
           <span>Homepage</span>
@@ -365,15 +382,15 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
       </section>
 
       {/* Key learnings */}
-      <section className={`${COLUMN} mt-fuori-md`} aria-labelledby="learnings-heading">
+      <section id="learnings" className={`${COLUMN} mt-fuori-md`} aria-labelledby="learnings-heading">
         <h2
           id="learnings-heading"
-          className="font-body text-fuori-h2 font-black text-white"
+          className="font-body text-fuori-h2 font-black text-black"
         >
           Key Learnings
         </h2>
 
-        <div className="mt-fuori-sm flex max-w-copy flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-white">
+        <div className="mt-fuori-sm flex max-w-copy flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-black">
           <p>
             Designing interactions with constraints sharpens decisions. Working with new
             design features in Figma in tandem with brand identity and user flow across
@@ -394,12 +411,13 @@ export default function FuorisaloneProject({ project }: FuorisaloneProjectProps)
           </p>
         </div>
       </section>
+      </div>
 
       {/* Next project — breaks out to the shallower 173px inset */}
       <section className={`${EDGE} mt-fuori-lg`}>
         <Link
           href="/#projects"
-          className="font-body text-cta-sm font-medium text-white transition-opacity hover:opacity-70"
+          className="font-body text-cta-sm font-medium text-black transition-opacity hover:opacity-70"
         >
           Next project →
         </Link>

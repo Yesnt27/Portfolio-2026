@@ -2,6 +2,10 @@
 
 @theme {
   --color-page: #111111;
+  --color-paper: #f3f1ef;
+  /* Process sidebar states (Figma node 520:227). */
+  --color-step-idle: #c2c2c2;
+  --color-step-active: #4e4e4e;
   --color-fuori-blue: #4f9cf4;
   --color-fuori-cyan: #27aae1;
   --color-fuori-grey: #a7a7a7;
@@ -79,6 +83,9 @@
   --text-fuori-label: clamp(1.25rem, calc(min(100vw, 1920px) * 35 / 1920), 2.1875rem); /* 35px */
   --text-fuori-body: clamp(1.0625rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem); /* 30px */
   --text-fuori-sub: clamp(1rem, calc(min(100vw, 1920px) * 25 / 1920), 1.5625rem); /* 25px */
+  /* Sidebar: 16.5px in the 1512 layout frame (node 515:157) = 21px at 1920. */
+  --text-sidebar: clamp(0.875rem, calc(min(100vw, 1920px) * 21 / 1920), 1.3125rem);
+  --spacing-step-left: clamp(0.75rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem);
 
   /* Nav + CTA links — tightened for a shorter sticky bar. */
   --text-nav: clamp(1.0625rem, calc(min(100vw, 1920px) * 24 / 1920), 1.5rem); /* 24px */
