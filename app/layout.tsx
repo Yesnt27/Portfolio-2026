@@ -63,6 +63,14 @@ const neueHaasGrotesk = localFont({
   display: "swap",
 });
 
+const departureMono = localFont({
+  src: "../fonts/DepartureMono-Regular.woff2",
+  weight: "400",
+  style: "normal",
+  variable: "--font-departure-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Portfolio | Kenny Nguyen",
   description:
@@ -77,7 +85,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${neueHaasGrotesk.variable} ${inter.variable} ${satoshi.variable}`}
+      className={`${neueHaasGrotesk.variable} ${inter.variable} ${satoshi.variable} ${departureMono.variable}`}
     >
       <body>{children}</body>
     </html>

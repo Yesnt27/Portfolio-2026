@@ -9,6 +9,7 @@
   --color-fuori-border: #999999;
   --font-display: var(--font-neue-haas), sans-serif;
   --font-body: var(--font-satoshi), sans-serif;
+  --font-mono: var(--font-departure-mono), ui-monospace, monospace;
 
   /* Shared page shell. max-w-page + mx-auto centers the 1920 Figma frame on
      wider monitors instead of letting each section invent its own width. */
