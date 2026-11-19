@@ -32,7 +32,7 @@ export const projects: Project[] = [
     id: "fuorisalone",
     template: "fuorisalone",
     eyebrow: "Case Study",
-    title: "Fuorisalone Microsite 2024",
+    title: "Fuorisalone Microsite 2025",
     lead: "Experimental website for visitors of Fuorisalone design district 2024 and encapsulating all its exhibits with concise UX/UI design.",
     tags: ["UI Design", "UX Research", "Prototyping"],
     role: "Design Coordinator",

@@ -1,120 +1,76 @@
-import Link from "next/link";
+import { CaseShell, Indent, MetaGrid, TocSection } from "@/components/projects/case-parts";
+import SiteHeader from "@/components/site/SiteHeader";
 import type { Project } from "@/lib/projects";
 
-type ProjectDetailProps = {
-  project: Project;
-};
+/*
+  Generic case study for projects without a bespoke layout yet. Uses the same
+  parts and rhythm as the Sol / Fuorisalone pages so a new project slots
+  straight into the redesign.
+*/
+const sections = [
+  { id: "overview", label: "Overview", key: "overview" },
+  { id: "challenge", label: "The Challenge", key: "challenge" },
+  { id: "process", label: "Process", key: "process" },
+  { id: "outcome", label: "Outcome", key: "outcome" },
+] as const;
 
-function TextBlock({ paragraphs }: { paragraphs: string[] }) {
+export default function ProjectDetail({ project }: { project: Project }) {
   return (
-    <div className="project-section-content">
-      {paragraphs.map((paragraph) => (
-        <p key={paragraph}>{paragraph}</p>
-      ))}
-    </div>
-  );
-}
-
-export default function ProjectDetail({ project }: ProjectDetailProps) {
-  return (
-    <main className="project-page">
-      <div className="project-container">
-        <nav className="project-nav">
-          <Link href="/#projects">&larr; Back to Projects</Link>
-        </nav>
-
-        <header className="project-hero">
-          <p className="project-eyebrow">{project.eyebrow}</p>
-          <h1 className="project-title">{project.title}</h1>
-          <p className="project-lead">{project.lead}</p>
-          {project.tags.length > 0 && (
-            <ul className="project-tags" aria-label="Project categories">
-              {project.tags.map((tag) => (
-                <li key={tag}>{tag}</li>
-              ))}
-            </ul>
-          )}
-        </header>
-
-        <dl className="project-meta-grid">
-          <div className="project-meta-item">
-            <dt>Role</dt>
-            <dd>{project.role}</dd>
-          </div>
-          <div className="project-meta-item">
-            <dt>Timeline</dt>
-            <dd>{project.timeline}</dd>
-          </div>
-          <div className="project-meta-item">
-            <dt>Tools</dt>
-            <dd>{project.tools}</dd>
-          </div>
-          <div className="project-meta-item">
-            <dt>Type</dt>
-            <dd>{project.type}</dd>
-          </div>
-        </dl>
-
-        <figure className="project-feature-media">
-          <div className="project-media-placeholder">Hero image or video</div>
-          {project.heroCaption && (
-            <figcaption className="project-media-caption">
-              {project.heroCaption}
-            </figcaption>
-          )}
-        </figure>
-
-        <div className="project-body">
-          <section className="project-section">
-            <h2>Overview</h2>
-            <TextBlock paragraphs={project.overview} />
-          </section>
-
-          <section className="project-section">
-            <h2>The Challenge</h2>
-            <TextBlock paragraphs={project.challenge} />
-          </section>
-
-          <section className="project-section project-section--split">
-            <div className="project-split-block">
-              <h2>Process</h2>
-              <TextBlock paragraphs={project.process} />
+    <>
+      <SiteHeader active="projects" compact />
+      <main id="main">
+        <CaseShell toc={sections.map(({ id, label }) => ({ id, label }))}>
+          <Indent x={286} as="header" reveal={false} className="pt-[clamp(64px,9.9vw,150px)]">
+            <p className="font-pixel text-[16.5px] leading-[normal] text-muted">{project.eyebrow}</p>
+            <h1 className="rise-in mt-4 font-serif text-[clamp(44px,4.6vw,70px)] leading-[1.2] tracking-[-0.01em] text-copy">
+              {project.title}
+            </h1>
+            <p className="mt-6 max-w-[760px] font-mono text-[16.5px] leading-[normal] text-copy">{project.lead}</p>
+            <div className="mt-[72px] max-w-[1061px]">
+              <MetaGrid
+                template="1fr 1fr 1fr 1fr"
+                columns={[
+                  { label: "Role", value: project.role },
+                  { label: "Timeline", value: project.timeline },
+                  { label: "Tools", value: project.tools },
+                  { label: "Type", value: project.type },
+                ]}
+              />
             </div>
-            <div className="project-split-block">
-              <h2>Outcome</h2>
-              <TextBlock paragraphs={project.outcome} />
-            </div>
-          </section>
-        </div>
+          </Indent>
 
-        {project.gallery.length > 0 && (
-          <section className="project-gallery" aria-label="Project gallery">
-            <div className="project-gallery-grid">
-              {project.gallery.map((label) => (
-                <div key={label} className="project-gallery-item">
-                  {label}
+          {sections.map(({ id, label, key }) => (
+            <TocSection key={id} id={id} label={label}>
+              <Indent x={286} className="mt-[120px]">
+                <h2 className="font-mono text-[16.5px] font-bold leading-[normal] text-copy">{label}</h2>
+                <div className="mt-[18px] max-w-[903px] space-y-[21px] font-mono text-[16.5px] leading-[normal] text-copy">
+                  {project[key].map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </Indent>
+            </TocSection>
+          ))}
 
-        {project.links.length > 0 && (
-          <footer className="project-footer">
-            <div className="project-links">
+          {project.links.length > 0 && (
+            <Indent x={286} className="mt-[96px] flex flex-wrap gap-6">
               {project.links.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className={link.primary ? "btn btn--primary" : "btn"}
+                  className="group inline-flex items-baseline gap-[0.25em] font-sans text-[32px] leading-[normal] text-copy transition-colors hover:text-ink"
                 >
                   {link.label}
+                  <span aria-hidden="true" className="transition-transform duration-300 ease-snap group-hover:translate-x-2">
+                    →
+                  </span>
                 </a>
               ))}
-            </div>
-          </footer>
-        )}
-      </div>
-    </main>
+            </Indent>
+          )}
+          <div className="h-[140px]" />
+        </CaseShell>
+      </main>
+    </>
   );
 }

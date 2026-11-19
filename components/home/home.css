@@ -1,0 +1,105 @@
+/* Home hero collage (components/home/HeroCollage.tsx). */
+
+.hero-collage {
+  --px: 0;
+  --py: 0;
+}
+
+/* Pointer parallax: the two pieces drift in opposite directions for depth. */
+.hero-card {
+  translate: calc(var(--px) * -26px) calc(var(--py) * -18px);
+  transition: translate 0.9s var(--ease-snap);
+}
+
+.hero-icon {
+  translate: calc(var(--px) * 34px) calc(var(--py) * 24px);
+  transition: translate 0.9s var(--ease-snap);
+}
+
+/* Entrance: each piece drops in and settles onto its Figma angle. */
+@keyframes hero-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(-36px) rotate(14deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(7.68deg);
+  }
+}
+
+@keyframes hero-icon-in {
+  from {
+    opacity: 0;
+    transform: translateY(-48px) rotate(-9deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-0.91deg) scale(1);
+  }
+}
+
+.hero-card-face {
+  transform: rotate(7.68deg);
+  /* backwards, not both: after the entrance the static transform takes over again,
+     so the hover tilt below can still transition. */
+  animation: hero-card-in 1.1s var(--ease-snap) 0.25s backwards;
+  transition: transform 0.7s var(--ease-snap);
+}
+
+.hero-icon-face {
+  transform: rotate(-0.91deg);
+  animation: hero-icon-in 1.1s var(--ease-snap) 0.1s backwards;
+  transition: transform 0.7s var(--ease-snap);
+}
+
+.hero-collage:hover .hero-card-face {
+  transform: rotate(4.5deg) translateY(-4px);
+}
+
+.hero-collage:hover .hero-icon-face {
+  transform: rotate(-4deg) scale(1.03);
+}
+
+/*
+  Figma stacks each screenshot column twice, exactly one period (485.2px of a
+  425.4px card = 114.07%) apart: an infinite marquee. A third copy fills the
+  gap while the strip slides one period, so the loop is seamless.
+*/
+.clue-strip {
+  position: absolute;
+  height: 114.07%;
+  animation: 22s linear infinite;
+}
+
+.clue-strip > img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 93.6%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.clue-up {
+  animation-name: clue-up;
+}
+
+.clue-down {
+  animation-name: clue-down;
+}
+
+@keyframes clue-up {
+  to {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes clue-down {
+  from {
+    translate: 0 -100%;
+  }
+  to {
+    translate: 0 0;
+  }
+}

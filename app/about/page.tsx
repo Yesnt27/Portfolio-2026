@@ -1,193 +1,164 @@
-import Image from "next/image";
-import Navbar from "@/components/Navbar";
-import ConnectFooter from "@/components/ConnectFooter";
+import type { Metadata } from "next";
+import MusicPlayer from "@/components/about/MusicPlayer";
+import SiteHeader from "@/components/site/SiteHeader";
+import CaptionRule from "@/components/ui/CaptionRule";
+import Reveal from "@/components/ui/Reveal";
 import { aboutImages } from "@/lib/about-images";
 
-export const metadata = {
-  title: "About Me | Kenny Nguyen",
+export const metadata: Metadata = {
+  title: "About",
   description:
-    "Multidisciplinary graphic designer and artist focused on practical design and creative storytelling.",
+    "Kenny Nguyen is a visual and product designer in Vancouver, BC, studying Interactive Arts and Technology at Simon Fraser University.",
 };
 
 /*
-  About page — Figma frame 291:185 (1920-wide).
-  Left column inset ~125px; two-column copy; masonry collage measured off the frame.
+  About — Figma frame 493:5454 (1512 x 3432).
+  Copy column starts at x=203 ("Hey!" hangs 36px left of it); the player sits
+  at x=922; the photo box spans x=164–1348.
 */
-const PAGE =
-  "mx-auto w-full max-w-page px-[clamp(1.25rem,calc(min(100vw,1920px)*125/1920),7.8125rem)]";
+const COPY = "px-5 md:pl-[clamp(20px,13.43vw,203px)] md:pr-[clamp(20px,12.17vw,184px)]";
+const BOX = "px-4 md:px-[clamp(16px,10.85vw,164px)]";
 
-/* Crop positions derived from Figma image fills on frame 291:185 */
-const collageTiles = [
-  {
-    src: aboutImages.headshot,
-    alt: "Portrait of Kenny Nguyen",
-    box: "left-0 top-0 w-[24.08%] aspect-[384/391]",
-    position: "55% 35%",
-  },
-  {
-    src: aboutImages.fireworks,
-    alt: "Fireworks over a crowd at dusk",
-    box: "left-[27.77%] top-[0.2%] w-[24.08%] aspect-[384/389]",
-    position: "50% 62%",
-  },
-  {
-    src: aboutImages.food,
-    alt: "Shared meal tray with rice, meat, and sides",
-    box: "left-[55.99%] top-[0.2%] w-[44.01%] aspect-[702/495]",
-    position: "50% 53%",
-  },
-  {
-    src: aboutImages.beach,
-    alt: "Friends posing together on a beach",
-    box: "left-[0.44%] top-[46.79%] w-[45.39%] aspect-[724/522]",
-    position: "47% 64%",
-  },
-  {
-    src: aboutImages.vista,
-    alt: "Person overlooking the ocean from a high vantage point",
-    box: "left-[50.09%] top-[56.98%] w-[49.91%] aspect-[796/422]",
-    position: "50% 55%",
-  },
-] as const;
+/* Figma image-fill crops, expressed relative to each clip box. */
+const crops = {
+  vista: { width: "100.05%", height: "268.36%", left: "0%", top: "-103.0%" },
+  beach: { width: "154.89%", height: "232.06%", left: "-22.30%", top: "-114.57%" },
+};
+
+function CroppedPhoto({
+  src,
+  alt,
+  crop,
+  ratio,
+  delay,
+}: {
+  src: string;
+  alt: string;
+  crop: { width: string; height: string; left: string; top: string };
+  ratio: string;
+  delay: number;
+}) {
+  return (
+    <Reveal delay={delay} className="relative w-full overflow-hidden bg-mat" style={{ aspectRatio: ratio }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="absolute max-w-none transition-transform duration-[1.2s] ease-snap hover:scale-[1.03]"
+        style={crop}
+      />
+    </Reveal>
+  );
+}
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-page text-white">
-      <Navbar variant="inner" theme="dark" />
+    <>
+      <SiteHeader active="about" />
 
-      <section
-        className={`${PAGE} pt-[clamp(2rem,calc(min(100vw,1920px)*100/1920),6.25rem)]`}
-      >
-        <h1 className="max-w-[577px] font-display text-[clamp(2.5rem,calc(min(100vw,1920px)*80/1920),5rem)] font-bold leading-[0.92]">
-          Thanks for stopping by!
-        </h1>
+      <main id="main" className="mx-auto max-w-frame">
+        <section aria-labelledby="about-heading" className={`${COPY} pt-[clamp(56px,6.9vw,105px)]`}>
+          <h1
+            id="about-heading"
+            className="font-serif text-[clamp(30px,2.65vw,40px)] leading-none tracking-[-0.05em] text-ink"
+          >
+            <span className="rise-in block -ml-[clamp(0px,2.4vw,36px)]">Hey!</span>
+            <span className="rise-in mt-[27px] block [--rise-delay:120ms]">Thanks for stopping by!</span>
+          </h1>
 
-        <div className="mt-[clamp(1.75rem,calc(min(100vw,1920px)*70/1920),4.375rem)] grid gap-[clamp(2rem,calc(min(100vw,1920px)*64/1920),4rem)] lg:grid-cols-[minmax(0,825fr)_minmax(0,683fr)] lg:gap-[clamp(2rem,calc(min(100vw,1920px)*106/1920),6.625rem)]">
-          <div className="space-y-[1.1em] font-body text-[clamp(1.0625rem,calc(min(100vw,1920px)*30/1920),1.875rem)] font-medium leading-[1.1]">
-            <p>
-              From a young age, I was captivated by illustrative books and the
-              power of influence that it carried. I remember roleplaying as a
-              kid making various custom models of my LEGO Bionicle toys and
-              imagining separate plotlines and battles for each and every one of
-              them. I also remember spending countless hours trying to make a
-              custom level in geometry dash.
-            </p>
-            <p>
-              Now, I am interested in bridging the gap between interactive
-              design with programming proficiency. I believe that good design is
-              accompanied with fundamental understandings of how it is made at a
-              digital level.
-            </p>
-          </div>
+          <div className="mt-[60px] flex flex-col gap-16 xl:flex-row xl:items-start xl:justify-between xl:gap-10">
+            <div className="min-w-0 max-w-[552px] flex-1">
+              <div className="rise-in font-mono text-[16.5px] leading-[normal] text-copy [--rise-delay:200ms]">
+                <p>I&rsquo;m a visual &amp; product designer based in Vancouver, BC.</p>
+                <p className="mt-[42px]">
+                  I am interested in bridging the gap between interactive design as a form of beauty. I
+                  believe that good design is accompanied with fundamental understandings of how form is
+                  implemented without negating function, and I&rsquo;m constantly learning to find the
+                  balance.
+                </p>
+                <p className="mt-[21px]">
+                  I care about the threshold of design where something starts <b className="font-bold">feeling</b>{" "}
+                  right, and so I iterate, and build in code.
+                </p>
+                <p className="mt-[21px]">
+                  I am currently pursing a Bachelors of Science in interactive Arts and Technology at Simon
+                  Fraser University, with a computing science minor.
+                </p>
+                <p className="mt-[21px]">
+                  Outside of design, you can find me playing pickup basketball, struggling with non-natural
+                  chords on guitar, or ARAM...
+                </p>
+              </div>
 
-          <div className="font-body text-[clamp(1.0625rem,calc(min(100vw,1920px)*30/1920),1.875rem)] font-medium leading-[1.1]">
-            <div className="space-y-[1.1em]">
-              <p>
-                Currently, I&apos;m a 2nd year student pursuing a Bachelor of
-                Science in the school of Interactive Arts and Technology.
-              </p>
-              <p>
-                Skills not listed on this portfolio, I am drawing cartoon
-                characters on procreate, relearning how to read sheet music, and
-                pushing my friends to try new sports every now and then.
-              </p>
+              <Reveal className="mt-[52px] font-serif text-[24px] font-medium leading-[normal] text-ink">
+                <p>More importantly,</p>
+                <p className="ml-[clamp(64px,16.5vw,249px)] mt-[22px] max-w-[184px]">I care about the little things,</p>
+              </Reveal>
+
+              <Reveal delay={150} className="ml-[clamp(120px,24.5vw,370px)] -mt-[8px] w-[min(267px,60%)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={aboutImages.signature}
+                  alt="Kenny's signature"
+                  width={267}
+                  height={128}
+                  loading="lazy"
+                  className="h-auto w-full dark:invert"
+                />
+              </Reveal>
             </div>
 
-            <p className="mt-[clamp(1.5rem,calc(min(100vw,1920px)*50/1920),3.125rem)] max-w-[442px]">
-              Wherever I am in my design journey, there&apos;s something that
-              always lingers in my mind
-            </p>
-
-            <p className="mt-[clamp(1.25rem,calc(min(100vw,1920px)*40/1920),2.5rem)] max-w-[724px] font-display text-[clamp(2rem,calc(min(100vw,1920px)*60/1920),3.75rem)] font-bold leading-[0.92] lg:ml-[clamp(1rem,calc(min(100vw,1920px)*88/1920),5.5rem)]">
-              , I&apos;m still building.
-            </p>
+            <MusicPlayer className="rise-in mx-auto shrink-0 [--rise-delay:280ms] xl:mx-0 xl:-mt-[10px]" />
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section
-        className={`${PAGE} mt-[clamp(3rem,calc(min(100vw,1920px)*120/1920),7.5rem)]`}
-        aria-label="Photo collage"
-      >
-        {/* Desktop: Figma masonry positions as % of the 1595×981 collage box */}
-        <div className="relative hidden aspect-[1595/981] w-full md:block">
-          {collageTiles.map((tile) => (
-            <div
-              key={tile.src}
-              className={`absolute overflow-hidden ${tile.box}`}
-            >
-              <Image
-                src={tile.src}
-                alt={tile.alt}
-                fill
-                sizes="(min-width: 768px) 40vw, 100vw"
-                className="object-cover"
-                style={{ objectPosition: tile.position }}
-              />
+        <section aria-label="A collage of photos about me" className="mt-[clamp(28px,2.2vw,33px)]">
+          <CaptionRule>A collage of photos about me</CaptionRule>
+
+          <div className={`${BOX} mt-[clamp(48px,5.9vw,89px)]`}>
+            <div className="border border-line bg-card px-[clamp(12px,1.52vw,23px)] pb-[clamp(16px,1.72vw,26px)] pt-[clamp(16px,1.72vw,26px)]">
+              <div className="grid gap-[clamp(10px,1.24vw,18.7px)] md:grid-cols-[469.278fr_647fr]">
+                <Reveal className="relative aspect-[469.278/661.585] overflow-hidden bg-mat">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={aboutImages.portrait}
+                    alt="Portrait of Kenny in a dark suit and patterned tie"
+                    width={776}
+                    height={1094}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-[1.2s] ease-snap hover:scale-[1.03]"
+                  />
+                </Reveal>
+                <div className="flex flex-col gap-[clamp(10px,1.18vw,17.9px)]">
+                  <CroppedPhoto
+                    src={aboutImages.vista}
+                    alt="Kenny with arms raised on a mountain lookout above the ocean and islands"
+                    crop={crops.vista}
+                    ratio="647 / 321.613"
+                    delay={120}
+                  />
+                  <CroppedPhoto
+                    src={aboutImages.beach}
+                    alt="A group of friends posing together on a wide sandy beach"
+                    crop={crops.beach}
+                    ratio="644 / 322.376"
+                    delay={220}
+                  />
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
 
-        {/* Mobile: stacked asymmetric pairs */}
-        <div className="grid grid-cols-2 gap-3 md:hidden">
-          <div className="relative col-span-1 aspect-square overflow-hidden">
-            <Image
-              src={aboutImages.headshot}
-              alt="Portrait of Kenny Nguyen"
-              fill
-              sizes="50vw"
-              className="object-cover"
-              style={{ objectPosition: "55% 35%" }}
-            />
+            <p className="mt-[36px] font-pixel text-[clamp(17px,1.6vw,24px)] leading-[normal] text-copy">
+              Winter 2026 ~ Made w/ Figma and Next.js
+            </p>
           </div>
-          <div className="relative col-span-1 aspect-square overflow-hidden">
-            <Image
-              src={aboutImages.fireworks}
-              alt="Fireworks over a crowd at dusk"
-              fill
-              sizes="50vw"
-              className="object-cover"
-              style={{ objectPosition: "50% 62%" }}
-            />
-          </div>
-          <div className="relative col-span-2 aspect-[702/495] overflow-hidden">
-            <Image
-              src={aboutImages.food}
-              alt="Shared meal tray with rice, meat, and sides"
-              fill
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: "50% 53%" }}
-            />
-          </div>
-          <div className="relative col-span-2 aspect-[724/522] overflow-hidden">
-            <Image
-              src={aboutImages.beach}
-              alt="Friends posing together on a beach"
-              fill
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: "47% 64%" }}
-            />
-          </div>
-          <div className="relative col-span-2 aspect-[796/422] overflow-hidden">
-            <Image
-              src={aboutImages.vista}
-              alt="Person overlooking the ocean from a high vantage point"
-              fill
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: "50% 55%" }}
-            />
-          </div>
-        </div>
+        </section>
 
-        <p className="mt-[clamp(1rem,calc(min(100vw,1920px)*40/1920),2.5rem)] pl-[clamp(0.5rem,calc(min(100vw,1920px)*49/1920),3.0625rem)] font-body text-[clamp(1.125rem,calc(min(100vw,1920px)*40/1920),2.5rem)] font-normal leading-[0.92] text-fuori-grey">
-          Fig 1. A collage of moments and memories that define me.
-        </p>
-      </section>
-
-      <ConnectFooter variant="social" />
-    </main>
+        <div aria-hidden="true" className="h-[clamp(56px,6vw,90px)]" />
+      </main>
+    </>
   );
 }
