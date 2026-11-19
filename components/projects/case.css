@@ -1,0 +1,49 @@
+/* Case-study motion (components/projects/*). */
+
+@keyframes earbud-float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  50% {
+    translate: 0 -9px;
+    rotate: -1.5deg;
+  }
+}
+
+.earbud {
+  animation: earbud-float 5.5s ease-in-out infinite;
+}
+
+.phone {
+  transition: translate 0.6s var(--ease-snap);
+}
+
+.phone:hover {
+  translate: 0 -10px;
+}
+
+/* Fuorisalone poster row: the three lead posters lift on hover. */
+.poster-row-item {
+  transition:
+    translate 0.6s var(--ease-snap),
+    box-shadow 0.6s var(--ease-snap);
+}
+
+.poster-row-item:hover {
+  translate: 0 -8px;
+  box-shadow: 0 22px 40px -22px rgb(0 0 0 / 0.55);
+}
+
+/* Key-learning cards. */
+.learning-card {
+  transition:
+    translate 0.5s var(--ease-snap),
+    box-shadow 0.5s var(--ease-snap);
+}
+
+.learning-card:hover {
+  translate: 0 -6px;
+  box-shadow: 6px 6px 0 0 var(--color-faint);
+}

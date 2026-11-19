@@ -1,111 +1,77 @@
 @import "tailwindcss";
 
-@theme {
-  --color-page: #111111;
-  --color-paper: #f3f1ef;
-  /* Process sidebar states (Figma node 520:227). */
-  --color-step-idle: #c2c2c2;
-  --color-step-active: #4e4e4e;
-  --color-fuori-blue: #4f9cf4;
-  --color-fuori-cyan: #27aae1;
-  --color-fuori-grey: #a7a7a7;
-  --color-fuori-grey-light: #a0a0a0;
-  --color-fuori-border: #999999;
-  --font-display: var(--font-neue-haas), sans-serif;
-  --font-body: var(--font-satoshi), sans-serif;
-  --font-mono: var(--font-departure-mono), ui-monospace, monospace;
-
-  /* Shared page shell. max-w-page + mx-auto centers the 1920 Figma frame on
-     wider monitors instead of letting each section invent its own width. */
-  --container-page: 1920px;
-
-  /*
-    Spacing is a % of the design FRAME, not the raw viewport.
-
-    Why min(100vw, 1920px) instead of plain vw?
-    - Below 1920px: min() resolves to 100vw, so gaps still shrink with the window.
-    - Above 1920px: min() locks to 1920px — the same width as max-w-page — so
-      gutters and flow/section gaps match the centered column and stop growing
-      into the empty side margins of an ultrawide screen.
-
-    Plain Xvw was the bug: on a 2560px window, 18.75vw wants to be 480px even
-    though the content column only occupies the middle 1920px. The old clamp()
-    max capped that, but navbar/footer used different clamps, so the page no
-    longer shared one centered rhythm.
-
-    Formula: clamp(mobile floor, frame * (figmaPx / 1920), figmaPx as rem)
-  */
-  --spacing-gutter: clamp(1.25rem, calc(min(100vw, 1920px) * 120 / 1920), 7.5rem); /* 120px */
-  --spacing-flow-xs: clamp(0.625rem, calc(min(100vw, 1920px) * 24 / 1920), 1.5rem); /* 24px */
-  --spacing-flow-sm: clamp(1rem, calc(min(100vw, 1920px) * 40 / 1920), 2.5rem); /* 40px */
-  --spacing-flow-md: clamp(2rem, calc(min(100vw, 1920px) * 96 / 1920), 6rem); /* 96px */
-  --spacing-flow-lg: clamp(2.5rem, calc(min(100vw, 1920px) * 120 / 1920), 7.5rem); /* 120px */
-  --spacing-section: clamp(5rem, calc(min(100vw, 1920px) * 200 / 1920), 12.5rem); /* 200px */
-  --spacing-section-lg: clamp(6rem, calc(min(100vw, 1920px) * 264 / 1920), 16.5rem); /* 264px */
-
-  /*
-    Fuorisalone case study, measured off the Figma frame
-    (file gp7T0cPbPep5VLlx1dSNk0, node 309:95 — 1920 x 15744).
-
-    That frame lays the page out as a LEFT-ALIGNED column inset 277px, not a
-    centered one: media stops at 1267px wide and running copy at 1419px, so the
-    right margin is intentionally larger than the left. The "next project" block
-    breaks out to a shallower 173px inset.
-
-    Six spacing steps cover every vertical gap in the frame — the raw Figma
-    gaps cluster tightly around these values, so one step per cluster keeps the
-    rhythm faithful without hard-coding 30 one-off numbers.
-  */
-  --spacing-content: clamp(1.25rem, calc(min(100vw, 1920px) * 277 / 1920), 17.3125rem); /* 277px */
-  --spacing-edge: clamp(1rem, calc(min(100vw, 1920px) * 173 / 1920), 10.8125rem); /* 173px */
-
-  --spacing-fuori-2xs: clamp(0.5rem, calc(min(100vw, 1920px) * 16 / 1920), 1rem); /* 16px */
-  --spacing-fuori-xs: clamp(1rem, calc(min(100vw, 1920px) * 38 / 1920), 2.375rem); /* 38px */
-  --spacing-fuori-sm: clamp(1.5rem, calc(min(100vw, 1920px) * 58 / 1920), 3.625rem); /* 58px */
-  --spacing-fuori-md: clamp(2rem, calc(min(100vw, 1920px) * 95 / 1920), 5.9375rem); /* 95px */
-  --spacing-fuori-lg: clamp(3rem, calc(min(100vw, 1920px) * 150 / 1920), 9.375rem); /* 150px */
-  --spacing-fuori-xl: clamp(4rem, calc(min(100vw, 1920px) * 255 / 1920), 15.9375rem); /* 255px */
-
-  /* Gutter between the three lead posters in the Figma row. */
-  --spacing-fuori-gap: clamp(0.375rem, calc(min(100vw, 1920px) * 29 / 1920), 1.8125rem); /* 29px */
-
-  --container-logo: 234px;
-  --container-media: 1267px;
-  --container-copy: 1419px;
-  --container-posters: 1407px;
-  --container-next: 1572px;
-
-  /* Type ramp from the same frame, so text tracks the column as it narrows. */
-  --text-fuori-title: clamp(2.5rem, calc(min(100vw, 1920px) * 80 / 1920), 5rem); /* 80px */
-  --text-fuori-lead: clamp(1.75rem, calc(min(100vw, 1920px) * 60 / 1920), 3.75rem); /* 60px */
-  --text-fuori-next: clamp(1.5rem, calc(min(100vw, 1920px) * 50 / 1920), 3.125rem); /* 50px */
-  --text-fuori-h2: clamp(1.375rem, calc(min(100vw, 1920px) * 40 / 1920), 2.5rem); /* 40px */
-  --text-fuori-label: clamp(1.25rem, calc(min(100vw, 1920px) * 35 / 1920), 2.1875rem); /* 35px */
-  --text-fuori-body: clamp(1.0625rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem); /* 30px */
-  --text-fuori-sub: clamp(1rem, calc(min(100vw, 1920px) * 25 / 1920), 1.5625rem); /* 25px */
-  /* Sidebar: 16.5px in the 1512 layout frame (node 515:157) = 21px at 1920. */
-  --text-sidebar: clamp(0.875rem, calc(min(100vw, 1920px) * 21 / 1920), 1.3125rem);
-  --spacing-step-left: clamp(0.75rem, calc(min(100vw, 1920px) * 30 / 1920), 1.875rem);
-
-  /* Nav + CTA links — tightened for a shorter sticky bar. */
-  --text-nav: clamp(1.0625rem, calc(min(100vw, 1920px) * 24 / 1920), 1.5rem); /* 24px */
-  --spacing-nav-y: clamp(1rem, calc(min(100vw, 1920px) * 35 / 1920), 2.1875rem); /* 35px */
-  --spacing-nav-gap: clamp(1.25rem, calc(min(100vw, 1920px) * 64 / 1920), 4rem); /* 64px */
-  --text-cta-lg: clamp(1.375rem, calc(min(100vw, 1920px) * 50 / 1920), 3.125rem); /* 50px */
-  --text-cta-md: clamp(1.0625rem, calc(min(100vw, 1920px) * 30 / 1920), 2.8125rem); /* 30px */
-  --text-cta-sm: clamp(1.25rem, calc(min(100vw, 1920px) * 40 / 1920), 2.8125rem); /* 40px */
-}
-
-/* ============================================
-   Portfolio - Global Styles
-   ============================================ */
+/* `dark:` follows the site's theme switch (data-theme on <html>), not the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
-  IMPORTANT: do not use an unlayered `* { margin: 0 }` here.
-  Tailwind utilities (like .mx-auto) live in @layer. Unlayered rules win over
-  layered ones, so a raw margin reset was killing margin-inline: auto and
-  pinning max-w-page sections (Implementation, Intro, etc.) to the left on
-  wide monitors. Put base resets inside @layer base so utilities still win.
+  Design tokens for the 2026 redesign.
+  Source: Figma file gp7T0cPbPep5VLlx1dSNk0, section "testing different layouts"
+  (483:143 home, 493:5454 about, 645:2308 / 510:6986 sandbox, 571:90 sol,
+  515:157 fuorisalone). Every frame is drawn at 1512px (MacBook Pro 14"), so
+  that is the reference width for all fluid values below.
+*/
+@theme {
+  /* Figma fills. `line` and `night` are #616161 / #212121 with the 20% black
+     layer Figma stacks on them, flattened into one colour. */
+  --color-paper: #f3f1ef;
+  --color-ink: #000000;
+  --color-copy: #4e4e4e;
+  --color-muted: #969696; /* Figma variable grey-2 */
+  --color-faint: #d4d4d4; /* Figma variable light-grey */
+  --color-card: #d9d9d9;
+  --color-card-soft: #e8e8e8;
+  --color-control: #acacac;
+  --color-slate: #616161;
+  --color-line: #4e4e4e;
+  --color-line-strong: #363636;
+  --color-mat: #ffffff;
+  --color-night: #1a1a1a;
+  --color-amber: #ffb81d;
+  --color-amber-soft: #ffda8c;
+
+  --font-pixel: var(--font-departure), ui-monospace, monospace;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-bogart), Georgia, serif;
+  --font-sans: var(--font-satoshi), system-ui, sans-serif;
+
+  --container-frame: 1512px;
+
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+
+/*
+  Dark theme: the same 1-bit idea, inverted. The footer stays dark in both.
+  --color-dither is the mark colour of the dither paper behind every page
+  (components/DitherBackground.tsx, which paints marks on --color-paper).
+  It sits outside @theme because no utility uses it, and Tailwind only emits
+  the theme variables that something uses.
+*/
+:root {
+  --color-dither: #cfcdcb;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --color-paper: #161616;
+  --color-ink: #f3f1ef;
+  --color-copy: #bdbab6;
+  --color-muted: #808080;
+  --color-faint: #3c3c3c;
+  --color-card: #242424;
+  --color-card-soft: #2a2a2a;
+  --color-control: #404040;
+  --color-slate: #8e8e8e;
+  --color-line: #5e5e5e;
+  --color-line-strong: #8a8a8a;
+  --color-mat: #ebe8e4;
+  --color-night: #0c0c0c;
+  --color-dither: #2b2b2a;
+  color-scheme: dark;
+}
+
+/*
+  Base resets live in @layer base so Tailwind utilities (mx-auto etc.) still
+  win over them.
 */
 @layer base {
   * {
@@ -113,485 +79,220 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--color-line) var(--color-paper);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    position: relative;
+    min-height: 100vh;
+    overflow-x: clip;
+    background-color: var(--color-paper);
+    color: var(--color-copy);
+    font-family: var(--font-mono);
+    font-size: 16.5px;
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
 }
 
-:root {
-  --wireframe-border: 2px dashed #999;
-  --wireframe-bg: #f5f5f5;
-  --section-padding: 4rem 2rem;
-  --max-width: 1200px;
-  --font-primary: var(--font-neue-haas), sans-serif;
-}
-
+/*
+  Square cursor. `cursor` is inherited, so setting it on <html> covers every
+  element; interactive elements swap to the hollow "target" square. Text
+  fields keep the I-beam so typing still feels normal.
+*/
 html {
-  scroll-behavior: smooth;
-  /* Keeps mx-auto centering stable when a vertical scrollbar appears/disappears.
-     Without this, 100vw-based math can shift the page a few pixels sideways. */
-  scrollbar-gutter: stable;
+  cursor: url("/cursors/square.svg") 8 8, default;
 }
 
-body {
-  font-family: var(--font-primary);
-  line-height: 1.6;
-  color: #333;
-  background: var(--color-page);
+a,
+button,
+summary,
+label[for],
+select,
+[role="button"],
+[role="menuitem"],
+[role="tab"],
+.cursor-pointer {
+  cursor: url("/cursors/square-pointer.svg") 11 11, pointer;
 }
 
-/* ---- Navbar ---- */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: clamp(0.375rem, calc(min(100vw, 1920px) * 22 / 1920), 1.375rem)
-    clamp(1.375rem, calc(min(100vw, 1920px) * 22 / 1920), 1.375rem);
-  font-size: var(--text-nav);
-  background: #fff;
-  border-bottom: var(--wireframe-border);
-  z-index: 1000;
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text;
 }
 
-.navbar-brand,
-.navbar-brand a {
-  text-decoration: none;
-  color: inherit;
-  font-weight: 700;
+:disabled,
+[aria-disabled="true"] {
+  cursor: url("/cursors/square.svg") 8 8, not-allowed;
 }
 
-.navbar-links {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
+/* ---- Card-suit nav (components/site/SuitNav.tsx) ---- */
+@keyframes suit-hop {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  45% {
+    translate: 0 -5px;
+  }
 }
 
-.navbar-links a {
-  text-decoration: none;
-  color: #333;
+.suit-link:hover .suit-glyph,
+.suit-link:focus-visible .suit-glyph {
+  /* steps() keeps the hop chunky, like the pixel font it is drawn in */
+  animation: suit-hop 0.42s steps(4, jump-none);
 }
 
-.navbar-links a:hover {
+.suit-link:hover .suit-label,
+.suit-link:focus-visible .suit-label,
+.suit-link[aria-current="page"] .suit-label {
+  color: var(--color-ink);
+}
+
+.suit-link[aria-current="page"] .suit-label {
   text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 6px;
 }
 
-/* ---- Hero / Landing ---- */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--section-padding);
-  margin-top: 50px;
-  border: var(--wireframe-border);
-  background: var(--wireframe-bg);
-  gap: 2rem;
+.suit-tip {
+  opacity: 0;
+  translate: 0 -4px;
+  transition:
+    opacity 0.2s ease,
+    translate 0.2s ease;
 }
 
-.hero-content {
-  flex: 1;
-  max-width: var(--max-width);
+.suit-link:hover .suit-tip,
+.suit-link:focus-visible .suit-tip {
+  opacity: 1;
+  translate: 0 0;
 }
 
-.hero-name {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex-shrink: 0;
-  transform: rotate(-90deg);
-  transform-origin: right center;
+.suit-menu {
+  visibility: hidden;
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    clip-path 0.32s var(--ease-snap),
+    opacity 0.2s ease,
+    visibility 0s linear 0.32s;
 }
 
-.hero-name-line {
-  display: block;
-  font-size: clamp(2rem, 8vw, 5rem);
-  font-weight: 700;
-  line-height: 1;
-  color: #ff4d6d;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
+.suit-menu[data-open] {
+  visibility: visible;
+  opacity: 1;
+  clip-path: inset(0 -8px -8px 0);
+  transition:
+    clip-path 0.32s var(--ease-snap),
+    opacity 0.2s ease;
 }
 
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    justify-content: center;
+/* Utility: hide visually but keep for assistive tech. */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Scroll reveal (components/ui/Reveal.tsx). Only hides content once the
+   inline head script has confirmed JS is running, so nothing is ever stuck
+   invisible. */
+.js [data-reveal] {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 0.8s var(--ease-snap),
+    translate 0.8s var(--ease-snap);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js [data-reveal="in"] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Page-load entrance used by headers and hero copy. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
   }
-
-  .hero-name {
-    align-items: center;
-    font-size: clamp(1.5rem, 8vw, 4rem);
-  }
-}
-
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.hero p {
-  font-size: 1.125rem;
-  color: #666;
-}
-
-/* ---- Projects Section ---- */
-.projects {
-  padding: var(--section-padding);
-  border: var(--wireframe-border);
-  background: #fff;
-}
-
-.projects h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  max-width: var(--max-width);
-  margin: 0 auto;
-}
-
-.project-card {
-  border: var(--wireframe-border);
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.project-card:hover {
-  border-color: #333;
-}
-
-.project-placeholder {
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--wireframe-bg);
-  border: var(--wireframe-border);
-  margin-bottom: 1rem;
-}
-
-.project-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 0.35rem;
-}
-
-.project-card p {
-  font-size: 0.95rem;
-  color: #666;
-}
-
-/* ---- About Me Section ---- */
-.about {
-  padding: var(--section-padding);
-  border: var(--wireframe-border);
-  background: var(--wireframe-bg);
-}
-
-.about h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.about-content {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  flex-wrap: wrap;
-}
-
-.about-image-placeholder {
-  width: 200px;
-  height: 200px;
-  min-width: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e0e0e0;
-  border: var(--wireframe-border);
-}
-
-.about-text {
-  flex: 1;
-  min-width: 280px;
-}
-
-.about-text p {
-  font-size: 1.1rem;
-  color: #555;
-}
-
-/* ---- Footer ---- */
-.footer {
-  margin-left: 0 auto;
-  padding: 3rem;
-  text-align: center;
-  border-top: var(--wireframe-border);
-  background: #fff;
-  justify-content: center;
-}
-
-.footer p {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* ============================================
-   Project Detail Page
-   ============================================ */
-
-.project-page {
-  padding: 5.5rem 2rem 4rem;
-  background: #fff;
-}
-
-.project-container {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  max-width: var(--max-width);
-  margin: 0 auto;
-}
-
-.project-nav a {
-  color: #666;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.project-nav a:hover {
-  color: #ff4d6d;
-}
-
-.project-hero {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.project-eyebrow {
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #ff4d6d;
-}
-
-.project-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.project-lead {
-  max-width: 42rem;
-  font-size: 1.125rem;
-  color: #666;
-}
-
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  list-style: none;
-  margin-top: 5rem;
-}
-
-.project-tags li {
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #333;
-  background: var(--wireframe-bg);
-  border: 1px solid #e0e0e0;
-  border-radius: 999px;
-}
-
-.project-meta-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.project-meta-item dt {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #999;
-  margin-bottom: 0.35rem;
-}
-
-.project-meta-item dd {
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.project-feature-media {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin: 0;
-}
-
-.project-media-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 420px;
-  background: var(--wireframe-bg);
-  border: var(--wireframe-border);
-  color: #999;
-  font-size: 0.95rem;
-}
-
-.project-media-caption {
-  font-size: 0.875rem;
-  color: #888;
-  text-align: center;
-}
-
-.project-body {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-.project-section h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  letter-spacing: -0.01em;
-}
-
-.project-section-content {
-  max-width: 42rem;
-  font-size: 1.05rem;
-  color: #555;
-}
-
-.project-section-content p + p {
-  margin-top: 1rem;
-}
-
-.project-section--split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e5e5;
-}
-
-.project-split-block h2 {
-  font-size: 1.25rem;
-}
-
-.project-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-
-.project-gallery-item {
-  min-height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--wireframe-bg);
-  border: var(--wireframe-border);
-  color: #999;
-  font-size: 0.9rem;
-}
-
-.project-footer {
-  padding-top: 2rem;
-  border-top: 1px solid #e5e5e5;
-}
-
-.project-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: clamp(0.3125rem, calc(min(100vw, 1920px) * 10 / 1920), 0.625rem)
-    clamp(0.9375rem, calc(min(100vw, 1920px) * 20 / 1920), 1.25rem);
-  border: 1px solid #333;
-  text-decoration: none;
-  color: #333;
-  font-size: clamp(0.8125rem, calc(min(100vw, 1920px) * 20 / 1920), 1.25rem);
-  font-weight: 400;
-  transition: background 0.2s, color 0.2s;
-}
-
-.btn:hover {
-  background: #333;
-  color: #fff;
-}
-
-.btn--primary {
-  background: #ff4d6d;
-  border-color: #ff4d6d;
-  color: #fff;
-}
-
-.btn--primary:hover {
-  background: #e84362;
-  border-color: #e84362;
-  color: #fff;
-}
-
-@media (max-width: 900px) {
-  .project-meta-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .project-section--split {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  to {
+    opacity: 1;
+    translate: 0 0;
   }
 }
 
-@media (max-width: 600px) {
-  .project-page {
-    padding: 5rem 1.25rem 3rem;
+.rise-in {
+  animation: rise-in 0.9s var(--ease-snap) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/* Terminal-style caret blink (home role tag, footer code). */
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret-blink {
+  animation: caret-blink 1.06s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 
-  .project-container {
-    gap: 2rem;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 
-  .project-meta-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .project-media-placeholder {
-    min-height: 260px;
-  }
-
-  .project-gallery-grid {
-    grid-template-columns: 1fr;
+  .js [data-reveal] {
+    opacity: 1;
+    translate: none;
   }
 }

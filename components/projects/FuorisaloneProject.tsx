@@ -1,443 +1,286 @@
-import Image from "next/image";
-import Link from "next/link";
-import ConnectFooter from "@/components/ConnectFooter";
-import Navbar from "@/components/Navbar";
+import type { CSSProperties } from "react";
+import { CaseHero, CaseShell, CaseVideo, CropImage, Indent, MetaGrid, NextProject, TocSection } from "@/components/projects/case-parts";
 import PosterParallax from "@/components/projects/PosterParallax";
-import ProcessSidebar from "@/components/projects/ProcessSidebar";
-import ProjectMedia from "@/components/projects/ProjectMedia";
+import SiteHeader from "@/components/site/SiteHeader";
+import Reveal from "@/components/ui/Reveal";
 import { fuorisaloneImages } from "@/lib/fuorisalone-images";
 import { solImages } from "@/lib/sol-images";
 import type { Project } from "@/lib/projects";
 
-type FuorisaloneProjectProps = {
-  project: Project;
-};
-
 /*
-  Figma (node 309:95) insets the body column 277px into the 1920px frame and
-  left-aligns it. The right side only needs enough room to keep the widest
-  measure (1419px copy) off the edge, which is why the two paddings differ.
+  Fuorisalone Microsite — Figma frame 515:157 (1512 x 11784).
+  The frame staggers its blocks across the page (x = 274, 395, 410, 478,
+  415, 310); each block below keeps its own Figma x-offset via <Indent x>.
 */
-const COLUMN = "mx-auto w-full max-w-page pl-content pr-gutter";
-const EDGE = "mx-auto w-full max-w-page pl-edge pr-gutter";
 
-/* Sidebar phases (Figma node 515:157). Each lights up when its first section
-   reaches the read line and stays lit until the next phase starts. */
-const PROCESS_STEPS = [
-  { label: "Ideation", sectionId: "problem" },
-  { label: "Research", sectionId: "research" },
-  { label: "Iteration", sectionId: "content-strategy" },
+const { media, webp } = fuorisaloneImages;
+const toc = [
+  { id: "ideation", label: "Ideation" },
+  { id: "research", label: "Research" },
+  { id: "iteration", label: "Iteration" },
+  { id: "solution", label: "The Solution" },
+  { id: "learnings", label: "Key Learnings" },
 ];
 
-/* Clicking a sidebar label lands the section below the sticky navbar. */
-const ANCHOR = "scroll-mt-32";
+const heading = "font-serif text-[24px] leading-[normal] text-ink";
+const body = "font-mono text-[16.5px] leading-[normal]";
 
-/* Every screenshot and screen recording sits in the same 1267 x 713 frame. */
-const MEDIA_FRAME = "relative w-full max-w-media overflow-hidden aspect-[1267/713]";
+/* 1 Figma px inside the 1195px-wide poster row (container query units). */
+const u = (px: number) => `calc(${px} * var(--u))`;
 
-function SectionIntro({
-  eyebrow,
-  heading,
-  headingId,
-}: {
-  eyebrow: string;
-  heading: string;
-  headingId: string;
-}) {
+type Orbit = { src: string; box: [number, number, number, number]; inner: [number, number]; inset: string };
+const orbits: Orbit[] = [
+  { src: fuorisaloneImages.orbits[0], box: [531, -15, 1031.466, 904.753], inner: [595.278, 859.831], inset: "-23.26% -33.6%" },
+  { src: fuorisaloneImages.orbits[1], box: [-768, -291, 1623.582, 1424.13], inner: [937, 1353.42], inset: "-14.78% -21.34%" },
+  { src: fuorisaloneImages.orbits[2], box: [182, -89.67, 782.139, 787.411], inner: [595.278, 584.272], inset: "-34.23% -33.6%" },
+];
+
+const rowPosters = [
+  { src: webp.ahhhhh, alt: "Salone experimental poster", box: [20, 18, 355.527, 487] },
+  { src: webp.showcase, alt: "Fuorisalone showcase poster", box: [407, 18, 375.315, 485.701] },
+  { src: webp.frame100, alt: "Fuorisalone 2024 Milan Design Week poster", box: [816.6, 18, 355.318, 487] },
+] as const;
+
+/* Lead poster row (Figma 520:236): three posters over the gradient orbit lines. */
+function PosterRow() {
   return (
-    <>
-      <p className="font-body text-fuori-body font-bold text-fuori-grey">{eyebrow}</p>
-      <h2
-        id={headingId}
-        className="mt-fuori-2xs max-w-copy font-body text-fuori-h2 font-bold leading-[1.25] text-black"
-      >
-        {heading}
-      </h2>
-    </>
-  );
-}
-
-/* Captions are centered under the media column rather than the whole frame. */
-function Caption({ children }: { children: React.ReactNode }) {
-  return (
-    <figcaption className="mt-fuori-xs w-full max-w-media text-center font-body text-fuori-body font-medium text-fuori-grey">
-      {children}
-    </figcaption>
-  );
-}
-
-export default function FuorisaloneProject({ project }: FuorisaloneProjectProps) {
-  const { media } = fuorisaloneImages;
-  const prototypeLink = project.links.find((link) => link.primary)?.href ?? "#";
-
-  /*
-    The three lead posters run as a grid whose columns carry their Figma widths,
-    so the 29px gutters and relative sizes survive at any screen width.
-  */
-  const leadPosters = [
-    { src: fuorisaloneImages.posterShowcase, alt: "Fuorisalone showcase poster", ratio: "467/604" },
-    { src: fuorisaloneImages.posterFrame100, alt: "Fuorisalone 2024 Milan Design Week poster", ratio: "441/605" },
-    { src: fuorisaloneImages.posterAhhhhh, alt: "Salone experimental poster", ratio: "441/604" },
-  ];
-
-  return (
-    <article className="min-h-screen bg-paper text-black">
-      <Navbar variant="inner" theme="dark" />
-
-      {/* Full-bleed opener: Figma runs it to x:-6 w:1932 so it overhangs the frame. */}
-      <figure className="mx-auto w-full max-w-page">
-        <ProjectMedia
-          kind="video"
-          src={media.demoVideo}
-          label="Fuorisalone demo video"
-          aspectClass="aspect-[1932/942]"
-          maxWidthClass="max-w-none"
-          borderClass="border-[3px] border-white"
-          autoPlay
-          loop
-          muted
-        />
-      </figure>
-
-      {/* Hero through Key Learnings share one wrapper so the sidebar can stick
-          in the left gutter for exactly that stretch of the page. */}
-      <div className="relative mt-fuori-xl">
-      <ProcessSidebar steps={PROCESS_STEPS} endSectionId="learnings" />
-
-      {/* Hero */}
-      <header className={COLUMN}>
-        <Image
-          src={fuorisaloneImages.logo}
-          alt="Fuorisalone logo"
-          width={234}
-          height={102}
-          className="h-auto w-full max-w-logo"
-          priority
-        />
-
-        <h1 className="mt-fuori-md font-display text-fuori-title font-medium leading-[1.15] tracking-[-0.01em] text-black">
-          {project.title}
-        </h1>
-
-        <p className="mt-fuori-sm max-w-[1022px] font-body text-fuori-body font-normal leading-[1.37] text-black">
-          Experimental website for visitors of Fuorisalone design district 2024 and
-          encapsulating all its exhibits with concise UX/UI design.
-        </p>
-
-        <p className="mt-fuori-sm font-body text-fuori-label font-bold text-black">Team</p>
-        <div className="mt-fuori-sm font-body text-fuori-body font-normal leading-[1.37] text-black">
-          <p>5 design coordinators (Me)</p>
-          <p>No designated roles</p>
-          <p>Collaborative work</p>
-        </div>
-
-        <a
-          href={prototypeLink}
-          className="mt-fuori-md inline-block font-body text-cta-lg font-normal text-black transition-opacity hover:opacity-70"
-        >
-          View the final prototype →
-        </a>
-      </header>
-
-      {/* The Problem */}
-      <section id="problem" className={`${COLUMN} ${ANCHOR} mt-fuori-sm`} aria-labelledby="problem-heading">
-        <SectionIntro
-          eyebrow="The Problem"
-          heading="The issue of overdesigning and missing the target audience"
-          headingId="problem-heading"
-        />
-
-        <p className="mt-fuori-md max-w-[1236px] font-body text-fuori-body font-medium leading-[1.37] text-black">
-          Many modern day websites tend to overachieve on certain aspects including
-          visual design, without emphasis on the overarching user experience that can
-          enhance the navigation experience with minimal interruptions. We aimed to
-          create an experience where we intend to create a distinctive brand identity
-          for the annual Fuorisalone design festival while bridging the intersections
-          of UX/UI to create a site that is largely experimental and unique.
-        </p>
-
-        {/* Lead posters. Column tracks carry the Figma widths so the relative
-            sizes and 29px gutters hold at any screen width. */}
-        <div
-          className="mt-fuori-sm grid w-full max-w-posters gap-fuori-gap"
-          style={{ gridTemplateColumns: "467fr 441fr 441fr" }}
-        >
-          {leadPosters.map((poster) => (
+    <Reveal className="@container relative aspect-[1195/525] w-full max-w-[1195px] overflow-hidden border border-faint">
+      <div className="absolute inset-0" style={{ ["--u" as string]: "calc(100cqw / 1195)" } as CSSProperties}>
+        {orbits.map((orbit) => {
+          const [x, y, w, h] = orbit.box;
+          return (
+            <div
+              key={orbit.src}
+              aria-hidden="true"
+              className="absolute flex items-center justify-center"
+              style={{ left: u(x), top: u(y), width: u(w), height: u(h) }}
+            >
+              <div className="relative flex-none rotate-[64.8deg]" style={{ width: u(orbit.inner[0]), height: u(orbit.inner[1]) }}>
+                <div className="absolute" style={{ inset: orbit.inset }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={orbit.src} alt="" className="block size-full max-w-none" />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {rowPosters.map((poster) => {
+          const [x, y, w, h] = poster.box;
+          return (
             <div
               key={poster.src}
-              className="relative border border-fuori-grey bg-white"
-              style={{ aspectRatio: poster.ratio }}
+              className="poster-row-item absolute overflow-hidden bg-mat"
+              style={{ left: u(x), top: u(y), width: u(w), height: u(h) }}
             >
-              <Image
-                src={poster.src}
-                alt={poster.alt}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 33vw, 470px"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={poster.src} alt={poster.alt} loading="lazy" decoding="async" className="size-full object-cover" />
+            </div>
+          );
+        })}
+      </div>
+    </Reveal>
+  );
+}
+
+function LearningCard({ index, title, glyphs, children }: { index: number; title: string; glyphs: number; children: string }) {
+  return (
+    <Reveal delay={index * 120} className="learning-card relative aspect-[421/351] w-full max-w-[421px] overflow-hidden border border-faint bg-card-soft">
+      <div className="absolute left-[13%] top-[23%] right-[10%] flex flex-col">
+        <p className="font-serif text-[16.5px] leading-[normal] text-ink">
+          {index + 1}. {title}
+        </p>
+        <div className="mt-[12px] flex gap-[14px]">
+          <span aria-hidden="true" className="whitespace-pre font-pixel text-[16.5px] leading-[normal] text-ink">
+            {Array.from({ length: glyphs }, () => "▞").join("\n")}
+          </span>
+          <p className="max-w-[254px] pt-[2px] font-mono text-[12px] leading-[normal] text-copy">{children}</p>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+export default function FuorisaloneProject({ project }: { project: Project }) {
+  return (
+    <>
+      <SiteHeader active="projects" compact />
+      <main id="main">
+        <CaseHero sources={[...media.demo]} poster={media.demoPoster} label="Fuorisalone microsite demo video" />
+
+        <CaseShell toc={toc}>
+          <Indent x={274} as="header" reveal={false} className="pt-[clamp(64px,10vw,152px)]">
+            <div className="flex flex-wrap items-start gap-x-[clamp(24px,7.6vw,85px)] gap-y-6">
+              <h1 className="rise-in max-w-[419px] pt-[14px] font-serif text-[clamp(38px,3.3vw,50px)] leading-[normal] tracking-[-0.06em] text-ink">
+                {project.title}
+              </h1>
+              <div className="rise-in w-[254px] max-w-full bg-line p-[10px] [--rise-delay:120ms]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={fuorisaloneImages.logo} alt="Fuorisalone logo" width={1269} height={555} className="aspect-[1269/555] w-full" />
+              </div>
+            </div>
+
+            <div className="mt-[104px] max-w-[1195px]">
+              <MetaGrid
+                template="534fr 554fr 107fr"
+                columns={[
+                  {
+                    label: "Team",
+                    value: (
+                      <span className="block leading-[35px] text-ink">
+                        5 design coordinators (Me)
+                        <br />
+                        No designated roles
+                        <br />
+                        Collaborative work
+                      </span>
+                    ),
+                  },
+                  { label: "Timeline", value: <span className="text-ink">March 2026 - April 2026</span> },
+                  { label: "Tools", value: <span className="text-ink">Figma</span> },
+                ]}
               />
             </div>
-          ))}
-        </div>
+          </Indent>
 
-        <p className="mt-fuori-xs w-full max-w-posters text-center font-body text-fuori-body font-medium text-fuori-grey">
-          Exploring styles through initial iterations of high-fidelity posters
-        </p>
-      </section>
+          <TocSection id="ideation" label="Ideation">
+            <Indent x={274} className="mt-[63px]">
+              <p className={`${body} max-w-[711px] text-ink`}>
+                Experimental website for visitors of Fuorisalone design district 2024 and encapsulating all its exhibits with
+                concise UX/UI design.
+              </p>
+              <div className="mt-[32px]">
+                <PosterRow />
+              </div>
+            </Indent>
 
-      {/* Poster collage — scroll-driven parallax, centre poster held still.
-          Unlike the rest of the page this block is centered: Figma runs it from
-          x:77 to x:1842, so it sits evenly inside the frame. */}
-      <section
-        className="mx-auto mt-fuori-lg w-full max-w-page px-gutter"
-        aria-label="Poster iterations and graphic references"
-      >
-        <PosterParallax caption="Many, many poster iterations.." />
-      </section>
+            <Indent x={395} className="mt-[113px]">
+              <h2 className={heading}>The issue of overdesigning and missing the target audience</h2>
+              <p className={`${body} mt-[30px] max-w-[495px] text-copy`}>
+                We aimed to create an experience where we intend to create a distinctive brand identity for the annual
+                Fuorisalone design festival while bridging the intersections of UX/UI to create a site that is largely
+                experimental and unique.
+              </p>
+            </Indent>
 
-      {/* Research */}
-      <section id="research" className={`${COLUMN} ${ANCHOR} mt-fuori-xl`} aria-labelledby="research-heading">
-        <SectionIntro
-          eyebrow="Research"
-          heading="Catering to user personas and iterative design principles"
-          headingId="research-heading"
-        />
+            <section aria-label="Poster iterations" className="mt-[clamp(120px,20vw,300px)] px-5 md:pl-[clamp(20px,17.13vw,259px)] md:pr-[clamp(20px,3.8vw,57px)]">
+              <PosterParallax caption="Exploring styles through initial iterations of high-fidelity posters" />
+            </section>
+          </TocSection>
 
-        <p className="mt-fuori-xs max-w-[966px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
-          Design process covered work on posters (more experimental), which then
-          translated onto inspiration for our site which can be iterated on and
-          narrowed in further.
-        </p>
+          <TocSection id="research" label="Research">
+            <Indent x={410} className="mt-[73px]">
+              <CropImage
+                src={fuorisaloneImages.contentStrategy}
+                alt="Content strategy slide: the user flow from exhibitions to artists to detail pages"
+                ratio="1023 / 575"
+                className="w-full max-w-[1023px] border border-[#999]"
+              />
+            </Indent>
+            <Indent x={478} className="mt-[61px]">
+              <h2 className={heading}>Research</h2>
+              <p className={`${body} mt-[4px] max-w-[966px] text-copy`}>
+                Design process covered work on posters (more experimental), which then translated onto inspiration for our
+                site which can be iterated on and narrowed in further.
+              </p>
+              <div className={`${body} mt-[38px] pl-[6px] text-copy`}>
+                <p>Goals:</p>
+                <ol className="list-decimal pl-[24.75px]">
+                  <li>Understand personas to converge design decisions</li>
+                  <li>Pinpoint important design principles to iterate on</li>
+                </ol>
+              </div>
+            </Indent>
+          </TocSection>
 
-        <div className="mt-fuori-xs font-body text-fuori-sub font-medium leading-[1.37] text-fuori-grey">
-          <p>Goals:</p>
-          <ol className="mt-fuori-2xs list-decimal pl-[1.5em]">
-            <li>Understand personas to converge design decisions</li>
-            <li>Pinpoint important design principles to iterate on</li>
-          </ol>
-        </div>
+          <TocSection id="iteration" label="Iteration">
+            <Indent x={410} className="mt-[39px]">
+              <CaseVideo
+                sources={[...media.prototype]}
+                poster={media.prototypePoster}
+                label="Early Fuorisalone prototype: the district transitions screen"
+                ratio="1023 / 576"
+                className="w-full max-w-[1023px] border border-faint"
+              />
+            </Indent>
+            <Indent x={478} className="mt-[55px]">
+              <h2 className={heading}>Prototypes and testing</h2>
+              <p className={`${body} mt-[23px] max-w-[861px] text-ink`}>
+                After many long hours of iteration and wireframes, building from our previous ideas, I consolidated our
+                principles and brought them to life with an initial prototype, to see how things would look like in practice
+                and prepared for feedback from users.
+              </p>
+            </Indent>
+          </TocSection>
 
-        <figure className="mt-fuori-sm">
-          {/* Figma clips this screenshot to the frame from the top edge. */}
-          <div className={`${MEDIA_FRAME} border border-[#a8a8a8] bg-white`}>
-            <Image
-              src={fuorisaloneImages.figmaWorkspace}
-              alt="Figma workspace showing mobile screen artboards connected by user flow lines"
-              fill
-              className="object-cover object-top"
-              sizes="(max-width: 1280px) 100vw, 1267px"
-            />
-          </div>
-          <Caption>A snippet of our prototype work and graphic assets</Caption>
-        </figure>
-      </section>
+          <TocSection id="solution" label="The Solution">
+            <Indent x={415} className="mt-[96px]">
+              <div className="flex max-w-[1028px] flex-col gap-[50px]">
+                <CaseVideo
+                  sources={[...media.districtSelection]}
+                  poster={media.districtSelectionPoster}
+                  label="Refined district selection page"
+                  className="border border-faint"
+                />
+                <CaseVideo
+                  sources={[...media.districtShowcase]}
+                  poster={media.districtShowcasePoster}
+                  label="Brera design district showcase page"
+                  className="border border-faint"
+                />
+                <CaseVideo
+                  sources={[...media.exhibitShowcase]}
+                  poster={media.exhibitShowcasePoster}
+                  label="Exhibit page with booking details"
+                  className="border border-faint"
+                />
+              </div>
+            </Indent>
+            <Indent x={415} className="mt-[37px]">
+              <h2 className={`${heading} max-w-[976px]`}>Implementation and Website flow</h2>
+              <div className={`${body} mt-[28px] max-w-[888px] space-y-[21px] text-ink`}>
+                <p>
+                  After taking in feedback about our initial prototype being the problem that users would have to figure out
+                  which interactions to choose first and how to get to them easier, we had to find a way to make that
+                  easier.
+                </p>
+                <p>
+                  I chose to settle on a design that would use presentation principles to garner interest and not have the
+                  user second guess which features they missed. After the district showcase, I let them explore the
+                  different sections via interactive features.
+                </p>
+              </div>
+            </Indent>
+          </TocSection>
 
-      {/* Content strategy */}
-      <section id="content-strategy" className={`${COLUMN} ${ANCHOR} mt-fuori-lg`} aria-labelledby="content-strategy-heading">
-        <SectionIntro
-          eyebrow="Solution ideation"
-          heading="Defining content strategy for implementation"
-          headingId="content-strategy-heading"
-        />
+          <TocSection id="learnings" label="Key Learnings">
+            <Indent x={310} className="mt-[90px]">
+              <h2 className={`${heading} max-w-[160px]`}>Key Learnings</h2>
+              <div className="mt-[25px] grid max-w-[892px] gap-[50px] sm:grid-cols-2">
+                <LearningCard index={0} title="Take your time." glyphs={5}>
+                  Styling and aesthetic are all aspects that take a good amount of time and research, and if you leave out the
+                  people and interaction factors, you&rsquo;ll start to deviate from who you are designing for and for what
+                  purpose.
+                </LearningCard>
+                <LearningCard index={1} title="Don’t be complacent." glyphs={6}>
+                  Good design is a process that requires drawing inspiration and learning from previous works. As such, I could
+                  not afford to be stagnant with my designs, but to always seek out and not assume that my design is “the
+                  current best design” in my head.
+                </LearningCard>
+              </div>
+            </Indent>
+          </TocSection>
 
-        <p className="mt-fuori-xs max-w-[943px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
-          We realized that in order to create a concise and natural experience for
-          visitors, we needed to define a scope for our site, which involved creating
-          user flows to visualize what people would experience to determine what
-          information goes on the site, where it goes etc. I would assist in creating
-          the content directions that guided the information displayed.
-        </p>
+          <div className="h-[clamp(96px,10vw,150px)]" />
+        </CaseShell>
 
-        <figure className="mt-fuori-md">
-          <div className={`${MEDIA_FRAME} border border-fuori-border`}>
-            <Image
-              src={fuorisaloneImages.contentStrategy}
-              alt="Content strategy diagram showing exhibition, artist, and detail user flow"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1280px) 100vw, 1267px"
-            />
-          </div>
-          <figcaption className="mt-fuori-xs w-full max-w-media text-center font-body text-fuori-body font-medium text-fuori-grey-light">
-            A slide from our presentation deck outlining our user information flow in
-            website navigation.
-          </figcaption>
-        </figure>
-      </section>
-
-      {/* Prototypes and testing */}
-      <section className={`${COLUMN} mt-fuori-xl`} aria-labelledby="prototypes-heading">
-        <SectionIntro
-          eyebrow="Solution ideation"
-          heading="Prototypes and testing"
-          headingId="prototypes-heading"
-        />
-
-        <p className="mt-fuori-xs max-w-[1050px] font-body text-fuori-sub font-medium leading-[1.37] text-black">
-          After many long hours of iteration and wireframes, building from our previous
-          ideas, I consolidated our principles and brought them to life with an initial
-          prototype, to see how things would look like in practice and prepared for
-          feedback from users.
-        </p>
-
-        <figure className="mt-fuori-sm">
-          <ProjectMedia
-            kind="video"
-            src={media.prototypeVideo}
-            label="Fuorisalone prototype walkthrough"
-            aspectClass="aspect-[1267/713]"
-            maxWidthClass="max-w-media"
-            borderClass="border border-fuori-grey"
-            autoPlay
-            loop
-            muted
-          />
-          <Caption>
-            A preview of our district selection page from one of our earlier design
-            iterations
-          </Caption>
-        </figure>
-      </section>
-
-      {/* Final solution */}
-      <section className={`${COLUMN} mt-fuori-lg`} aria-labelledby="implementation-heading">
-        <SectionIntro
-          eyebrow="Final Solution"
-          heading="Implementation and Website flow"
-          headingId="implementation-heading"
-        />
-
-        <div className="mt-fuori-xs flex max-w-media flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-black">
-          <p>
-            After taking in feedback about our initial prototype being the problem that
-            users would have to figure out which interactions to choose first and how to
-            get to them easier, we had to find a way to make that easier.
-          </p>
-          <p>
-            I chose to settle on a design that would use presentation principles to
-            garner interest and not have the user second guess which features they
-            missed. After the district showcase, I let them explore the different
-            sections via interactive features.
-          </p>
-        </div>
-
-        <nav
-          className="mt-fuori-md flex w-full max-w-media flex-wrap items-center justify-center gap-x-fuori-md gap-y-3 font-body text-fuori-body font-medium text-black"
-          aria-label="Website flow"
-        >
-          <span>Homepage</span>
-          <span aria-hidden="true" className="text-fuori-h2">
-            →
-          </span>
-          <span>District Page</span>
-          <span aria-hidden="true" className="text-fuori-h2">
-            →
-          </span>
-          <span>Exhibit Showcase</span>
-        </nav>
-
-        <figure className="mt-fuori-lg">
-          <ProjectMedia
-            kind="video"
-            src={media.districtSelection}
-            label="District selection page prototype"
-            aspectClass="aspect-[1267/713]"
-            maxWidthClass="max-w-media"
-            borderClass="border border-fuori-grey"
-            autoPlay
-            loop
-            muted
-          />
-          <Caption>Updated and refined district selection page</Caption>
-        </figure>
-
-        <figure className="mt-fuori-lg">
-          <ProjectMedia
-            kind="video"
-            src={media.districtShowcase}
-            label="District showcase prototype"
-            aspectClass="aspect-[1267/713]"
-            maxWidthClass="max-w-media"
-            borderClass="border border-fuori-grey"
-            autoPlay
-            loop
-            muted
-          />
-          <Caption>Preview of district showcase and specific exhibits</Caption>
-        </figure>
-
-        <figure className="mt-fuori-lg">
-          <ProjectMedia
-            kind="video"
-            src={media.exhibitShowcase}
-            label="Exhibit page prototype"
-            aspectClass="aspect-[1267/713]"
-            maxWidthClass="max-w-media"
-            borderClass="border border-fuori-grey"
-            autoPlay
-            loop
-            muted
-          />
-          <Caption>Specific exhibit features and booking details page</Caption>
-        </figure>
-      </section>
-
-      {/* Key learnings */}
-      <section id="learnings" className={`${COLUMN} mt-fuori-md`} aria-labelledby="learnings-heading">
-        <h2
-          id="learnings-heading"
-          className="font-body text-fuori-h2 font-black text-black"
-        >
-          Key Learnings
-        </h2>
-
-        <div className="mt-fuori-sm flex max-w-copy flex-col gap-fuori-xs font-body text-fuori-body font-medium leading-[1.37] text-black">
-          <p>
-            Designing interactions with constraints sharpens decisions. Working with new
-            design features in Figma in tandem with brand identity and user flow across
-            multiple weeks, It allows me to create from a set of trials that allows me to
-            find the best designs to iterate towards.
-          </p>
-          <p>
-            Don&rsquo;t be complacent with design. Good design is a process that requires
-            drawing inspiration and learning from previous works. As such, I could not
-            afford to be stagnant with my designs, but to always seek out and not assume
-            that my design is &ldquo;the current best design&rdquo; in my head.
-          </p>
-          <p>
-            Take your time. Styling and aesthetic are all aspects that take a good amount
-            of time and research, and if you leave out the people and interaction factors,
-            you&rsquo;ll start to deviate from who you are designing for and for what
-            purpose.
-          </p>
-        </div>
-      </section>
-      </div>
-
-      {/* Next project — breaks out to the shallower 173px inset */}
-      <section className={`${EDGE} mt-fuori-lg`}>
-        <Link
-          href="/#projects"
-          className="font-body text-cta-sm font-medium text-black transition-opacity hover:opacity-70"
-        >
-          Next project →
-        </Link>
-
-        <Link
+        <NextProject
           href="/projects/sol"
-          className="relative mt-fuori-sm block aspect-[1572/821] w-full max-w-next overflow-hidden transition-opacity hover:opacity-90"
-          aria-label="Go to Sol / Figbuild 2026 project"
-        >
-          <Image
-            src={solImages.projectTitle}
-            alt="Next project preview: Sol"
-            fill
-            className="object-cover"
-            sizes="(max-width: 1600px) 100vw, 1572px"
-          />
-        </Link>
-      </section>
-
-      <ConnectFooter />
-    </article>
+          title="Figbuild 2026 (Sol)"
+          sources={[{ src: solImages.preview, type: "video/mp4" }]}
+          poster={solImages.previewPoster}
+        />
+        <div aria-hidden="true" className="h-[138px]" />
+      </main>
+    </>
   );
 }
