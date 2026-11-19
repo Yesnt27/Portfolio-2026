@@ -7,10 +7,13 @@ import "./player.css";
 const art = "/images/about";
 
 /*
-  "Now playing" card from Figma frame 493:5454 (nodes 652:108–652:137).
-  406 x 413 panel in grey-2 with a #4e4e4e keyline; album art fades into the
-  panel through the Figma gradient mask (Frame 155); the three slate bars,
-  title and #acacac transport buttons sit on one row underneath.
+  "Now playing" card, Figma frame 688:2026 (nodes 652:108–652:137).
+  406 x 413 panel in the light-grey variable (#d4d4d4, the `faint` token), no
+  keyline; album art fades into the panel through the Figma gradient mask
+  (Frame 155); the three slate bars, a 16.5px title over the 12px artist, and
+  the #acacac transport buttons sit on one row underneath. Dark mode uses the
+  `card` panel instead, because dark `faint` (#3c3c3c) would swallow the
+  #404040 buttons.
 
   Plays 20-second snapshots from lib/playlist.ts:
   - Play/Pause starts and stops the current snapshot. Nothing downloads until
@@ -210,7 +213,7 @@ export default function MusicPlayer({ className = "" }: { className?: string }) 
 
   return (
     <figure
-      className={`player w-full max-w-[406px] border border-line bg-muted px-[16px] pb-[15px] pt-[7px] ${className}`}
+      className={`player w-full max-w-[406px] bg-faint px-[16px] pb-[15px] pt-[7px] dark:bg-card ${className}`}
       data-playing={playing ? "" : undefined}
     >
       <audio
@@ -257,19 +260,21 @@ export default function MusicPlayer({ className = "" }: { className?: string }) 
       </div>
 
       <figcaption className="mt-[12.6px] flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-[15px] pl-[9px]">
-          <span aria-hidden="true" className="player-bars relative block h-[35px] w-[46px] shrink-0">
+        {/* Pinned to the row top so bars (y+7), title (y+8) and artist (y+26)
+            land on the Figma frame exactly. */}
+        <div className="flex min-w-0 items-start gap-[15px] self-start pl-[9px]">
+          <span aria-hidden="true" className="player-bars relative mt-[7px] block h-[35px] w-[46px] shrink-0">
             <span className="absolute left-0 top-0 h-[9px] w-[35px] bg-slate" />
             <span className="absolute left-[11px] top-[13px] h-[9px] w-[35px] bg-slate" />
             <span className="absolute left-0 top-[26px] h-[9px] w-[35px] bg-slate" />
           </span>
           {/* Announces the song after a skip for screen readers. */}
-          <span className="min-w-0" aria-live="polite">
-            <span ref={titleRef} className="player-title block font-serif text-[24px] font-medium leading-[normal] text-ink">
+          <span className="mt-[8px] min-w-0" aria-live="polite">
+            <span ref={titleRef} className="player-title block font-serif text-[16.5px] font-medium leading-[normal] text-ink">
               <span>{visible.title ?? visible.artist}</span>
             </span>
             {visible.title && (
-              <span className="block truncate font-sans text-[12px] leading-[normal] text-ink">{visible.artist}</span>
+              <span className="mt-[2px] block truncate font-sans text-[12px] leading-[normal] text-ink">{visible.artist}</span>
             )}
           </span>
         </div>

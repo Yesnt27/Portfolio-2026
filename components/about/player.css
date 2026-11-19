@@ -92,8 +92,8 @@
 }
 
 /*
-  Song name. The slot beside the buttons is ~125px, so most names overflow.
-  Instead of an ellipsis, an overflowing name glides to its end and back
+  Song name. The slot beside the buttons is ~125px. Instead of an ellipsis,
+  a name that doesn't fit glides to its end and back
   (pausing at each end) while the song plays or the card is hovered. The
   inner span's 18px of right padding is counted in the overflow, so at the
   end of the glide the last letter clears the soft fade on the right edge.

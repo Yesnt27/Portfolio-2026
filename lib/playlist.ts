@@ -24,29 +24,28 @@ export type Track = {
   cover: string;
 };
 
+/* Names use each artist's own spelling (wave to earth write "love." in
+   lowercase). The first song is the one the player shows before Play. */
 export const playlist: Track[] = [
   {
-    id: "the-weeknd",
+    id: "love",
+    title: "love.",
+    artist: "wave to earth",
+    src: "/audio/wave-to-earth.mp3",
+    cover: "/images/about/album-love.webp", // "0.1 flaws and all." — the original Figma art
+  },
+  {
+    id: "out-of-time",
+    title: "Out of Time",
     artist: "The Weeknd",
     src: "/audio/the-weeknd.mp3",
     cover: "/images/about/cover-the-weeknd.webp",
   },
   {
-    id: "malcolm-todd",
+    id: "i-saw-your-face",
+    title: "I Saw Your Face",
     artist: "Malcolm Todd",
     src: "/audio/malcolm-todd.mp3",
     cover: "/images/about/cover-malcolm-todd.webp",
-  },
-  {
-    id: "don-toliver",
-    artist: "Don Toliver",
-    src: "/audio/don-toliver.mp3",
-    cover: "/images/about/cover-don-toliver.webp",
-  },
-  {
-    id: "wave-to-earth",
-    artist: "wave to earth",
-    src: "/audio/wave-to-earth.mp3",
-    cover: "/images/about/cover-wave-to-earth.webp",
   },
 ];
