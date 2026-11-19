@@ -287,7 +287,7 @@ export default function MusicPlayer({ className = "" }: { className?: string }) 
             className="player-btn grid h-[48px] w-[51px] place-items-center bg-control"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`${art}/player-prev.svg`} alt="" width={18} height={16} className="-scale-x-100" />
+            <img src={`${art}/player-prev.svg`} alt="" width={18} height={16} className="-scale-x-100 dark:invert" />
           </button>
           <button
             type="button"
@@ -298,12 +298,12 @@ export default function MusicPlayer({ className = "" }: { className?: string }) 
           >
             {playing ? (
               <span aria-hidden="true" className="flex h-[17px] gap-[5px]">
-                <span className="w-[5px] bg-[#1c1c1c]" />
-                <span className="w-[5px] bg-[#1c1c1c]" />
+                <span className="w-[5px] bg-[#1c1c1c] dark:bg-ink" />
+                <span className="w-[5px] bg-[#1c1c1c] dark:bg-ink" />
               </span>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={`${art}/player-play.svg`} alt="" width={21} height={17} className="rotate-90" />
+              <img src={`${art}/player-play.svg`} alt="" width={21} height={17} className="rotate-90 dark:invert" />
             )}
           </button>
           <button
@@ -313,7 +313,7 @@ export default function MusicPlayer({ className = "" }: { className?: string }) 
             className="player-btn grid h-[48px] w-[51px] place-items-center bg-control"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`${art}/player-next.svg`} alt="" width={18} height={16} />
+            <img src={`${art}/player-next.svg`} alt="" width={18} height={16} className="dark:invert" />
           </button>
         </div>
       </figcaption>

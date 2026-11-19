@@ -5,17 +5,6 @@ import SkyTrainScene from "@/components/site/SkyTrainScene";
 import { contactEmail, socialLinks } from "@/lib/site";
 
 /*
-  Pixel-block clusters behind "Say Hi!" (Departure Mono 60px, white @27%).
-  Offsets are from the Figma footer, relative to the "Say Hi!" row.
-*/
-const blocks = [
-  { glyphs: "▟\n░\n▒\n▓", x: -58, y: 8 },
-  { glyphs: "▟\n░\n▒\n▓", x: 143, y: 95 },
-  { glyphs: "▜\n▝\n▞", x: -19, y: 19 },
-  { glyphs: "▜\n▝\n▞", x: 19, y: -10, mirror: true },
-];
-
-/*
   Site footer, shared by every page (Figma: e.g. 633:1547 on frame 493:5454).
   On the 1512 frame the three top columns start at x=83 (socials), 345 (code)
   and 909 (drawing); the fr ratios below reproduce those exactly at 1512 and
@@ -57,27 +46,14 @@ export default function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between lg:mt-0">
-          <div className="relative min-h-[198px] pt-[54px]">
-            {blocks.map((block, index) => (
-              <span
-                key={index}
-                aria-hidden="true"
-                className="pointer-events-none absolute whitespace-pre font-pixel text-[60px] leading-[normal] text-white opacity-27"
-                style={{
-                  left: block.x,
-                  top: block.y,
-                  transform: block.mirror ? "scaleX(-1)" : undefined,
-                }}
-              >
-                {block.glyphs}
-              </span>
-            ))}
-            <h2 id="footer-heading" className="relative ml-[42px] font-serif text-[50px] leading-[normal] text-white">
+          {/* "Say Hi!" and the email share one baseline, side by side. */}
+          <div className="flex flex-wrap items-baseline gap-x-[clamp(20px,2.6vw,40px)] gap-y-3 sm:pt-[54px]">
+            <h2 id="footer-heading" className="font-serif text-[50px] leading-[normal] text-white">
               Say Hi!
             </h2>
             <a
               href={`mailto:${contactEmail}`}
-              className="relative ml-[42px] mt-[38px] inline-block font-serif sm:ml-[201px] text-[24px] leading-[normal] underline decoration-1 underline-offset-4 transition-colors hover:text-amber-soft"
+              className="inline-block font-serif text-[24px] leading-[normal] underline decoration-1 underline-offset-4 transition-colors hover:text-amber-soft"
             >
               {contactEmail}
             </a>
