@@ -103,3 +103,30 @@
     translate: 0 0;
   }
 }
+
+/*
+  Work rows: hovering a project's image grows it from its centre outward
+  until it meets the row's hairlines (--row-pad, the 26px gap between media
+  and lines), corners squaring off so it fills the band between the lines.
+  Only the visible layer's inset animates; the .work-media box keeps its
+  size, so nothing else in the row moves. The video inside is object-cover,
+  so it scales up with the layer.
+*/
+.work-media-fill {
+  transition:
+    inset 0.6s var(--ease-snap),
+    border-radius 0.6s var(--ease-snap);
+}
+
+@media (hover: hover) {
+  .work-media:hover .work-media-fill {
+    inset: calc(-1 * var(--row-pad, 26px));
+    border-radius: 0;
+  }
+}
+
+/* Keyboard parity: tabbing onto a row opens its image the same way. */
+.group:focus-visible .work-media-fill {
+  inset: calc(-1 * var(--row-pad, 26px));
+  border-radius: 0;
+}
