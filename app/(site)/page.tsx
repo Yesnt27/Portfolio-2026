@@ -9,8 +9,14 @@ import ThemeToggle from "@/components/site/ThemeToggle";
 /*
   Home — Figma frame 483:143 (1512 x 4745).
   Left column at x=80: name, role, index menu, clock, hero title, intro.
-  The collage sits at x=611 / y=535 and overlaps the end of the title the way
-  the frame does (puzzle mark above the title, phone card beneath it).
+
+  Hero collage: moved right of the frame's x=611. In the frame it covered the
+  end of the title ("interacti|ons"). It is now flush with the column's right
+  edge, lining up with the nav icons above it, and the title is capped in em
+  so it always wraps into the frame's three lines. Title and collage both
+  scale with the viewport, so the gap between them holds at every lg width
+  (~36px at 1512, ~22px at 1024) instead of the title growing into the
+  collage on smaller laptops.
 */
 export default function HomePage() {
   return (
@@ -41,14 +47,17 @@ export default function HomePage() {
         <div className="relative mt-[clamp(48px,13.6vw,206px)] lg:min-h-[548px]">
           <div className="relative z-10 lg:pt-[100px]">
             <LocalClock variant="inline" className="rise-in [--rise-delay:160ms]" />
-            <h1 className="rise-in mt-[30px] max-w-[729px] font-serif text-[clamp(36px,3.97vw,60px)] font-medium leading-[1.333] text-ink [--rise-delay:240ms]">
+            {/* 12.15em = the frame's 729px at 60px type; em keeps the same three
+                lines as the font shrinks with the viewport. */}
+            <h1 className="rise-in mt-[30px] max-w-[729px] font-serif lg:max-w-[12.15em] text-[clamp(36px,3.97vw,60px)] font-medium leading-[1.333] text-ink [--rise-delay:240ms]">
               Designing interactions with emphasis on creative storytelling
             </h1>
           </div>
 
-          {/* No z-index on the collage itself: its card (z-0) slides under the
-              title (z-10) while the puzzle mark (z-20) sits above it. */}
-          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:left-[39.27%] lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
+          {/* Right-aligned to the column (lg:right-0). No z-index on the collage
+              itself: if anything ever overlaps, the card (z-0) still slides under
+              the title (z-10) while the puzzle mark (z-20) sits above it. */}
+          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
 
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>

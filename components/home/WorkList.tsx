@@ -56,28 +56,38 @@ function RowText({ item, linked }: { item: WorkItem; linked: boolean }) {
   );
 }
 
+/*
+  `work-media` is the fixed-size box that holds the media's place in the row
+  (and is the hover target); `work-media-fill` is what you see. On hover the
+  fill grows from its centre out to the row's hairlines (home.css), so the
+  row itself never shifts.
+*/
 function RowMedia({ item }: { item: WorkItem }) {
-  const frame =
-    "work-media relative aspect-[983/553] w-full overflow-hidden rounded-[12px] md:w-[65.01vw] md:max-w-[983px]";
+  const frame = "work-media relative aspect-[983/553] w-full md:w-[65.01vw] md:max-w-[983px]";
+  const fill = "work-media-fill absolute inset-0 overflow-hidden rounded-[12px]";
 
   if (item.media) {
     return (
-      <div className={`${frame} bg-black`}>
-        <AutoVideo
-          sources={item.media.sources}
-          poster={item.media.poster}
-          label={item.media.label}
-          className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-snap group-hover:scale-[1.025]"
-        />
+      <div className={frame}>
+        <div className={`${fill} bg-black`}>
+          <AutoVideo
+            sources={item.media.sources}
+            poster={item.media.poster}
+            label={item.media.label}
+            className="absolute inset-0 size-full object-cover"
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`${frame} grid place-items-center bg-card`}>
-      <span className="font-pixel text-[16.5px] text-muted">
-        coming soon<span className="caret-blink">_</span>
-      </span>
+    <div className={frame}>
+      <div className={`${fill} grid place-items-center bg-card`}>
+        <span className="font-pixel text-[16.5px] text-muted">
+          coming soon<span className="caret-blink">_</span>
+        </span>
+      </div>
     </div>
   );
 }
@@ -107,8 +117,10 @@ export default function WorkList() {
               </Reveal>
             </>
           );
+          /* --row-pad is the gap between the media and the hairlines; the
+             hover grows the media by exactly this much (home.css). */
           const grid =
-            "mx-auto grid max-w-frame gap-y-6 px-4 py-[26px] md:grid-cols-[47.9%_1fr] md:px-0";
+            "mx-auto grid max-w-frame gap-y-6 px-4 py-(--row-pad) [--row-pad:26px] md:grid-cols-[47.9%_1fr] md:px-0";
           return (
             <li key={item.id} className="border-b border-line">
               {item.href ? (
