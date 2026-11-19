@@ -68,27 +68,191 @@ function IndexGrid({ onOpen }: { onOpen: (id: string) => void }) {
 
 /* -------------------------------------------------------------- SHUFFLE -- */
 
-function ShufflePile() {
-  const [order, setOrder] = useState(pileOrder);
-  const [lifting, setLifting] = useState<string | null>(null);
-  const busy = useRef(false);
+/*
+  A shuffle gathers the pile into the middle, riffles it (splits it in two
+  and pushes the halves back together in a new order), then deals every
+  piece into one of the eight Figma places. The selected piece is dealt last,
+  on top, into the top piece's place: centred and straight.
 
-  const shuffle = useCallback(() => {
-    if (busy.current) return;
-    busy.current = true;
-    const top = order[order.length - 1];
-    setLifting(top);
-    /* Halfway through the lift, tuck the card under the pile, then let it settle back. */
-    window.setTimeout(() => {
-      setOrder((current) => [top, ...current.filter((id) => id !== top)]);
-      window.setTimeout(() => {
-        setLifting(null);
-        busy.current = false;
-      }, 40);
-    }, 320);
-  }, [order]);
+  The selection works like a shuffled playlist: each shuffle picks from the
+  pieces that haven't been on top yet this round, and once all eight have had
+  a turn, a new round starts without the piece that is already showing.
+*/
 
-  const topId = order[order.length - 1];
+/* Where a piece sits, in px on the 1512 frame, plus its tilt, scale and how
+   long it waits before moving (so the deal lands one piece at a time). */
+type Spot = { x: number; y: number; r: number; s: number; delay: number };
+type Deck = {
+  order: string[]; // bottom to top
+  spots: Record<string, Spot>;
+  bag: string[]; // pieces still to come up this round
+};
+type Phase = "gather" | "split" | "merge" | "deal";
+
+const ALL_IDS = sandboxItems.map((item) => item.id);
+
+/* The Figma places, top piece's first. */
+const PLACES = [...pileOrder].reverse().map((id) => byId.get(id)!.pile);
+const MIDDLE = { x: STAGE.width / 2, y: STAGE.top + STAGE.height / 2 };
+
+/* Each step's move: how long it takes, and its easing. */
+const MOVES: Record<Phase, { ms: number; ease: string }> = {
+  gather: { ms: 260, ease: "cubic-bezier(0.45, 0, 0.2, 1)" },
+  split: { ms: 190, ease: "cubic-bezier(0.3, 0, 0.2, 1)" },
+  merge: { ms: 190, ease: "cubic-bezier(0.3, 0, 0.2, 1)" },
+  deal: { ms: 520, ease: "var(--ease-snap)" },
+};
+/* The most a piece's start is staggered within a step, and the gap between dealt pieces. */
+const STAGGER: Record<Phase, number> = { gather: 40, split: 30, merge: 20, deal: 24 };
+/* Pieces are 80% size while gathered, so the bundle stays compact. */
+const BUNDLE_SCALE = 0.8;
+/* How far (frame px) a dealt piece may hang past the stage edge before it is scaled down. */
+const EDGE = 36;
+
+const jitter = (amount: number) => (Math.random() * 2 - 1) * amount;
+
+function shuffled<T>(list: T[]): T[] {
+  const out = [...list];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/* Largest scale (up to 1) that keeps a tilted piece within EDGE of the stage. */
+function fitScale(item: SandboxItem, x: number, y: number, r: number) {
+  const angle = (r * Math.PI) / 180;
+  const cos = Math.abs(Math.cos(angle));
+  const sin = Math.abs(Math.sin(angle));
+  const halfW = (item.pile.w * cos + item.pile.h * sin) / 2;
+  const halfH = (item.pile.w * sin + item.pile.h * cos) / 2;
+  const roomX = Math.min(x, STAGE.width - x) + EDGE;
+  const roomY = Math.min(y - STAGE.top, STAGE.top + STAGE.height - y) + EDGE;
+  return Math.min(1, roomX / halfW, roomY / halfH);
+}
+
+/* The pile as Figma draws it. Its top piece counts as this round's first turn. */
+function figmaDeck(): Deck {
+  const spots: Record<string, Spot> = {};
+  for (const item of sandboxItems) {
+    spots[item.id] = { x: item.pile.cx, y: item.pile.cy, r: item.pile.rotate, s: 1, delay: 0 };
+  }
+  const top = pileOrder[pileOrder.length - 1];
+  return { order: pileOrder, spots, bag: ALL_IDS.filter((id) => id !== top) };
+}
+
+/* Choose the next piece for the top, starting a new round when the bag is empty. */
+function pickNext(deck: Deck) {
+  const showing = deck.order[deck.order.length - 1];
+  let bag = deck.bag.filter((id) => id !== showing);
+  if (bag.length === 0) bag = ALL_IDS.filter((id) => id !== showing);
+  const next = bag[Math.floor(Math.random() * bag.length)];
+  return { next, bag: bag.filter((id) => id !== next) };
+}
+
+/* Every piece bunched near the middle, loosely squared up. */
+function bundle(order: string[], spread: { x: number; y: number; r: number }, phase: Phase) {
+  const spots: Record<string, Spot> = {};
+  for (const id of order) {
+    spots[id] = {
+      x: MIDDLE.x + jitter(spread.x),
+      y: MIDDLE.y + jitter(spread.y),
+      r: jitter(spread.r),
+      s: BUNDLE_SCALE,
+      delay: Math.random() * STAGGER[phase],
+    };
+  }
+  return spots;
+}
+
+/* The deck cut in two: bottom half to the left, top half to the right. */
+function split(order: string[]) {
+  const spots: Record<string, Spot> = {};
+  order.forEach((id, z) => {
+    const side = z < order.length / 2 ? -1 : 1;
+    spots[id] = {
+      x: MIDDLE.x + side * 180 + jitter(14),
+      y: MIDDLE.y + jitter(14),
+      r: side * 9 + jitter(3),
+      s: BUNDLE_SCALE,
+      delay: Math.random() * STAGGER.split,
+    };
+  });
+  return spots;
+}
+
+/* The selected piece on top in the centre; the rest in random places and order. */
+function deal(top: string): Pick<Deck, "order" | "spots"> {
+  const rest = shuffled(ALL_IDS.filter((id) => id !== top));
+  const places = shuffled(PLACES.slice(1));
+  const spots: Record<string, Spot> = {};
+  rest.forEach((id, i) => {
+    const place = places[i];
+    const x = place.cx + jitter(14);
+    const y = place.cy + jitter(14);
+    const r = place.rotate + jitter(4);
+    spots[id] = { x, y, r, s: fitScale(byId.get(id)!, x, y, r), delay: i * STAGGER.deal };
+  });
+  const centre = PLACES[0];
+  spots[top] = {
+    x: centre.cx,
+    y: centre.cy,
+    r: 0,
+    s: fitScale(byId.get(top)!, centre.cx, centre.cy, 0),
+    delay: rest.length * STAGGER.deal,
+  };
+  return { order: [...rest, top], spots };
+}
+
+const pct = (value: number) => ((value / STAGE.width) * 100).toFixed(3);
+
+function ShufflePile({ memory }: { memory: { current: Deck | null } }) {
+  const [deck, setDeck] = useState<Deck>(() => memory.current ?? figmaDeck());
+  const [phase, setPhase] = useState<Phase>("deal");
+  const timers = useRef<number[]>([]);
+  /* Clicks are ignored until the riffle is done; once the deal starts, a
+     click starts the next shuffle from wherever the pieces are in flight. */
+  const busy = phase !== "deal";
+
+  useEffect(() => () => timers.current.forEach(window.clearTimeout), []);
+
+  const shuffle = () => {
+    if (busy) return;
+    timers.current.forEach(window.clearTimeout);
+    timers.current = [];
+
+    const { next, bag } = pickNext(deck);
+    const dealt = { ...deal(next), bag };
+    memory.current = dealt;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      for (const spot of Object.values(dealt.spots)) spot.delay = 0;
+      setDeck(dealt);
+      return;
+    }
+
+    /* Each step starts once the slowest piece of the previous one has landed. */
+    const steps: [Phase, Deck][] = [
+      ["gather", { ...deck, spots: bundle(deck.order, { x: 40, y: 26, r: 12 }, "gather") }],
+      ["split", { ...deck, spots: split(deck.order) }],
+      ["merge", { ...dealt, spots: bundle(dealt.order, { x: 10, y: 8, r: 5 }, "merge") }],
+      ["deal", dealt],
+    ];
+    let at = 0;
+    for (const [step, layout] of steps) {
+      const run = () => {
+        setPhase(step);
+        setDeck(layout);
+      };
+      if (at === 0) run();
+      else timers.current.push(window.setTimeout(run, at));
+      at += MOVES[step].ms + STAGGER[step];
+    }
+  };
+
+  const topId = deck.order[deck.order.length - 1];
+  const move = MOVES[phase];
 
   return (
     <div className="flex flex-col items-center">
@@ -96,34 +260,45 @@ function ShufflePile() {
         type="button"
         onClick={shuffle}
         aria-label={`Shuffle the pile. Top piece: ${caption(byId.get(topId)!)}`}
+        data-busy={busy ? "" : undefined}
         className="pile-stage relative w-full"
-        style={{ aspectRatio: `${STAGE.width} / ${STAGE.height}` }}
+        style={{
+          aspectRatio: `${STAGE.width} / ${STAGE.height}`,
+          ["--move-ms" as string]: `${move.ms}ms`,
+          ["--move-ease" as string]: move.ease,
+        }}
       >
-        {order.map((id, z) => {
-          const item = byId.get(id)!;
-          const { cx, cy, w, h, rotate } = item.pile;
+        {/* Rendered in a fixed order and stacked with z-index: moving the
+            elements in the DOM would cut their transitions short. */}
+        {sandboxItems.map((item) => {
+          const { id } = item;
+          const { w, h } = item.pile;
+          const spot = deck.spots[id];
           return (
             <span
               key={id}
               className="pile-card absolute block"
               data-top={id === topId ? "" : undefined}
-              data-lift={id === lifting ? "" : undefined}
               style={{
-                zIndex: z + 1,
-                left: `${(cx / STAGE.width) * 100}%`,
-                top: `${((cy - STAGE.top) / STAGE.height) * 100}%`,
+                zIndex: deck.order.indexOf(id) + 1,
                 width: `${(w / STAGE.width) * 100}%`,
                 aspectRatio: `${w} / ${h}`,
-                ["--r" as string]: `${rotate}deg`,
+                ["--x" as string]: pct(spot.x),
+                ["--y" as string]: pct(spot.y - STAGE.top),
+                ["--r" as string]: `${spot.r.toFixed(2)}deg`,
+                ["--s" as string]: spot.s.toFixed(3),
+                ["--delay" as string]: `${Math.round(spot.delay)}ms`,
               }}
             >
-              <SandboxMedia
-                item={item}
-                mode="pile"
-                playing={id === topId}
-                sizes="40vw"
-                className="size-full shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-              />
+              <span className="pile-face block size-full">
+                <SandboxMedia
+                  item={item}
+                  mode="pile"
+                  playing={id === topId}
+                  sizes="40vw"
+                  className="size-full shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
+                />
+              </span>
             </span>
           );
         })}
@@ -212,6 +387,8 @@ function Lightbox({ openId, onClose, onStep }: { openId: string | null; onClose:
 export default function SandboxGallery() {
   const [view, setView] = useState<View>("index");
   const [openId, setOpenId] = useState<string | null>(null);
+  /* The pile and its round survive switching to INDEX and back. */
+  const pileMemory = useRef<Deck | null>(null);
 
   useEffect(() => {
     if (window.location.hash === "#shuffle") setView("shuffle");
@@ -268,7 +445,7 @@ export default function SandboxGallery() {
           </div>
         ) : (
           <div className="view-enter px-[clamp(8px,2vw,30px)]">
-            <ShufflePile />
+            <ShufflePile memory={pileMemory} />
           </div>
         )}
       </div>

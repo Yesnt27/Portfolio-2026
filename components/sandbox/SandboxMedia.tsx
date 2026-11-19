@@ -1,7 +1,53 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import AutoVideo from "@/components/ui/AutoVideo";
 import type { SandboxItem } from "@/lib/sandbox";
+
+type VideoMedia = Extract<SandboxItem["media"], { kind: "video" }>;
+
+/*
+  The zoomed-in video, the only place a piece plays with sound. Opening the
+  lightbox is a click, which lets browsers start it unmuted; if one still
+  refuses, it plays muted instead of sitting paused, and the controls can
+  turn the sound on.
+*/
+function LightboxVideo({ media }: { media: VideoMedia }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    let live = true;
+    video.muted = false;
+    video.play().catch((error: DOMException) => {
+      /* Only an autoplay refusal; a play() cut short by closing isn't one. */
+      if (!live || error.name !== "NotAllowedError") return;
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+    return () => {
+      live = false;
+      video.pause();
+    };
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      controls
+      loop
+      playsInline
+      poster={media.poster}
+      aria-label={media.alt}
+      className="size-full bg-black object-contain"
+    >
+      {media.sources.map((source) => (
+        <source key={source.src} src={source.src} type={source.type} />
+      ))}
+    </video>
+  );
+}
 
 type SandboxMediaProps = {
   item: SandboxItem;
@@ -66,23 +112,12 @@ export default function SandboxMedia({ item, mode, playing = true, sizes = "50vw
   if (mode === "lightbox") {
     return (
       <div className={`${mat} ${className}`}>
-        <video
-          controls
-          autoPlay
-          loop
-          playsInline
-          poster={media.poster}
-          aria-label={media.alt}
-          className="size-full bg-black object-contain"
-        >
-          {media.sources.map((source) => (
-            <source key={source.src} src={source.src} type={source.type} />
-          ))}
-        </video>
+        <LightboxVideo media={media} />
       </div>
     );
   }
 
+  /* Grid and pile previews are always muted (AutoVideo); sound is for the lightbox. */
   return (
     <div className={`relative ${mat} ${className}`}>
       {playing ? (
