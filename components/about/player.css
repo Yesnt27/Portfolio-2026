@@ -91,6 +91,46 @@
   animation: player-skip-prev 0.5s var(--ease-snap);
 }
 
+/*
+  Song name. The slot beside the buttons is ~125px, so most names overflow.
+  Instead of an ellipsis, an overflowing name glides to its end and back
+  (pausing at each end) while the song plays or the card is hovered. The
+  inner span's 18px of right padding is counted in the overflow, so at the
+  end of the glide the last letter clears the soft fade on the right edge.
+  Reduced motion: the global rule stops the glide; the fade still shows the
+  name continues.
+*/
+.player-title {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.player-title > span {
+  display: inline-block;
+  padding-right: 18px;
+}
+
+.player-title[data-overflow] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent);
+}
+
+.player[data-playing] .player-title[data-overflow] > span,
+.player:hover .player-title[data-overflow] > span,
+.player:focus-within .player-title[data-overflow] > span {
+  animation: player-marquee var(--marquee-time, 5s) ease-in-out infinite alternate;
+}
+
+@keyframes player-marquee {
+  0%,
+  18% {
+    translate: 0 0;
+  }
+  82%,
+  100% {
+    translate: var(--marquee) 0;
+  }
+}
+
 /* Pixel-style press: the key sinks 2px, no soft shadow. */
 .player-btn {
   transition:
