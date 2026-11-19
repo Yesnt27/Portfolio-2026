@@ -17,11 +17,16 @@ import ThemeToggle from "@/components/site/ThemeToggle";
   scale with the viewport, so the gap between them holds at every lg width
   (~36px at 1512, ~22px at 1024) instead of the title growing into the
   collage on smaller laptops.
+
+  Vertically (lg+), the whole hero fits the first screen of a laptop
+  (verified 1512x860, 1440x820, 1920x960): tighter gaps under the menu, two
+  of them in vh so short screens shrink them, and the collage lifted into
+  the empty space under the nav icons (lg:-top-[210px]).
 */
 export default function HomePage() {
   return (
     <main id="main">
-      <section className="relative mx-auto max-w-frame px-[clamp(20px,5.29vw,80px)] pt-[clamp(28px,4.43vw,67px)]">
+      <section className="relative mx-auto max-w-frame px-[clamp(20px,5.29vw,80px)] pt-[clamp(28px,4.43vw,67px)] lg:pt-[clamp(28px,2.6vw,40px)]">
         <header className="flex items-start justify-between gap-6">
           <div className="rise-in">
             <Link href="/" className="font-pixel text-[16.5px] leading-[normal] text-copy transition-colors hover:text-ink">
@@ -33,7 +38,7 @@ export default function HomePage() {
                 Visual design &amp; Product Designer
               </span>
             </Link>
-            <IndexMenu className="mt-[57px]" />
+            <IndexMenu className="mt-[57px] lg:mt-[36px]" />
           </div>
 
           <div className="rise-in flex items-start gap-[clamp(20px,3.6vw,54px)] [--rise-delay:80ms] md:-mt-[20px]">
@@ -44,12 +49,12 @@ export default function HomePage() {
           </div>
         </header>
 
-        <div className="relative mt-[clamp(48px,13.6vw,206px)] lg:min-h-[548px]">
-          <div className="relative z-10 lg:pt-[100px]">
+        <div className="relative mt-[clamp(48px,13.6vw,206px)] lg:mt-[clamp(8px,1.6vh,24px)] lg:min-h-[548px]">
+          <div className="relative z-10">
             <LocalClock variant="inline" className="rise-in [--rise-delay:160ms]" />
             {/* 12.15em = the frame's 729px at 60px type; em keeps the same three
                 lines as the font shrinks with the viewport. */}
-            <h1 className="rise-in mt-[30px] max-w-[729px] font-serif lg:max-w-[12.15em] text-[clamp(36px,3.97vw,60px)] font-medium leading-[1.333] text-ink [--rise-delay:240ms]">
+            <h1 className="rise-in mt-[30px] lg:mt-[clamp(14px,2.2vh,30px)] max-w-[729px] font-serif lg:max-w-[12.15em] text-[clamp(36px,3.97vw,60px)] font-medium leading-[1.333] text-ink [--rise-delay:240ms]">
               Designing interactions with emphasis on creative storytelling
             </h1>
           </div>
@@ -57,11 +62,11 @@ export default function HomePage() {
           {/* Right-aligned to the column (lg:right-0). No z-index on the collage
               itself: if anything ever overlaps, the card (z-0) still slides under
               the title (z-10) while the puzzle mark (z-20) sits above it. */}
-          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
+          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:right-0 lg:-top-[210px] lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
 
-          <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms]">
+          <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms] lg:mt-[20px]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>
-            <div className="mt-[33px] max-w-[222px] space-y-[20px] font-serif text-[16.5px] font-medium leading-[20px] text-copy">
+            <div className="mt-[33px] max-w-[222px] lg:mt-[20px] space-y-[20px] font-serif text-[16.5px] font-medium leading-[20px] text-copy">
               <p>Kenny is a designer who uses stunning visuals and intuitive interactions to create thoughtful products.</p>
               <p>Building things through disciplinary visual mediums in tandem with code.</p>
             </div>
