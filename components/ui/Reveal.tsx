@@ -11,7 +11,9 @@ type RevealProps = {
   style?: CSSProperties;
 };
 
-/* Fades + lifts its content into place the first time it scrolls into view. */
+/* Fades + lifts its content into place the first time it scrolls into view.
+   Use it to make something reveal as one piece (a card, a row); everything
+   else is picked up automatically by ScrollReveal. */
 export default function Reveal({ children, as: Tag = "div", className = "", delay = 0, style }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -21,7 +23,9 @@ export default function Reveal({ children, as: Tag = "div", className = "", dela
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
-        node.dataset.reveal = "in";
+        // Only from hidden: ScrollReveal may have already shown a wrapper too
+        // tall to animate as one piece ("done"), and replaying it would blink.
+        if (node.dataset.reveal === "") node.dataset.reveal = "in";
         observer.disconnect();
       },
       { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },

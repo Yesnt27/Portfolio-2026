@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import DitherBackground from "@/components/DitherBackground";
 import BlendCursor from "@/components/site/BlendCursor";
 import SiteFooter from "@/components/site/SiteFooter";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 import "./globals.css";
 
 /* Pixel UI face: nav, labels, captions, footer. SIL OFL (fonts/DepartureMono-LICENSE.txt). */
@@ -80,6 +81,7 @@ export default function RootLayout({
         <DitherBackground />
         {children}
         <SiteFooter />
+        <ScrollReveal />
         {/* Last in <body> so it blends over everything. */}
         <BlendCursor />
       </body>
