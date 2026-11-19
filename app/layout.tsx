@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import DitherBackground from "@/components/DitherBackground";
+import BlendCursor from "@/components/site/BlendCursor";
 import SiteFooter from "@/components/site/SiteFooter";
 import "./globals.css";
 
@@ -79,6 +80,8 @@ export default function RootLayout({
         <DitherBackground />
         {children}
         <SiteFooter />
+        {/* Last in <body> so it blends over everything. */}
+        <BlendCursor />
       </body>
     </html>
   );
