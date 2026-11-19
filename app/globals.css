@@ -314,16 +314,6 @@ html.has-blend-cursor :is(input, textarea, [contenteditable="true"]) {
     opacity 0.2s ease;
 }
 
-/* Utility: hide visually but keep for assistive tech. */
-.sr-only-focusable:not(:focus):not(:focus-within) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 /*
   Scroll reveal. Every block of content fades up into place the first time it
   scrolls into view: explicit wrappers from components/ui/Reveal.tsx, plus

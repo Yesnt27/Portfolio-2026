@@ -34,13 +34,6 @@ export default function SiteHeader({ active, compact = false, showToggle = true 
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only-focusable fixed left-4 top-4 z-[60] bg-ink px-3 py-2 font-pixel text-[14px] text-paper"
-      >
-        Skip to content
-      </a>
-
       <header
         data-scrolled={scrolled ? "" : undefined}
         className={`fixed inset-x-0 top-0 z-40 transition-[background-color,backdrop-filter] duration-500 ${

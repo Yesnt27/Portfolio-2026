@@ -95,12 +95,14 @@ const ALL_IDS = sandboxItems.map((item) => item.id);
 const PLACES = [...pileOrder].reverse().map((id) => byId.get(id)!.pile);
 const MIDDLE = { x: STAGE.width / 2, y: STAGE.top + STAGE.height / 2 };
 
-/* Each step's move: how long it takes, and its easing. */
+/* Each step's move: how long it takes, and its easing. Everything eases in;
+   the deal (where the pieces travel to their places) takes 0.3s and the
+   riffle steps before it are quicker, so a whole shuffle is ~0.9s. */
 const MOVES: Record<Phase, { ms: number; ease: string }> = {
-  gather: { ms: 260, ease: "cubic-bezier(0.45, 0, 0.2, 1)" },
-  split: { ms: 190, ease: "cubic-bezier(0.3, 0, 0.2, 1)" },
-  merge: { ms: 190, ease: "cubic-bezier(0.3, 0, 0.2, 1)" },
-  deal: { ms: 520, ease: "var(--ease-snap)" },
+  gather: { ms: 180, ease: "ease-in" },
+  split: { ms: 140, ease: "ease-in" },
+  merge: { ms: 140, ease: "ease-in" },
+  deal: { ms: 300, ease: "ease-in" },
 };
 /* The most a piece's start is staggered within a step, and the gap between dealt pieces. */
 const STAGGER: Record<Phase, number> = { gather: 40, split: 30, merge: 20, deal: 24 };
