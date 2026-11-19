@@ -21,43 +21,39 @@
   background-color: color-mix(in srgb, var(--color-card) 88%, var(--color-ink));
 }
 
-/* ---- SHUFFLE: placed by centre point, rotated to its Figma angle ---- */
+/* ---- SHUFFLE ----
+   Each piece is placed by its centre point (--x/--y, in % of the stage
+   width, hence cqw), tilted and scaled. Only transforms animate, so the
+   shuffle never re-lays out the page. SandboxGallery sets the step's
+   duration and easing on the stage and each piece's start delay. */
+.pile-stage {
+  container-type: inline-size;
+}
+
 .pile-card {
-  translate: -50% -50%;
+  left: 0;
+  top: 0;
+  translate: calc(var(--x) * 1cqw - 50%) calc(var(--y) * 1cqw - 50%);
   rotate: var(--r);
+  scale: var(--s);
+  transition-property: translate, rotate, scale;
+  transition-duration: var(--move-ms, 520ms);
+  transition-timing-function: var(--move-ease, var(--ease-snap));
+  transition-delay: var(--delay, 0ms);
+}
+
+/* Hover lifts the top piece; it lives on an inner layer so it never
+   inherits the shuffle's timing. */
+.pile-face {
   transition:
     translate 0.32s cubic-bezier(0.3, 0.8, 0.3, 1),
-    rotate 0.32s cubic-bezier(0.3, 0.8, 0.3, 1),
     scale 0.32s cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
-/* The selected (top) piece reads bigger than the rest: everything under it
-   steps back to 92%, the top piece comes forward to 106%. Shuffling swaps
-   which card is on top, so the sizes animate with each press. */
-.pile-card {
-  scale: 0.92;
-}
-
-.pile-card[data-top] {
-  scale: 1.06;
-}
-
-.pile-stage:hover .pile-card[data-top],
-.pile-stage:focus-visible .pile-card[data-top] {
-  translate: -50% calc(-50% - 10px);
-  scale: 1.075;
-}
-
-/* Lift: the top piece slides out to the side, gets tucked under the pile
-   (z-index swaps mid-flight in SandboxGallery), then settles back.
-   The first selector matches the hover rule's weight and comes later, so it
-   wins: you're always hovering when you click, and that used to cancel the
-   slide-out. */
-.pile-stage .pile-card[data-top][data-lift],
-.pile-stage .pile-card[data-lift] {
-  translate: calc(-50% + clamp(110px, 22vw, 340px)) calc(-50% - 56px);
-  rotate: calc(var(--r) + 9deg);
-  scale: 1.08;
+.pile-stage:not([data-busy]):hover .pile-card[data-top] .pile-face,
+.pile-stage:not([data-busy]):focus-visible .pile-card[data-top] .pile-face {
+  translate: 0 -10px;
+  scale: 1.012;
 }
 
 @keyframes pile-hint {
