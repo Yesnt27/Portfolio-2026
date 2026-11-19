@@ -273,12 +273,14 @@ export default function SandboxGallery() {
         )}
       </div>
 
-      {/* Pager (Figma 645:2309 / 645:2526 / 645:2527) — steps between views. */}
-      <div className="mt-[clamp(40px,5.4vw,82px)] flex items-center justify-center gap-[19px] font-pixel text-[24px] leading-[normal] text-ink">
+      {/* Pager (Figma 645:2309 / 645:2526 / 645:2527) — steps between views.
+          Sticky: it rides the bottom of the screen while you scroll the
+          gallery, then settles in place above the footer at the end. */}
+      <div className="pointer-events-none sticky bottom-[clamp(12px,1.6vw,24px)] z-40 mt-[clamp(40px,5.4vw,82px)] flex items-center justify-center gap-[19px] font-pixel text-[24px] leading-[normal] text-ink [&>*]:pointer-events-auto [&>*]:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)]">
         <button type="button" onClick={() => cycle(-1)} aria-label="Previous view" className="pager-key grid h-[64px] w-[80px] place-items-center bg-card">
           ←
         </button>
-        <p className="grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase" aria-live="polite">
+        <p className="!pointer-events-none grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase" aria-live="polite">
           {view}
         </p>
         <button type="button" onClick={() => cycle(1)} aria-label="Next view" className="pager-key grid h-[64px] w-[80px] place-items-center bg-card">

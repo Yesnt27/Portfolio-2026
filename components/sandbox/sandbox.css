@@ -31,18 +31,33 @@
     scale 0.32s cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
+/* The selected (top) piece reads bigger than the rest: everything under it
+   steps back to 92%, the top piece comes forward to 106%. Shuffling swaps
+   which card is on top, so the sizes animate with each press. */
+.pile-card {
+  scale: 0.92;
+}
+
+.pile-card[data-top] {
+  scale: 1.06;
+}
+
 .pile-stage:hover .pile-card[data-top],
 .pile-stage:focus-visible .pile-card[data-top] {
   translate: -50% calc(-50% - 10px);
-  scale: 1.012;
+  scale: 1.075;
 }
 
 /* Lift: the top piece slides out to the side, gets tucked under the pile
-   (z-index swaps mid-flight in SandboxGallery), then settles back. */
-.pile-card[data-lift] {
+   (z-index swaps mid-flight in SandboxGallery), then settles back.
+   The first selector matches the hover rule's weight and comes later, so it
+   wins: you're always hovering when you click, and that used to cancel the
+   slide-out. */
+.pile-stage .pile-card[data-top][data-lift],
+.pile-stage .pile-card[data-lift] {
   translate: calc(-50% + clamp(110px, 22vw, 340px)) calc(-50% - 56px);
   rotate: calc(var(--r) + 9deg);
-  scale: 1.04;
+  scale: 1.08;
 }
 
 @keyframes pile-hint {
