@@ -83,7 +83,7 @@ export default function AboutPage() {
                   right, and so I iterate, and build in code.
                 </p>
                 <p className="mt-[21px]">
-                  I am currently pursing a Bachelors of Science in interactive Arts and Technology at Simon
+                  I am currently pursuing a Bachelors of Science in interactive Arts and Technology at Simon
                   Fraser University, with a computing science minor.
                 </p>
                 <p className="mt-[21px]">

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import HeroCollage from "@/components/home/HeroCollage";
 import IndexMenu from "@/components/home/IndexMenu";
 import WorkList from "@/components/home/WorkList";
 import LocalClock from "@/components/site/LocalClock";
@@ -54,10 +53,8 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* Right-aligned to the column (lg:right-0). No z-index on the collage
-              itself: if anything ever overlaps, the card (z-0) still slides under
-              the title (z-10) while the puzzle mark (z-20) sits above it. */}
-          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
+          {/* Right side intentionally left blank for now (the hero collage was
+              removed; content to come). lg:min-h above keeps the space reserved. */}
 
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>
