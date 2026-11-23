@@ -84,10 +84,10 @@ function TiltedRows() {
   );
 }
 
-/* B: a straight 4 x 2 grid; the title bar carries the caption. */
+/* B: a straight 4 x 2 grid of 314px columns; the title bar carries the caption. */
 function CleanGrid() {
   return (
-    <div className="mx-auto grid max-w-[1352px] grid-cols-2 gap-[clamp(16px,1.85vw,28px)] px-[clamp(16px,5.3vw,80px)] md:grid-cols-4">
+    <div className="mx-auto grid grid-cols-2 justify-center gap-[clamp(16px,1.85vw,28px)] px-[clamp(16px,5.3vw,80px)] md:grid-cols-[repeat(4,min(20.77vw,314px))] md:px-0">
       {ORDER.map((item, i) => (
         <Window
           key={item.id}
@@ -102,12 +102,12 @@ function CleanGrid() {
   );
 }
 
-/* C: portrait windows; even columns drop down, each with a slight tilt. */
+/* C: 290px portrait windows; even columns drop down, each with a slight tilt. */
 const C_TILT = [-1.5, 1.2, -0.8, 1.6, 1, -1.4, 1.5, -1];
 
 function StaggeredPortrait() {
   return (
-    <div className="mx-auto grid max-w-[1352px] grid-cols-2 gap-x-[clamp(16px,2.6vw,40px)] gap-y-[clamp(20px,2.6vw,40px)] px-[clamp(16px,7vw,106px)] pb-[clamp(30px,4vw,60px)] md:grid-cols-4">
+    <div className="mx-auto grid grid-cols-2 justify-center gap-x-[clamp(16px,2.6vw,40px)] gap-y-[clamp(20px,2.6vw,40px)] px-[clamp(16px,7vw,106px)] pb-[clamp(30px,4vw,60px)] md:grid-cols-[repeat(4,min(19.18vw,290px))] md:px-0">
       {ORDER.map((item, i) => (
         <Window
           key={item.id}

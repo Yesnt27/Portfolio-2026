@@ -68,7 +68,7 @@
   --drop: 0px;
   position: relative;
   flex: none;
-  width: 19.84%; /* 300px on the 1512 frame */
+  width: min(19.84vw, 300px); /* 300px on the 1512 frame */
   top: var(--drop);
   outline: none;
 }
