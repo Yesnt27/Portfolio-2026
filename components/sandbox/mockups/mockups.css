@@ -54,7 +54,8 @@
 }
 
 /*
-  C2, "file drawer": portrait windows standing edge to edge in two rows.
+  C2, "file drawer": portrait windows standing edge to edge in a flat
+  4 x 2 wall (both rows' top and bottom edges line up).
   Hovering a box pulls it up out of its slot like a file out of a drawer:
   the slot behind shows as a recess, the box rises, tilts and grows over
   the row above, and its two neighbours lean away, pivoting at their base.
@@ -65,15 +66,10 @@
 }
 
 .mk-cell {
-  --drop: 0px;
   position: relative;
   flex: none;
   width: min(19.84vw, 300px); /* 300px on the 1512 frame */
-  top: var(--drop);
   outline: none;
-}
-.mk-cell:nth-child(even) {
-  --drop: clamp(20px, 3.97vw, 60px);
 }
 
 /* The slot a box sits in; only seen once the box lifts out of it. */
