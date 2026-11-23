@@ -1,0 +1,54 @@
+/* MOCKUP ONLY: styles for /sandbox/mockups/[variant]. */
+
+.mk-win {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-mat);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.05),
+    0 16px 32px -20px rgb(0 0 0 / 0.5);
+}
+
+.mk-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  height: clamp(18px, 1.9vw, 28px);
+  padding-inline: 4.5%;
+  background: var(--color-card);
+  font-family: var(--font-pixel);
+  font-size: clamp(10px, 0.85vw, 13px);
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.mk-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 3.5%;
+  padding: 4.5%;
+}
+
+.mk-body img {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* B: a hovered box lifts and tilts (shown on one box in the mockup). */
+.mk-lift {
+  transition: transform 300ms var(--ease-snap), box-shadow 300ms var(--ease-snap);
+}
+.mk-lift:hover,
+.mk-lift[data-demo-hover] {
+  transform: translateY(-8px) rotate(-1.5deg);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.05),
+    0 26px 40px -22px rgb(0 0 0 / 0.6);
+}
