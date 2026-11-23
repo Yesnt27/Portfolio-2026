@@ -48,10 +48,4 @@ export const workItems: WorkItem[] = [
     tags: ["Brand design"],
     description: "Rebranding of the Renovo organization",
   },
-  {
-    id: "clue",
-    title: ["Clue"],
-    meta: "",
-    tags: [],
-  },
 ];
