@@ -19,6 +19,12 @@ type SiteHeaderProps = {
   card-suit nav right, a 2px #363636 rule at y=128. Fixed rather than sticky:
   the spacer below keeps its full height, so shrinking the bar on scroll never
   shifts the page underneath it.
+
+  No backdrop-filter on the scrolled bar: blurring what's behind it makes the
+  GPU re-read the full-screen dither canvas (which redraws while scrolling)
+  on every frame. On some Windows GPU drivers that read goes stale and the
+  page smears and ghosts while scrolling. A near-opaque paper fill reads the
+  same without that cost.
 */
 export default function SiteHeader({ active, compact = false, showToggle = true }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
@@ -36,8 +42,8 @@ export default function SiteHeader({ active, compact = false, showToggle = true 
     <>
       <header
         data-scrolled={scrolled ? "" : undefined}
-        className={`fixed inset-x-0 top-0 z-40 transition-[background-color,backdrop-filter] duration-500 ${
-          scrolled ? "bg-paper/80 backdrop-blur-[10px]" : "bg-transparent"
+        className={`fixed inset-x-0 top-0 z-40 transition-[background-color] duration-500 ${
+          scrolled ? "bg-paper/95" : "bg-transparent"
         }`}
       >
         <div
