@@ -96,7 +96,7 @@ const PAPER_TOKEN = "--color-paper";
 const INK_TOKEN = "--color-dither";
 const FALLBACK: Palette = {
   paper: [0xf3 / 255, 0xf1 / 255, 0xef / 255],
-  ink: [0xcf / 255, 0xcd / 255, 0xcb / 255],
+  ink: [0xdc / 255, 0xda / 255, 0xd8 / 255],
 };
 
 /* ---------------------------------------------------------------- shaders */

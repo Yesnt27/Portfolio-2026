@@ -1,5 +1,4 @@
 import Link from "next/link";
-import HeroCollage from "@/components/home/HeroCollage";
 import IndexMenu from "@/components/home/IndexMenu";
 import WorkList from "@/components/home/WorkList";
 import LocalClock from "@/components/site/LocalClock";
@@ -20,8 +19,8 @@ import ThemeToggle from "@/components/site/ThemeToggle";
 
   Vertically (lg+), the whole hero fits the first screen of a laptop
   (verified 1512x860, 1440x820, 1920x960): tighter gaps under the menu, two
-  of them in vh so short screens shrink them, and the collage lifted into
-  the empty space under the nav icons (lg:-top-[210px]).
+  of them in vh so short screens shrink them. (The hero collage has since
+  been removed; the right side is reserved for content to come.)
 */
 export default function HomePage() {
   return (
@@ -59,10 +58,8 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* Right-aligned to the column (lg:right-0). No z-index on the collage
-              itself: if anything ever overlaps, the card (z-0) still slides under
-              the title (z-10) while the puzzle mark (z-20) sits above it. */}
-          <HeroCollage className="mx-auto my-10 w-full max-w-[560px] lg:absolute lg:right-0 lg:-top-[210px] lg:my-0 lg:w-[50.04%] lg:max-w-none [&_.hero-card]:z-0 [&_.hero-icon]:z-20" />
+          {/* Right side intentionally left blank for now (the hero collage was
+              removed; content to come). lg:min-h above keeps the space reserved. */}
 
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms] lg:mt-[20px]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>
