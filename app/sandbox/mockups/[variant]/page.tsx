@@ -32,6 +32,7 @@ const VARIANTS = {
   a: { name: "Tilted rows", size: "every box 380 × 262" },
   b: { name: "Clean grid", size: "every box 314 × 217" },
   c: { name: "Staggered portrait", size: "every box 290 × 372" },
+  c2: { name: "File drawer", size: "every box 300 × 385, touching; hover to pull one out" },
 } as const;
 type Variant = keyof typeof VARIANTS;
 
@@ -121,6 +122,26 @@ function StaggeredPortrait() {
   );
 }
 
+/* C2: C's portrait windows standing edge to edge, two rows of four. A
+   hovered box lifts out of its slot (see .mk-cell in mockups.css). Rows are
+   separate so a box's neighbours are only ever beside it. */
+function FileDrawer() {
+  const rows = [ORDER.slice(0, 4), ORDER.slice(4)];
+  return (
+    <div className="pb-[clamp(20px,3.97vw,60px)] pt-[clamp(40px,6vw,90px)]">
+      {rows.map((row, r) => (
+        <div key={r} className="mk-drawer-row">
+          {row.map((item) => (
+            <div key={item.id} tabIndex={0} className="mk-cell" aria-label={`${item.title}, ${item.year}`}>
+              <Window item={item} ratio={300 / 385} titled />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function SandboxMockupPage({ params }: Props) {
   const { variant } = await params;
   const v = VARIANTS[variant as Variant];
@@ -140,6 +161,7 @@ export default async function SandboxMockupPage({ params }: Props) {
           {variant === "a" && <TiltedRows />}
           {variant === "b" && <CleanGrid />}
           {variant === "c" && <StaggeredPortrait />}
+          {variant === "c2" && <FileDrawer />}
         </div>
 
         {/* Shuffle control, after Figma 709:127. */}

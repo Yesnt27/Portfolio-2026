@@ -43,8 +43,8 @@ export default function Window({
         <span aria-hidden="true">---</span>
         {titled && (
           <>
-            <span className="truncate">{item.title}</span>
-            <span className="ml-auto text-muted">{item.year}</span>
+            <span className="mk-title truncate">{item.title}</span>
+            <span className="mk-title ml-auto text-muted">{item.year}</span>
           </>
         )}
       </figcaption>
