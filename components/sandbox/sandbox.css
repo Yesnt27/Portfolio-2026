@@ -1,0 +1,117 @@
+/* Sandbox (components/sandbox/SandboxGallery.tsx). */
+
+/* ---- INDEX: the piece lifts off its card on hover ---- */
+.sandbox-card .sandbox-piece {
+  transition:
+    translate 0.55s var(--ease-snap),
+    rotate 0.55s var(--ease-snap);
+}
+
+.sandbox-card:hover .sandbox-piece,
+.sandbox-card:focus-visible .sandbox-piece {
+  translate: 0 -6px;
+  rotate: -1deg;
+}
+
+.sandbox-card {
+  transition: background-color 0.3s ease;
+}
+
+.sandbox-card:hover {
+  background-color: color-mix(in srgb, var(--color-card) 88%, var(--color-ink));
+}
+
+/* ---- SHUFFLE ----
+   Each piece is placed by its centre point (--x/--y, in % of the stage
+   width, hence cqw), tilted and scaled. Only transforms animate, so the
+   shuffle never re-lays out the page. SandboxGallery sets the step's
+   duration and easing on the stage and each piece's start delay. */
+.pile-stage {
+  container-type: inline-size;
+}
+
+.pile-card {
+  left: 0;
+  top: 0;
+  translate: calc(var(--x) * 1cqw - 50%) calc(var(--y) * 1cqw - 50%);
+  rotate: var(--r);
+  scale: var(--s);
+  transition-property: translate, rotate, scale;
+  transition-duration: var(--move-ms, 520ms);
+  transition-timing-function: var(--move-ease, var(--ease-snap));
+  transition-delay: var(--delay, 0ms);
+}
+
+/* Hover lifts the top piece; it lives on an inner layer so it never
+   inherits the shuffle's timing. */
+.pile-face {
+  transition:
+    translate 0.32s cubic-bezier(0.3, 0.8, 0.3, 1),
+    scale 0.32s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+.pile-stage:not([data-busy]):hover .pile-card[data-top] .pile-face,
+.pile-stage:not([data-busy]):focus-visible .pile-card[data-top] .pile-face {
+  translate: 0 -10px;
+  scale: 1.012;
+}
+
+@keyframes pile-hint {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 5px;
+  }
+}
+
+.pile-hint {
+  animation: pile-hint 1.4s steps(3, jump-none) infinite;
+}
+
+/* ---- View switch & transitions ---- */
+.view-switch:hover > span:last-child {
+  translate: 0.25em 0;
+}
+
+.view-enter {
+  animation: rise-in 0.6s var(--ease-snap) both;
+}
+
+/* ---- Pager keys: pixel-style press ---- */
+.pager-key {
+  transition:
+    background-color 0.15s ease,
+    translate 0.08s steps(1, end);
+}
+
+.pager-key:hover {
+  background-color: color-mix(in srgb, var(--color-card) 82%, var(--color-ink));
+}
+
+.pager-key:active {
+  translate: 0 2px;
+}
+
+/* ---- Lightbox ---- */
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.sandbox-lightbox[open] .lightbox-media {
+  animation: lightbox-in 0.45s var(--ease-snap);
+}
+
+.sandbox-lightbox[open]::backdrop {
+  animation: backdrop-in 0.3s ease;
+}
