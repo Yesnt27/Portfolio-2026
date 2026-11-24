@@ -51,10 +51,9 @@ function LightboxVideo({ media }: { media: VideoMedia }) {
 
 type SandboxMediaProps = {
   item: SandboxItem;
-  /* How the piece is shown: grid card, shuffle pile, or full-size lightbox. */
-  mode: "index" | "pile" | "lightbox";
-  /* Pile: only the top card's video runs, the rest show their poster. */
-  playing?: boolean;
+  /* How the piece is shown: grid card or full-size lightbox. (The SHUFFLE
+     drawer draws its own windows: components/sandbox/SandboxGallery.tsx.) */
+  mode: "index" | "lightbox";
   sizes?: string;
   className?: string;
 };
@@ -63,7 +62,7 @@ type SandboxMediaProps = {
   A sandbox piece in its mat. Figma draws every piece with a 15px white
   border (cream for the duotone River); the Palace pair shares one white mat.
 */
-export default function SandboxMedia({ item, mode, playing = true, sizes = "50vw", className = "" }: SandboxMediaProps) {
+export default function SandboxMedia({ item, mode, sizes = "50vw", className = "" }: SandboxMediaProps) {
   const { media } = item;
   const matColor = item.mat ? { borderColor: item.mat, backgroundColor: item.mat } : undefined;
   const mat = `border-[clamp(8px,1vw,15px)] ${item.mat ? "" : "border-mat bg-mat"}`;
@@ -117,20 +116,15 @@ export default function SandboxMedia({ item, mode, playing = true, sizes = "50vw
     );
   }
 
-  /* Grid and pile previews are always muted (AutoVideo); sound is for the lightbox. */
+  /* Grid previews are always muted (AutoVideo); sound is for the lightbox. */
   return (
     <div className={`relative ${mat} ${className}`}>
-      {playing ? (
-        <AutoVideo
-          sources={media.sources}
-          poster={media.poster}
-          label={media.alt}
-          className="absolute inset-0 size-full bg-black object-cover"
-        />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={media.poster} alt={media.alt} loading="lazy" className="absolute inset-0 size-full bg-black object-cover" />
-      )}
+      <AutoVideo
+        sources={media.sources}
+        poster={media.poster}
+        label={media.alt}
+        className="absolute inset-0 size-full bg-black object-cover"
+      />
     </div>
   );
 }

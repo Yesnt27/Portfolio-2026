@@ -21,42 +21,148 @@
   background-color: color-mix(in srgb, var(--color-card) 88%, var(--color-ink));
 }
 
-/* ---- SHUFFLE ----
-   Each piece is placed by its centre point (--x/--y, in % of the stage
-   width, hence cqw), tilted and scaled. Only transforms animate, so the
-   shuffle never re-lays out the page. SandboxGallery sets the step's
-   duration and easing on the stage and each piece's start delay. */
-.pile-stage {
-  container-type: inline-size;
+/* ---- SHUFFLE: the file drawer ----
+   Same-size windows (300 x 385 on the 1512 frame) standing edge to edge,
+   four to a row (two on phones), fanned like a hand of cards: Figma's
+   10 / 5 degrees counterclockwise on the left, mirrored on the right. The
+   second row rides up over the first. The fan uses `rotate`, so the
+   pull-out's `transform` stacks on it, and the shuffle animates `translate`
+   and `rotate` without touching either. */
+.drawer {
+  --cell: 42vw;
+  --overlap: 8vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: calc(2 * var(--cell));
+  padding-top: clamp(40px, 6vw, 90px);
 }
 
-.pile-card {
-  left: 0;
-  top: 0;
-  translate: calc(var(--x) * 1cqw - 50%) calc(var(--y) * 1cqw - 50%);
-  rotate: var(--r);
-  scale: var(--s);
-  transition-property: translate, rotate, scale;
-  transition-duration: var(--move-ms, 520ms);
-  transition-timing-function: var(--move-ease, var(--ease-snap));
-  transition-delay: var(--delay, 0ms);
+.drawer-cell {
+  --rot: 0deg;
+  position: relative;
+  flex: none;
+  display: block;
+  width: var(--cell);
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  rotate: var(--rot);
+  outline: none;
 }
 
-/* Hover lifts the top piece; it lives on an inner layer so it never
-   inherits the shuffle's timing. */
-.pile-face {
+.drawer-cell:nth-child(2n + 1) { --rot: -5deg; }
+.drawer-cell:nth-child(2n) { --rot: 5deg; }
+.drawer-cell:nth-child(n + 3) { margin-top: calc(-1 * var(--overlap)); }
+
+@media (width >= 48rem) {
+  .drawer {
+    --cell: min(19.84vw, 300px);
+    --overlap: clamp(20px, 3.97vw, 60px);
+    width: calc(4 * var(--cell));
+  }
+
+  .drawer-cell:nth-child(4n + 1) { --rot: -10deg; }
+  .drawer-cell:nth-child(4n + 2) { --rot: -5deg; }
+  .drawer-cell:nth-child(4n + 3) { --rot: 5deg; }
+  .drawer-cell:nth-child(4n) { --rot: 10deg; }
+  .drawer-cell:nth-child(n + 3) { margin-top: 0; }
+  .drawer-cell:nth-child(n + 5) { margin-top: calc(-1 * var(--overlap)); }
+}
+
+/* One window (Figma 709:848): grey bar on top, media on a white mat. */
+.drawer-win {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  aspect-ratio: 300 / 385;
+  border-radius: 6px;
+  background: var(--color-mat);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.1),
+    0 12px 24px -16px rgb(0 0 0 / 0.45);
+  transform-origin: 50% 100%;
   transition:
-    translate 0.32s cubic-bezier(0.3, 0.8, 0.3, 1),
-    scale 0.32s cubic-bezier(0.3, 0.8, 0.3, 1);
+    transform 420ms var(--ease-snap),
+    box-shadow 420ms var(--ease-snap);
 }
 
-.pile-stage:not([data-busy]):hover .pile-card[data-top] .pile-face,
-.pile-stage:not([data-busy]):focus-visible .pile-card[data-top] .pile-face {
-  translate: 0 -10px;
-  scale: 1.012;
+.drawer-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  height: 12%;
+  padding: 0 6%;
+  background: var(--color-card);
+  font-family: var(--font-pixel);
+  font-size: clamp(10px, 0.86vw, 13px);
+  line-height: 1;
+  color: var(--color-ink);
+  white-space: nowrap;
 }
 
-@keyframes pile-hint {
+.drawer-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 3.5%;
+  padding: 4.5%;
+}
+
+.drawer-img {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Pulled out: the window rises along its tilt, over the row above. */
+.drawer-cell[data-active] {
+  z-index: 10;
+}
+
+.drawer-cell[data-active] .drawer-win {
+  transform: translateY(-22%) rotate(-2deg) scale(1.06);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.08),
+    0 34px 50px -24px rgb(0 0 0 / 0.6);
+}
+
+.drawer-cell:focus-visible .drawer-win {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Its neighbours in the same row lean away, pivoting at their base. */
+.drawer-cell:nth-child(2n + 1):has(+ .drawer-cell[data-active]) .drawer-win {
+  transform: translateX(-4%) rotate(-2.5deg);
+}
+.drawer-cell[data-active]:nth-child(2n + 1) + .drawer-cell .drawer-win {
+  transform: translateX(4%) rotate(2.5deg);
+}
+
+@media (width >= 48rem) {
+  .drawer-cell:not(:nth-child(4n)):has(+ .drawer-cell[data-active]) .drawer-win {
+    transform: translateX(-4%) rotate(-2.5deg);
+  }
+  .drawer-cell[data-active]:not(:nth-child(4n)) + .drawer-cell .drawer-win {
+    transform: translateX(4%) rotate(2.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-win {
+    transition: none;
+  }
+}
+
+@keyframes shuffle-hint {
   0%,
   100% {
     translate: 0 0;
@@ -66,8 +172,8 @@
   }
 }
 
-.pile-hint {
-  animation: pile-hint 1.4s steps(3, jump-none) infinite;
+.shuffle-hint {
+  animation: shuffle-hint 1.4s steps(3, jump-none) infinite;
 }
 
 /* ---- View switch & transitions ---- */

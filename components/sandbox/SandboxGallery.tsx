@@ -1,17 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import GlitchCaption from "@/components/sandbox/GlitchCaption";
 import SandboxMedia from "@/components/sandbox/SandboxMedia";
 import Reveal from "@/components/ui/Reveal";
-import { indexRows, pileOrder, sandboxItems, type SandboxItem } from "@/lib/sandbox";
+import { drawerOrder, indexRows, sandboxItems, type SandboxItem } from "@/lib/sandbox";
 import "./sandbox.css";
 
 type View = "index" | "shuffle";
 const VIEWS: View[] = ["index", "shuffle"];
 const byId = new Map(sandboxItems.map((item) => [item.id, item]));
-
-/* Shuffle stage: the pile's bounding box on the 1512 frame (y 380–1510). */
-const STAGE = { top: 380, width: 1512, height: 1130 };
 
 const caption = (item: SandboxItem) => `${item.title}, ${item.year}`;
 
@@ -69,53 +67,21 @@ function IndexGrid({ onOpen }: { onOpen: (id: string) => void }) {
 /* -------------------------------------------------------------- SHUFFLE -- */
 
 /*
-  A shuffle gathers the pile into the middle, riffles it (splits it in two
-  and pushes the halves back together in a new order), then deals every
-  piece into one of the eight Figma places. The selected piece is dealt last,
-  on top, into the top piece's place: centred and straight.
+  The SHUFFLE view, a "file drawer" (Figma 709:127 layout, 709:848 window).
+  Every piece sits in its own same-size window: a grey bar on top, the media
+  cropped to fill a white mat below (the Palace pair shares it, split in two).
+  The windows stand edge to edge in rows of four (two on phones), fanned like
+  a hand of cards, the second row riding up over the first (sandbox.css).
 
-  The selection works like a shuffled playlist: each shuffle picks from the
-  pieces that haven't been on top yet this round, and once all eight have had
-  a turn, a new round starts without the piece that is already showing.
+  Hover, keyboard focus or a tap pulls one window out: it lifts out of the
+  drawer along its tilt, its neighbours lean away, a video starts playing
+  and the title glitches in after the bar's "_" (GlitchCaption). Clicking it
+  opens the lightbox. SHUFFLE in the pager deals the windows into a new
+  order: each glides and turns into its new place.
 */
 
-/* Where a piece sits, in px on the 1512 frame, plus its tilt, scale and how
-   long it waits before moving (so the deal lands one piece at a time). */
-type Spot = { x: number; y: number; r: number; s: number; delay: number };
-type Deck = {
-  order: string[]; // bottom to top
-  spots: Record<string, Spot>;
-  bag: string[]; // pieces still to come up this round
-};
-type Phase = "gather" | "split" | "merge" | "deal";
-
-const ALL_IDS = sandboxItems.map((item) => item.id);
-
-/* The Figma places, top piece's first. */
-const PLACES = [...pileOrder].reverse().map((id) => byId.get(id)!.pile);
-const MIDDLE = { x: STAGE.width / 2, y: STAGE.top + STAGE.height / 2 };
-
-/* Each step's move: how long it takes, and its easing. Everything eases in;
-   the deal (where the pieces travel to their places) takes 0.3s and the
-   riffle steps before it are quicker, so a whole shuffle is ~0.9s. */
-const MOVES: Record<Phase, { ms: number; ease: string }> = {
-  gather: { ms: 180, ease: "ease-in" },
-  split: { ms: 140, ease: "ease-in" },
-  merge: { ms: 140, ease: "ease-in" },
-  deal: { ms: 300, ease: "ease-in" },
-};
-/* The most a piece's start is staggered within a step, and the gap between dealt pieces. */
-const STAGGER: Record<Phase, number> = { gather: 40, split: 30, merge: 20, deal: 24 };
-/* Pieces are 80% size while gathered, so the bundle stays compact. */
-const BUNDLE_SCALE = 0.8;
-/* The selected (top) piece reads bigger than the rest: the pieces under it
-   step back to 92% and the top one comes forward to 106%. */
-const BACK_SCALE = 0.92;
-const FRONT_SCALE = 1.06;
-/* How far (frame px) a dealt piece may hang past the stage edge before it is scaled down. */
-const EDGE = 36;
-
-const jitter = (amount: number) => (Math.random() * 2 - 1) * amount;
+/* Where a window sits on screen (its centre) and how it is turned. */
+type Pose = { x: number; y: number; rotate: string };
 
 function shuffled<T>(list: T[]): T[] {
   const out = [...list];
@@ -126,199 +92,140 @@ function shuffled<T>(list: T[]): T[] {
   return out;
 }
 
-/* Largest scale (up to 1) that keeps a tilted piece within EDGE of the stage. */
-function fitScale(item: SandboxItem, x: number, y: number, r: number) {
-  const angle = (r * Math.PI) / 180;
-  const cos = Math.abs(Math.cos(angle));
-  const sin = Math.abs(Math.sin(angle));
-  const halfW = (item.pile.w * cos + item.pile.h * sin) / 2;
-  const halfH = (item.pile.w * sin + item.pile.h * cos) / 2;
-  const roomX = Math.min(x, STAGE.width - x) + EDGE;
-  const roomY = Math.min(y - STAGE.top, STAGE.top + STAGE.height - y) + EDGE;
-  return Math.min(1, roomX / halfW, roomY / halfH);
+function pose(el: HTMLElement): Pose {
+  const box = el.getBoundingClientRect();
+  const { rotate } = getComputedStyle(el);
+  return { x: box.left + box.width / 2, y: box.top + box.height / 2, rotate: rotate === "none" ? "0deg" : rotate };
 }
 
-/* The pile as Figma draws it. Its top piece counts as this round's first turn. */
-function figmaDeck(): Deck {
-  const spots: Record<string, Spot> = {};
-  for (const item of sandboxItems) {
-    spots[item.id] = { x: item.pile.cx, y: item.pile.cy, r: item.pile.rotate, s: BACK_SCALE, delay: 0 };
+/* The window's media, cropped to fill it. Videos show their poster until the
+   window is pulled out, then play muted (sound is for the lightbox). */
+function DrawerMedia({ item, playing }: { item: SandboxItem; playing: boolean }) {
+  const { media } = item;
+  const sizes = "(min-width: 768px) 20vw, 45vw";
+  if (media.kind === "pair") {
+    return media.images.map((image) => (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img key={image.src} src={image.src} srcSet={image.srcSet} sizes="(min-width: 768px) 10vw, 22vw" alt={image.alt} loading="lazy" decoding="async" className="drawer-img" />
+    ));
   }
-  const top = pileOrder[pileOrder.length - 1];
-  spots[top].s = FRONT_SCALE;
-  return { order: pileOrder, spots, bag: ALL_IDS.filter((id) => id !== top) };
+  if (media.kind === "image") {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={media.src} srcSet={media.srcSet} sizes={sizes} alt={media.alt} loading="lazy" decoding="async" className="drawer-img" />;
+  }
+  if (playing) {
+    return (
+      <video muted loop playsInline autoPlay poster={media.poster} aria-label={media.alt} className="drawer-img bg-black">
+        {media.sources.map((source) => (
+          <source key={source.src} src={source.src} type={source.type} />
+        ))}
+      </video>
+    );
+  }
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={media.poster} alt={media.alt} loading="lazy" decoding="async" className="drawer-img bg-black" />;
 }
 
-/* Choose the next piece for the top, starting a new round when the bag is empty. */
-function pickNext(deck: Deck) {
-  const showing = deck.order[deck.order.length - 1];
-  let bag = deck.bag.filter((id) => id !== showing);
-  if (bag.length === 0) bag = ALL_IDS.filter((id) => id !== showing);
-  const next = bag[Math.floor(Math.random() * bag.length)];
-  return { next, bag: bag.filter((id) => id !== next) };
-}
+function ShuffleDrawer({
+  order,
+  setOrder,
+  shuffleRef,
+  onOpen,
+}: {
+  order: string[];
+  setOrder: (next: string[]) => void;
+  /* The pager's SHUFFLE key calls this. */
+  shuffleRef: { current: (() => void) | null };
+  onOpen: (id: string) => void;
+}) {
+  const [active, setActive] = useState<string | null>(null);
+  const [still, setStill] = useState(false);
+  const [shuffles, setShuffles] = useState(0);
+  const cells = useRef(new Map<string, HTMLElement>());
+  const before = useRef<Map<string, Pose> | null>(null);
+  const release = (id: string) => setActive((current) => (current === id ? null : current));
 
-/* Every piece bunched near the middle, loosely squared up. */
-function bundle(order: string[], spread: { x: number; y: number; r: number }, phase: Phase) {
-  const spots: Record<string, Spot> = {};
-  for (const id of order) {
-    spots[id] = {
-      x: MIDDLE.x + jitter(spread.x),
-      y: MIDDLE.y + jitter(spread.y),
-      r: jitter(spread.r),
-      s: BUNDLE_SCALE,
-      delay: Math.random() * STAGGER[phase],
+  useEffect(() => setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
+
+  /* Note where every window is, then reorder; the layout effect below glides
+     each one from its old place and tilt to its new ones. */
+  useEffect(() => {
+    shuffleRef.current = () => {
+      before.current = new Map([...cells.current].map(([id, el]) => [id, pose(el)]));
+      let next = order;
+      while (next.every((id, i) => id === order[i])) next = shuffled(order);
+      setActive(null);
+      setOrder(next);
+      setShuffles((count) => count + 1);
     };
-  }
-  return spots;
-}
-
-/* The deck cut in two: bottom half to the left, top half to the right. */
-function split(order: string[]) {
-  const spots: Record<string, Spot> = {};
-  order.forEach((id, z) => {
-    const side = z < order.length / 2 ? -1 : 1;
-    spots[id] = {
-      x: MIDDLE.x + side * 180 + jitter(14),
-      y: MIDDLE.y + jitter(14),
-      r: side * 9 + jitter(3),
-      s: BUNDLE_SCALE,
-      delay: Math.random() * STAGGER.split,
+    return () => {
+      shuffleRef.current = null;
     };
   });
-  return spots;
-}
 
-/* The selected piece on top in the centre; the rest in random places and order. */
-function deal(top: string): Pick<Deck, "order" | "spots"> {
-  const rest = shuffled(ALL_IDS.filter((id) => id !== top));
-  const places = shuffled(PLACES.slice(1));
-  const spots: Record<string, Spot> = {};
-  rest.forEach((id, i) => {
-    const place = places[i];
-    const x = place.cx + jitter(14);
-    const y = place.cy + jitter(14);
-    const r = place.rotate + jitter(4);
-    spots[id] = { x, y, r, s: fitScale(byId.get(id)!, x, y, r) * BACK_SCALE, delay: i * STAGGER.deal };
-  });
-  const centre = PLACES[0];
-  spots[top] = {
-    x: centre.cx,
-    y: centre.cy,
-    r: 0,
-    s: fitScale(byId.get(top)!, centre.cx, centre.cy, 0) * FRONT_SCALE,
-    delay: rest.length * STAGGER.deal,
-  };
-  return { order: [...rest, top], spots };
-}
-
-const pct = (value: number) => ((value / STAGE.width) * 100).toFixed(3);
-
-function ShufflePile({ memory }: { memory: { current: Deck | null } }) {
-  const [deck, setDeck] = useState<Deck>(() => memory.current ?? figmaDeck());
-  const [phase, setPhase] = useState<Phase>("deal");
-  const timers = useRef<number[]>([]);
-  /* Clicks are ignored until the riffle is done; once the deal starts, a
-     click starts the next shuffle from wherever the pieces are in flight. */
-  const busy = phase !== "deal";
-
-  useEffect(() => () => timers.current.forEach(window.clearTimeout), []);
-
-  const shuffle = () => {
-    if (busy) return;
-    timers.current.forEach(window.clearTimeout);
-    timers.current = [];
-
-    const { next, bag } = pickNext(deck);
-    const dealt = { ...deal(next), bag };
-    memory.current = dealt;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      for (const spot of Object.values(dealt.spots)) spot.delay = 0;
-      setDeck(dealt);
-      return;
-    }
-
-    /* Each step starts once the slowest piece of the previous one has landed. */
-    const steps: [Phase, Deck][] = [
-      ["gather", { ...deck, spots: bundle(deck.order, { x: 40, y: 26, r: 12 }, "gather") }],
-      ["split", { ...deck, spots: split(deck.order) }],
-      ["merge", { ...dealt, spots: bundle(dealt.order, { x: 10, y: 8, r: 5 }, "merge") }],
-      ["deal", dealt],
-    ];
-    let at = 0;
-    for (const [step, layout] of steps) {
-      const run = () => {
-        setPhase(step);
-        setDeck(layout);
-      };
-      if (at === 0) run();
-      else timers.current.push(window.setTimeout(run, at));
-      at += MOVES[step].ms + STAGGER[step];
-    }
-  };
-
-  const topId = deck.order[deck.order.length - 1];
-  const move = MOVES[phase];
+  useLayoutEffect(() => {
+    const from = before.current;
+    before.current = null;
+    if (!from || still) return;
+    order.forEach((id, i) => {
+      const el = cells.current.get(id);
+      const a = from.get(id);
+      if (!el || !a) return;
+      const b = pose(el);
+      el.animate(
+        [
+          { translate: `${a.x - b.x}px ${a.y - b.y}px`, rotate: a.rotate },
+          { translate: "0px 0px", rotate: b.rotate },
+        ],
+        { duration: 620, easing: "cubic-bezier(0.2, 0.9, 0.1, 1)", delay: i * 35, fill: "backwards" },
+      );
+    });
+  }, [order, still]);
 
   return (
     <div className="flex flex-col items-center">
-      <button
-        type="button"
-        onClick={shuffle}
-        aria-label={`Shuffle the pile. Top piece: ${caption(byId.get(topId)!)}`}
-        data-busy={busy ? "" : undefined}
-        className="pile-stage relative w-full"
-        style={{
-          aspectRatio: `${STAGE.width} / ${STAGE.height}`,
-          ["--move-ms" as string]: `${move.ms}ms`,
-          ["--move-ease" as string]: move.ease,
-        }}
-      >
-        {/* Rendered in a fixed order and stacked with z-index: moving the
-            elements in the DOM would cut their transitions short. */}
-        {sandboxItems.map((item) => {
-          const { id } = item;
-          const { w, h } = item.pile;
-          const spot = deck.spots[id];
+      <div className="drawer">
+        {order.map((id) => {
+          const item = byId.get(id)!;
+          const on = active === id;
           return (
-            <span
+            <button
               key={id}
-              className="pile-card absolute block"
-              data-top={id === topId ? "" : undefined}
-              style={{
-                zIndex: deck.order.indexOf(id) + 1,
-                width: `${(w / STAGE.width) * 100}%`,
-                aspectRatio: `${w} / ${h}`,
-                ["--x" as string]: pct(spot.x),
-                ["--y" as string]: pct(spot.y - STAGE.top),
-                ["--r" as string]: `${spot.r.toFixed(2)}deg`,
-                ["--s" as string]: spot.s.toFixed(3),
-                ["--delay" as string]: `${Math.round(spot.delay)}ms`,
+              ref={(el) => {
+                if (el) cells.current.set(id, el);
+                else cells.current.delete(id);
               }}
+              type="button"
+              className="drawer-cell"
+              data-active={on ? "" : undefined}
+              aria-label={`Open ${caption(item)}`}
+              onPointerEnter={() => setActive(id)}
+              onPointerLeave={(event) => event.pointerType !== "touch" && release(id)}
+              onFocus={() => setActive(id)}
+              onBlur={() => release(id)}
+              onClick={() => onOpen(id)}
             >
-              <span className="pile-face block size-full">
-                <SandboxMedia
-                  item={item}
-                  mode="pile"
-                  playing={id === topId}
-                  sizes="40vw"
-                  className="size-full shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)]"
-                />
+              <span className="drawer-win">
+                <span className="drawer-bar">
+                  <GlitchCaption title={item.title} year={item.year} on={on} />
+                </span>
+                <span className="drawer-body" style={item.mat ? { background: item.mat } : undefined}>
+                  <DrawerMedia item={item} playing={on && !still} />
+                </span>
               </span>
-            </span>
+            </button>
           );
         })}
-      </button>
+      </div>
 
       <p className="mt-[clamp(28px,4.9vw,74px)] flex flex-col items-center gap-2 font-pixel text-[clamp(17px,1.6vw,24px)] leading-[normal] text-muted">
         Click to shuffle
-        <span aria-hidden="true" className="pile-hint">
+        <span aria-hidden="true" className="shuffle-hint">
           ↓
         </span>
       </p>
       <p className="sr-only" aria-live="polite">
-        Now on top: {caption(byId.get(topId)!)}
+        {shuffles > 0 && `Shuffled. First: ${caption(byId.get(order[0])!)}`}
       </p>
     </div>
   );
@@ -394,8 +301,9 @@ function Lightbox({ openId, onClose, onStep }: { openId: string | null; onClose:
 export default function SandboxGallery() {
   const [view, setView] = useState<View>("index");
   const [openId, setOpenId] = useState<string | null>(null);
-  /* The pile and its round survive switching to INDEX and back. */
-  const pileMemory = useRef<Deck | null>(null);
+  /* The drawer's order survives switching to INDEX and back. */
+  const [drawer, setDrawer] = useState(drawerOrder);
+  const shuffleRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (window.location.hash === "#shuffle") setView("shuffle");
@@ -452,20 +360,34 @@ export default function SandboxGallery() {
           </div>
         ) : (
           <div className="view-enter px-[clamp(8px,2vw,30px)]">
-            <ShufflePile memory={pileMemory} />
+            <ShuffleDrawer order={drawer} setOrder={setDrawer} shuffleRef={shuffleRef} onOpen={setOpenId} />
           </div>
         )}
       </div>
 
       {/* Pager (Figma 645:2309 / 645:2526 / 645:2527) — steps between views.
-          Sticky: it rides the bottom of the screen while you scroll the
-          gallery, then settles in place above the footer at the end. */}
+          In SHUFFLE its middle key shuffles the drawer ("Click to shuffle ↓"
+          points at it, Figma 709:127). Sticky: it rides the bottom of the
+          screen while you scroll the gallery, then settles in place above
+          the footer at the end. */}
       <div className="pointer-events-none sticky bottom-[clamp(12px,1.6vw,24px)] z-40 mt-[clamp(40px,5.4vw,82px)] flex items-center justify-center gap-[19px] font-pixel text-[24px] leading-[normal] text-ink [&>*]:pointer-events-auto [&>*]:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)]">
         <button type="button" onClick={() => cycle(-1)} aria-label="Previous view" className="pager-key grid h-[64px] w-[80px] place-items-center bg-card">
           ←
         </button>
-        <p className="!pointer-events-none grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase" aria-live="polite">
-          {view}
+        {view === "shuffle" ? (
+          <button
+            type="button"
+            onClick={() => shuffleRef.current?.()}
+            aria-label="Shuffle the sandbox"
+            className="pager-key grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase"
+          >
+            {view}
+          </button>
+        ) : (
+          <p className="!pointer-events-none grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase">{view}</p>
+        )}
+        <p className="sr-only" aria-live="polite">
+          {view} view
         </p>
         <button type="button" onClick={() => cycle(1)} aria-label="Next view" className="pager-key grid h-[64px] w-[80px] place-items-center bg-card">
           →

@@ -8,8 +8,9 @@ import type { VideoSource } from "@/components/ui/AutoVideo";
 
   `index`: card in the INDEX grid (Figma 645:2308) — card width on the 1512
   frame and the media's on-screen size inside its 15px white mat.
-  `pile`: placement in the SHUFFLE pile (Figma 510:6986) — centre point on the
-  frame, media size and rotation.
+  The SHUFFLE view shows every piece in a same-size window instead (Figma
+  709:127 / 709:848), so it needs no per-piece layout; `drawerOrder` is where
+  it starts.
 */
 
 type Image = { kind: "image"; src: string; srcSet: string; width: number; height: number; alt: string };
@@ -24,7 +25,6 @@ export type SandboxItem = {
   /* River carries the Figma duotone, which tints its mat cream as well. */
   mat?: string;
   index: { card: number; w: number; h: number };
-  pile: { cx: number; cy: number; w: number; h: number; rotate: number };
 };
 
 const s = "/images/sandbox";
@@ -55,7 +55,6 @@ export const sandboxItems: SandboxItem[] = [
       alt: "Blender animation of a figure standing inside rings of pink and blue neon light",
     },
     index: { card: 517, w: 424, h: 424 },
-    pile: { cx: 756, cy: 979, w: 632, h: 632, rotate: 0 },
   },
   {
     id: "friends-galore",
@@ -70,7 +69,6 @@ export const sandboxItems: SandboxItem[] = [
       alt: "Product video for Friends Ga-lore, a playful book-of-friends app with hobby and connection cards",
     },
     index: { card: 786, w: 691, h: 389 },
-    pile: { cx: 510, cy: 686, w: 691, h: 389, rotate: -18.25 },
   },
   {
     id: "vsa-intros",
@@ -85,7 +83,6 @@ export const sandboxItems: SandboxItem[] = [
       alt: "Animated Vietnamese Student Association team introduction cards cycling through members",
     },
     index: { card: 615, w: 357, h: 447 },
-    pile: { cx: 376, cy: 1199, w: 357, h: 447, rotate: -17.67 },
   },
   {
     id: "golden-sunrise",
@@ -93,7 +90,6 @@ export const sandboxItems: SandboxItem[] = [
     year: "2026",
     media: photo("golden-sunrise", [1200, 2400], 2880, 2160, "The Golden Gate Bridge from the beach under a pink dawn sky"),
     index: { card: 693, w: 581, h: 436 },
-    pile: { cx: 839, cy: 1229, w: 581, h: 436, rotate: 10.84 },
   },
   {
     id: "palace",
@@ -107,7 +103,6 @@ export const sandboxItems: SandboxItem[] = [
       ],
     },
     index: { card: 742, w: 638, h: 419 },
-    pile: { cx: 732, cy: 891.5, w: 638, h: 419, rotate: 0 },
   },
   {
     id: "concert-lights",
@@ -115,7 +110,6 @@ export const sandboxItems: SandboxItem[] = [
     year: "2026",
     media: photo("concert-lights", [900, 1800], 2160, 2880, "Cyan laser beams fanning over a dark arena crowd"),
     index: { card: 546, w: 305, h: 407 },
-    pile: { cx: 1047, cy: 748, w: 371, h: 495, rotate: 20.58 },
   },
   {
     id: "river",
@@ -124,7 +118,6 @@ export const sandboxItems: SandboxItem[] = [
     media: photo("river-duotone", [900, 1800], 2160, 2880, "A rocky river running between evergreen banks, printed in a navy and cream duotone"),
     mat: "#fff2d9",
     index: { card: 546, w: 340, h: 454 },
-    pile: { cx: 456, cy: 1101, w: 340, h: 454, rotate: 0 },
   },
   {
     id: "guernica",
@@ -132,7 +125,6 @@ export const sandboxItems: SandboxItem[] = [
     year: "2022",
     media: photo("guernica", [1300, 2360], 2360, 1640, "Black and white painting of overlapping figures, an eye and repeated 7:43 numerals"),
     index: { card: 756, w: 611, h: 425 },
-    pile: { cx: 1085, cy: 1040, w: 611, h: 425, rotate: 16.85 },
   },
 ];
 
@@ -144,14 +136,15 @@ export const indexRows: string[][] = [
   ["river", "guernica"],
 ];
 
-/* Shuffle pile stacking order, bottom to top (Figma 510:6986 layer order). */
-export const pileOrder = [
-  "friends-galore",
-  "river",
+/* SHUFFLE drawer, first view: left to right, top row first. Mixed so
+   neighbours differ in shape and colour; each shuffle reorders it. */
+export const drawerOrder = [
+  "portals",
+  "guernica",
+  "concert-lights",
+  "golden-sunrise",
   "palace",
   "vsa-intros",
-  "guernica",
-  "golden-sunrise",
-  "concert-lights",
-  "portals",
+  "river",
+  "friends-galore",
 ];
