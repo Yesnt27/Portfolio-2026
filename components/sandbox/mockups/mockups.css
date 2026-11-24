@@ -58,9 +58,11 @@
   a hand of cards. Each box turns in place (Figma 10 / 5 degrees
   counterclockwise on the left, mirrored on the right), and the bottom row
   rides 60px up over the top row.
-  Hovering a box pulls it up like a file out of a drawer, along its own
-  tilt: the box rises and grows over the row above (nothing is drawn where
-  it sat), and its two neighbours lean away, pivoting at their base. The fan uses the `rotate` property so it stacks under the
+  Hovering, focusing or tapping a box (FileDrawer sets data-active) pulls
+  it up like a file out of a drawer, along its own tilt: the box rises and
+  grows over the row above (nothing is drawn where it sat), its two
+  neighbours lean away, pivoting at their base, and the title glitches in
+  along the bottom bar (GlitchCaption). The fan uses the `rotate` property so it stacks under the
   hover's `transform` instead of being replaced by it.
 */
 .mk-drawer-row {
@@ -96,31 +98,22 @@
     box-shadow 420ms var(--ease-snap);
 }
 
-.mk-cell .mk-title {
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-
 /* The pulled file. */
-.mk-cell:is(:hover, :focus-visible, [data-demo-hover]) {
+.mk-cell:is([data-active], [data-demo-hover]) {
   z-index: 10;
 }
-.mk-cell:is(:hover, :focus-visible, [data-demo-hover]) .mk-win {
+.mk-cell:is([data-active], [data-demo-hover]) .mk-win {
   transform: translateY(-22%) rotate(-2deg) scale(1.06);
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 0.08),
     0 34px 50px -24px rgb(0 0 0 / 0.6);
 }
-.mk-cell:is(:hover, :focus-visible, [data-demo-hover]) .mk-title {
-  opacity: 1;
-  transition-delay: 120ms;
-}
 
 /* Its neighbours lean away, like files parting in a drawer. */
-.mk-cell:has(+ .mk-cell:is(:hover, :focus-visible, [data-demo-hover])) .mk-win {
+.mk-cell:has(+ .mk-cell:is([data-active], [data-demo-hover])) .mk-win {
   transform: translateX(-4%) rotate(-2.5deg);
 }
-.mk-cell:is(:hover, :focus-visible, [data-demo-hover]) + .mk-cell .mk-win {
+.mk-cell:is([data-active], [data-demo-hover]) + .mk-cell .mk-win {
   transform: translateX(4%) rotate(2.5deg);
 }
 
@@ -128,4 +121,20 @@
   .mk-cell .mk-win {
     transition: none;
   }
+}
+
+/*
+  The newer Figma 709:848 window: the bar runs along the bottom, under the
+  media, about an eighth of the window's height. FileDrawer leaves it blank
+  until a box is pulled out, then GlitchCaption types the title in.
+*/
+.mk-bar-bottom {
+  height: 12%;
+  min-height: 24px;
+  padding-inline: 6%;
+  gap: 1.2em;
+  font-size: clamp(10px, 0.86vw, 13px);
+}
+.mk-glitch {
+  white-space: pre;
 }
