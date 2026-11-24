@@ -162,20 +162,6 @@
   }
 }
 
-@keyframes shuffle-hint {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 5px;
-  }
-}
-
-.shuffle-hint {
-  animation: shuffle-hint 1.4s steps(3, jump-none) infinite;
-}
-
 /* ---- View switch & transitions ---- */
 .view-switch:hover > span:last-child {
   translate: 0.25em 0;

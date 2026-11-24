@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import GlitchCaption from "@/components/sandbox/GlitchCaption";
+import LookalikeText from "@/components/sandbox/LookalikeText";
 import SandboxMedia from "@/components/sandbox/SandboxMedia";
 import Reveal from "@/components/ui/Reveal";
 import { drawerOrder, indexRows, sandboxItems, type SandboxItem } from "@/lib/sandbox";
@@ -218,12 +219,6 @@ function ShuffleDrawer({
         })}
       </div>
 
-      <p className="mt-[clamp(28px,4.9vw,74px)] flex flex-col items-center gap-2 font-pixel text-[clamp(17px,1.6vw,24px)] leading-[normal] text-muted">
-        Click to shuffle
-        <span aria-hidden="true" className="shuffle-hint">
-          ↓
-        </span>
-      </p>
       <p className="sr-only" aria-live="polite">
         {shuffles > 0 && `Shuffled. First: ${caption(byId.get(order[0])!)}`}
       </p>
@@ -304,6 +299,8 @@ export default function SandboxGallery() {
   /* The drawer's order survives switching to INDEX and back. */
   const [drawer, setDrawer] = useState(drawerOrder);
   const shuffleRef = useRef<(() => void) | null>(null);
+  /* Each SHUFFLE click also makes its label swap in look-alike letters. */
+  const [shuffleClicks, setShuffleClicks] = useState(0);
 
   useEffect(() => {
     if (window.location.hash === "#shuffle") setView("shuffle");
@@ -366,8 +363,8 @@ export default function SandboxGallery() {
       </div>
 
       {/* Pager (Figma 645:2309 / 645:2526 / 645:2527) — steps between views.
-          In SHUFFLE its middle key shuffles the drawer ("Click to shuffle ↓"
-          points at it, Figma 709:127). Sticky: it rides the bottom of the
+          In SHUFFLE its middle key shuffles the drawer, and its label
+          briefly swaps in look-alike letters (LookalikeText). Sticky: it rides the bottom of the
           screen while you scroll the gallery, then settles in place above
           the footer at the end. */}
       <div className="pointer-events-none sticky bottom-[clamp(12px,1.6vw,24px)] z-40 mt-[clamp(40px,5.4vw,82px)] flex items-center justify-center gap-[19px] font-pixel text-[24px] leading-[normal] text-ink [&>*]:pointer-events-auto [&>*]:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)]">
@@ -377,11 +374,14 @@ export default function SandboxGallery() {
         {view === "shuffle" ? (
           <button
             type="button"
-            onClick={() => shuffleRef.current?.()}
+            onClick={() => {
+              shuffleRef.current?.();
+              setShuffleClicks((count) => count + 1);
+            }}
             aria-label="Shuffle the sandbox"
             className="pager-key grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase"
           >
-            {view}
+            <LookalikeText text="SHUFFLE" trigger={shuffleClicks} />
           </button>
         ) : (
           <p className="!pointer-events-none grid h-[66px] min-w-[162px] place-items-center bg-card px-4 uppercase">{view}</p>
