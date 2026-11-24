@@ -32,8 +32,8 @@ export class AsciiScreenEffect {
     // AsciiEffect uses a fixed -1px, which makes each character slightly wider
     // than the image pixel it stands for (~4% at this size), so the text drifts
     // right of the real 3D geometry. Measure the font instead, so a character
-    // is exactly 1/resolution px wide and the HTML screen pinned on top
-    // (CSS3DRenderer) lines up with the ASCII one.
+    // is exactly 1/resolution px wide and the HTML screen warped on top
+    // (createAsciiTV.js) lines up with the ASCII one.
     const measure = document.createElement('canvas').getContext('2d');
     measure.font = `${fontSize}px ${font}`;
     const letterSpacing = 1 / resolution - measure.measureText('M').width;

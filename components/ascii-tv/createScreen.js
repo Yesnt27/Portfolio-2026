@@ -1,28 +1,22 @@
 // createScreen.js
 // The TV's screen content, built from Figma frame 740:1094 ("Frame 163",
 // 418 × 325, inside Group 228 / 740:1097):
-//   - Rectangle 784: #333, dithered mono (Bayer 16×16, 2 levels, 5px blocks)
 //   - app icon (Frends Ga-lore), tilted −9.46°, dithered (3 levels, 1px blocks)
 //   - peakprep-walkthrough video, tilted 9.79°, dithered (3 levels, 1px blocks)
+// The design's dithered #333 background (Rectangle 784) is left out: the
+// screen keeps the ASCII TV's own solid black glass behind the frames.
 // Hovering the screen eases both frames in toward the centre (ascii-tv.css),
 // with Departure Mono's card timing.
 //
-// Coordinates are the design's own pixels. createAsciiTV.js pins this element
-// onto the 3D screen with CSS3DRenderer and scales it to fit.
+// Coordinates are the design's own pixels. createAsciiTV.js warps this
+// element onto the TV's screen.
 
 import { ditherInto } from './dither.js';
 
 export const SCREEN_W = 418;
 export const SCREEN_H = 325;
 
-// Dither params copied from the Figma shader effects.
-const SCREEN_DITHER = {
-  levels: 2,
-  mono: true,
-  monoColor: { r: 0.38942307233810425, g: 0.38942307233810425, b: 0.38942307233810425 },
-  brightness: 100,
-  contrast: 1,
-};
+// Dither params copied from the Figma shader effects on the two frames.
 const FRAME_DITHER = { levels: 3, mono: false, brightness: 100, contrast: 1 };
 
 const ICON_SRC = '/images/home/frends-galore-icon.svg';
@@ -104,18 +98,6 @@ export function createScreen({ reduceMotion = false } = {}) {
   const root = el('div', 'tv-screen', { width: `${SCREEN_W}px`, height: `${SCREEN_H}px` });
   root.setAttribute('aria-hidden', 'true');
 
-  // ---- Rectangle 784: dithered #333 -------------------------------------
-  const bg = ditherLayer(417, 327, 5, SCREEN_DITHER);
-  const solid = el('canvas');
-  solid.width = solid.height = 1;
-  const sctx = solid.getContext('2d');
-  sctx.fillStyle = '#333333';
-  sctx.fillRect(0, 0, 1, 1);
-  bg.setSource(solid);
-  const bgClip = el('div', 'tv-screen__bg', { width: '417px', height: '327px' });
-  bgClip.appendChild(bg.canvas);
-  root.appendChild(bgClip);
-
   // Layer order as in Figma: the video, then the app icon on top of it.
 
   // ---- peakprep-walkthrough video (740:1092) ----------------------------
@@ -147,7 +129,6 @@ export function createScreen({ reduceMotion = false } = {}) {
   // ---- Sources ----------------------------------------------------------
   let disposed = false;
   const drawAll = () => {
-    bg.draw();
     icon.draw();
     video.draw();
   };
@@ -201,14 +182,12 @@ export function createScreen({ reduceMotion = false } = {}) {
     video.draw();
   });
 
-  bg.draw();
-
   return {
     element: root,
 
     // CSS pixels per design pixel, as the screen is shown on the page.
     setScale(s) {
-      for (const layer of [bg, icon, video]) layer.setScale(s);
+      for (const layer of [icon, video]) layer.setScale(s);
       drawAll();
     },
 

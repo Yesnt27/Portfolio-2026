@@ -1,24 +1,19 @@
 /* ASCII TV screen (components/ascii-tv/createScreen.js), Figma frame 740:1094.
-   Sizes are the design's pixels; CSS3DRenderer scales the whole screen onto
-   the TV. */
+   Sizes are the design's pixels; createAsciiTV.js warps the whole screen onto
+   the TV. It has no background of its own: the ASCII TV's black glass shows
+   through behind the frames. */
 
 .tv-screen {
   overflow: hidden;
   pointer-events: auto; /* the rest of the TV box lets clicks through */
 }
 
-.tv-screen__bg {
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-}
-
-/* One canvas pixel per dither block, kept as hard squares when scaled up. */
+/* One canvas pixel per dither block. The frames are tilted, so hard-edged
+   scaling of the small blocks can't line up with the screen's pixel grid and
+   beats into stripes; the default smooth scaling keeps the dither grain
+   without them. */
 .tv-dither {
   display: block;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
 }
 
 /* Tilted frames: a flex-centred box with the rotated content inside, as in
@@ -37,14 +32,6 @@
 .tv-frame__tilt {
   flex: none;
   overflow: hidden;
-}
-
-/* The frames are tilted, so hard-edged scaling of their small dither blocks
-   can't line up with the screen's pixel grid and beats into stripes. Smooth
-   scaling keeps the dither grain without the stripes. (The background's 5px
-   dots stay crisp: they're bigger and not tilted.) */
-.tv-frame .tv-dither {
-  image-rendering: auto;
 }
 
 /* Hovering the screen eases both frames in toward its centre and straightens

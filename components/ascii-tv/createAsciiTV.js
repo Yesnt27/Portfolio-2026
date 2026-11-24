@@ -1,8 +1,22 @@
 import * as THREE from 'three';
-import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { AsciiScreenEffect } from './AsciiScreenEffect.js';
 import { buildTV } from './buildTV.js';
 import { createScreen, SCREEN_H, SCREEN_W } from './createScreen.js';
+
+// CSS matrix3d that maps an element's w × h box onto the quad `pts`
+// ([top-left, top-right, bottom-right, bottom-left], in px), perspective-
+// correct. Heckbert's square-to-quad projective mapping, with the unit
+// square's u and v columns divided by w and h. Use with transform-origin 0 0.
+function quadTransform(w, h, [[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
+  const dx1 = x1 - x2, dx2 = x3 - x2, sx = x0 - x1 + x2 - x3;
+  const dy1 = y1 - y2, dy2 = y3 - y2, sy = y0 - y1 + y2 - y3;
+  const den = dx1 * dy2 - dx2 * dy1;
+  const g = (sx * dy2 - dx2 * sy) / den;
+  const k = (dx1 * sy - sx * dy1) / den;
+  const a = x1 - x0 + g * x1, b = x3 - x0 + k * x3;
+  const d = y1 - y0 + g * y1, e = y3 - y0 + k * y3;
+  return `matrix3d(${a / w},${d / w},0,${g / w},${b / h},${e / h},0,${k / h},0,0,1,0,${x0},${y0},0,1)`;
+}
 
 export function createAsciiTV(container, options = {}) {
   const {
@@ -65,20 +79,44 @@ scene.background = new THREE.Color(0x000000);
   container.appendChild(el);
 
   // ---- The screen content (Figma 740:1094) --------------------------------
-  // Real HTML (dithered canvases + video) on top of the ASCII. CSS3DRenderer
-  // uses the same camera, and the screen is a child of the TV group, so it
-  // sways and turns with the TV, sitting exactly on the 3D screen.
+  // Real HTML (the dithered frames + video) laid over the ASCII screen.
+  // Every frame, three.js projects the screen's four corners with the same
+  // camera maths as the WebGL image the ASCII is made from, and a flat
+  // perspective warp (quadTransform) pins the HTML onto those corners.
+  //
+  // (This replaced three's CSS3DRenderer, which leaves the projection to the
+  // browser's 3D compositor: with this scene's scale its perspective divide
+  // is ~0.009, and Safari placed the screen visibly off the TV while Chrome
+  // didn't. Doing the projection here makes every browser agree.)
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const screen = createScreen({ reduceMotion });
-  const screenObject = new CSS3DObject(screen.element);
-  screenObject.position.set(screenRect.x, screenRect.y, screenRect.z);
-  // 1 CSS px of the design → world units (the 418 × 325 frame fills the screen).
-  screenObject.scale.set(screenRect.width / SCREEN_W, screenRect.height / SCREEN_H, 1);
-  tv.add(screenObject);
+  const overlay = document.createElement('div');
+  Object.assign(overlay.style, { position: 'absolute', inset: '0', pointerEvents: 'none' });
+  Object.assign(screen.element.style, { position: 'absolute', left: '0', top: '0', transformOrigin: '0 0' });
+  overlay.appendChild(screen.element);
+  container.appendChild(overlay);
 
-  const cssRenderer = new CSS3DRenderer();
-  Object.assign(cssRenderer.domElement.style, { position: 'absolute', inset: '0', pointerEvents: 'none' });
-  container.appendChild(cssRenderer.domElement);
+  // The screen's corners in the TV's own space: top-left, top-right,
+  // bottom-right, bottom-left (matching the element's corners).
+  const { x: sx, y: sy, z: sz, width: sw, height: sh } = screenRect;
+  const screenCorners = [
+    new THREE.Vector3(sx - sw / 2, sy + sh / 2, sz),
+    new THREE.Vector3(sx + sw / 2, sy + sh / 2, sz),
+    new THREE.Vector3(sx + sw / 2, sy - sh / 2, sz),
+    new THREE.Vector3(sx - sw / 2, sy - sh / 2, sz),
+  ];
+  const corner = new THREE.Vector3();
+  let viewW = 0;
+  let viewH = 0;
+
+  function placeScreen() {
+    if (!viewW || !viewH) return;
+    const pts = screenCorners.map((c) => {
+      corner.copy(c).applyMatrix4(tv.matrixWorld).project(camera);
+      return [((corner.x + 1) / 2) * viewW, ((1 - corner.y) / 2) * viewH];
+    });
+    screen.element.style.transform = quadTransform(SCREEN_W, SCREEN_H, pts);
+  }
 
   // ---- STEP 6b: Interaction ----------------------------------------------
   // Mouse position → a small target rotation. Each frame we ease toward it.
@@ -105,7 +143,8 @@ scene.background = new THREE.Color(0x000000);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     effect.setSize(w, h);
-    cssRenderer.setSize(w, h);
+    viewW = w;
+    viewH = h;
 
     // How big one design pixel of the screen ends up on the page (CSS px), so
     // the dither blocks never shrink below one CSS pixel.
@@ -123,8 +162,8 @@ scene.background = new THREE.Color(0x000000);
   let frameId = null;
 
   function renderOnce() {
-    effect.render(scene, camera);
-    cssRenderer.render(scene, camera);
+    effect.render(scene, camera); // also brings tv.matrixWorld and the camera up to date
+    placeScreen();
   }
 
   function tick(timestamp) {
@@ -183,7 +222,7 @@ scene.background = new THREE.Color(0x000000);
     timer.dispose();
     renderer.dispose();
     screen.dispose();
-    cssRenderer.domElement.remove();
+    overlay.remove();
     el.remove();
   };
 }
