@@ -7,7 +7,8 @@ export function createAsciiTV(container, options = {}) {
   const {
     charSet = ' .:-=+*#%@^>',   // dark → bright
     resolution = 0.16,        // lower = bigger, fewer characters
-    textColor = '#7CFF8A',    // phosphor green
+    lightColor = '#333333',   // text color on the light theme (dark grey)
+    darkColor = '#ffffff',    // text color on the dark theme (white)
     background = '#050805',
   } = options;
 
@@ -37,8 +38,16 @@ scene.background = new THREE.Color(0x000000);
   // charSet. Use it for light text on a dark background.
   const effect = new AsciiEffect(renderer, charSet, { invert: true, resolution });
   const el = effect.domElement;
-  el.style.color = textColor;
   el.style.backgroundColor = background;
+
+  // Follow the site's theme switch (data-theme on <html>).
+  function applyTheme() {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    el.style.color = isDark ? darkColor : lightColor;
+  }
+  applyTheme();
+  const themeObserver = new MutationObserver(applyTheme);
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   el.setAttribute('aria-hidden', 'true'); // screen readers skip the wall of symbols
   container.appendChild(el);
 
@@ -170,6 +179,7 @@ const noiseTex = new THREE.CanvasTexture(noiseCanvas);
     stop();
     io.disconnect();
     ro.disconnect();
+    themeObserver.disconnect();
     window.removeEventListener('pointermove', onPointerMove);
     container.removeEventListener('click', onClick);
     tv.traverse((obj) => {
