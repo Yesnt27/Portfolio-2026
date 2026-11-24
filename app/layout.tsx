@@ -5,6 +5,7 @@ import DitherBackground from "@/components/DitherBackground";
 import BlendCursor from "@/components/site/BlendCursor";
 import SiteFooter from "@/components/site/SiteFooter";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 
 /* Pixel UI face: nav, labels, captions, footer. SIL OFL (fonts/DepartureMono-LICENSE.txt). */
