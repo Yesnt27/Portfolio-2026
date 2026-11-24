@@ -59,14 +59,21 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* ASCII TV in the old hero collage's slot: right-aligned to the
-              column, same 676.6 x 547.2 box, so lg:min-h above still fits it.
+          {/* ASCII TV (lg+): a 676.6 x 547.2-shaped box, 70% of the column
+              wide, that bleeds off the right edge of the window.
+              - right: (100% - 100vw) / 2 lines the box up with the window's
+                right edge (100% = column width), then -19.6% (= 28% of the
+                box) pushes it past. The TV sits inside the box with empty
+                margins, so about the last 6% of the TV itself is cut off.
+                body has overflow-x: clip, so nothing scrolls sideways.
+              - top: -184px lifts it so the antenna rises beside the menu and
+                the legs still land on the first screen of a laptop (1512x860).
               Below lg it sits in the flow between the title and the intro.
               z-20: the title and intro wrappers (z-10) are full-width blocks, so
               without it they sit over the TV and swallow the screen's hover.
               pointer-events-none: only the screen takes the pointer, so the
               box's empty margins never block the title. */}
-          <div className="rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none">
+          <div className="rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[-184px] lg:right-[calc((100%_-_100vw)/2_-_19.6%)] lg:my-0 lg:w-[70%] lg:max-w-none">
             <AsciiTV />
           </div>
 
