@@ -59,21 +59,27 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* ASCII TV (lg+): a 676.6 x 547.2-shaped box, 70% of the column
-              wide, that bleeds off the right edge of the window.
-              - right: (100% - 100vw) / 2 lines the box up with the window's
-                right edge (100% = column width), then -19.6% (= 28% of the
-                box) pushes it past. The TV sits inside the box with empty
-                margins, so about the last 6% of the TV itself is cut off.
-                body has overflow-x: clip, so nothing scrolls sideways.
-              - top: -184px lifts it so the antenna rises beside the menu and
-                the legs still land on the first screen of a laptop (1512x860).
-              Below lg it sits in the flow between the title and the intro.
+          {/* ASCII TV. To resize it on laptops/desktops, change the three
+              settings at the start of the className below:
+                --tv-size   how wide the TV's box is, as a % of the content
+                            column (70% = this design; 50% was the original).
+                --tv-bleed  how far the box runs past the window's right
+                            edge, as a fraction of its own width. The TV sits
+                            inside the box with empty margins, so 0.28 cuts off
+                            only the TV's knob side; 0.22 shows the whole TV.
+                --tv-lift   how far it's raised above the title row. Raise it
+                            for a bigger TV so the legs stay on the first screen.
+              On phones/tablets (below lg) it's max-w-[560px] instead.
+
+              How it works: right = (100% - 100vw) / 2 lines the box up with
+              the window's right edge (100% = column width), then
+              size × bleed pushes it past. body has overflow-x: clip, so
+              nothing scrolls sideways.
               z-20: the title and intro wrappers (z-10) are full-width blocks, so
               without it they sit over the TV and swallow the screen's hover.
               pointer-events-none: only the screen takes the pointer, so the
               box's empty margins never block the title. */}
-          <div className="rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[-184px] lg:right-[calc((100%_-_100vw)/2_-_19.6%)] lg:my-0 lg:w-[70%] lg:max-w-none">
+          <div className="lg:[--tv-size:70%] lg:[--tv-bleed:0.28] lg:[--tv-lift:184px] rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[calc(-1*var(--tv-lift))] lg:right-[calc((100%_-_100vw)/2_-_var(--tv-size)*var(--tv-bleed))] lg:my-0 lg:w-[var(--tv-size)] lg:max-w-none">
             <AsciiTV />
           </div>
 
