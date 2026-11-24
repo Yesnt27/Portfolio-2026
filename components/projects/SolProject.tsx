@@ -23,7 +23,8 @@ const toc = [
 ];
 
 /* Figma text styles: "Heading 1" (Bogart 24) and "geist body" (Geist Mono 16.5). */
-const heading = "font-serif text-[24px] leading-[normal] text-copy";
+const type = "font-serif text-[24px] leading-[normal]";
+const heading = `${type} text-copy`;
 const body = "font-mono text-[16.5px] leading-[normal] text-copy";
 
 type Layer = { src: string; box: CSSProperties; crop?: CSSProperties; radius?: string };
@@ -388,7 +389,7 @@ export default function SolProject({ project }: { project: Project }) {
 
           <TocSection id="learnings" label="Key Learnings">
             <Indent x={292} className="mt-[56px]">
-              <h2 className={`${heading} text-ink`}>Key Learnings</h2>
+              <h2 className={`${type} text-ink`}>Key Learnings</h2>
             </Indent>
             <Indent x={292} reveal={false} className="mt-[34px]">
               <div className="grid max-w-[892px] gap-x-[50px] gap-y-6 sm:grid-cols-2">
