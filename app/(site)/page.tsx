@@ -79,7 +79,7 @@ export default function HomePage() {
               without it they sit over the TV and swallow the screen's hover.
               pointer-events-none: only the screen takes the pointer, so the
               box's empty margins never block the title. */}
-          <div className="lg:[--tv-size:70%] lg:[--tv-bleed:0.28] lg:[--tv-lift:184px] rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[calc(-1*var(--tv-lift))] lg:right-[calc((100%_-_100vw)/2_-_var(--tv-size)*var(--tv-bleed))] lg:my-0 lg:w-[var(--tv-size)] lg:max-w-none">
+          <div className="lg:[--tv-size:90%] lg:[--tv-bleed:0.28] lg:[--tv-lift:260px] rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[calc(-1*var(--tv-lift))] lg:right-[calc((100%_-_100vw)/2_-_var(--tv-size)*var(--tv-bleed))] lg:my-0 lg:w-[var(--tv-size)] lg:max-w-none">
             <AsciiTV />
           </div>
 
