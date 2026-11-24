@@ -124,7 +124,7 @@ function StaggeredPortrait() {
 
 /* C2: C's portrait windows in two rows of four, fanned like a hand of cards,
    the bottom row overlapping the top. A
-   hovered box lifts out of its slot (see .mk-cell in mockups.css). Rows are
+   hovered box lifts up and out (see .mk-cell in mockups.css). Rows are
    separate so a box's neighbours are only ever beside it. */
 function FileDrawer() {
   const rows = [ORDER.slice(0, 4), ORDER.slice(4)];
