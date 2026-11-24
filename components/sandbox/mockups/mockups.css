@@ -55,7 +55,7 @@
 
 /*
   C2, "file drawer": portrait windows in two rows of four, fanned out like
-  a hand of cards. Each box turns with its slot (Figma 30 / 15 degrees
+  a hand of cards. Each box turns with its slot (Figma 20 / 10 degrees
   counterclockwise on the left, mirrored on the right), and the bottom row
   rides 60px up over the top row.
   Hovering a box pulls it up out of its slot like a file out of a drawer,
@@ -80,10 +80,10 @@
   rotate: var(--rot);
   outline: none;
 }
-.mk-cell:nth-child(1) { --rot: -30deg; }
-.mk-cell:nth-child(2) { --rot: -15deg; }
-.mk-cell:nth-child(3) { --rot: 15deg; }
-.mk-cell:nth-child(4) { --rot: 30deg; }
+.mk-cell:nth-child(1) { --rot: -20deg; }
+.mk-cell:nth-child(2) { --rot: -10deg; }
+.mk-cell:nth-child(3) { --rot: 10deg; }
+.mk-cell:nth-child(4) { --rot: 20deg; }
 
 /* The slot a box sits in; only seen once the box lifts out of it. */
 .mk-cell::before {

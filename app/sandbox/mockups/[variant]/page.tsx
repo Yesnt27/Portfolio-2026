@@ -32,7 +32,7 @@ const VARIANTS = {
   a: { name: "Tilted rows", size: "every box 380 × 262" },
   b: { name: "Clean grid", size: "every box 314 × 217" },
   c: { name: "Staggered portrait", size: "every box 290 × 372" },
-  c2: { name: "File drawer", size: "every box 300 × 385, fanned 30° / 15°, rows overlapping; hover to pull one out" },
+  c2: { name: "File drawer", size: "every box 300 × 385, fanned 20° / 10°, rows overlapping; hover to pull one out" },
 } as const;
 type Variant = keyof typeof VARIANTS;
 
