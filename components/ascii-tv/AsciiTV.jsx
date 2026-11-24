@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+"use client";
 
-export default function AsciiTV({className,...options}){
+import { useEffect, useRef } from "react";
+
+export default function AsciiTV({ className = "", ...options }) {
     const containerRef = useRef(null);
 
     useEffect(() => {

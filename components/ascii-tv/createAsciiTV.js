@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AsciiEffect } from 'three/addons/effects/AsciiEffect.js';
 import { buildTV } from './buildTV.js';
-import { headers } from 'next/headers.js';
 
 export function createAsciiTV(container, options = {}) {
   const {
@@ -9,7 +8,9 @@ export function createAsciiTV(container, options = {}) {
     resolution = 0.16,        // lower = bigger, fewer characters
     lightColor = '#333333',   // text color on the light theme (dark grey)
     darkColor = '#ffffff',    // text color on the dark theme (white)
-    background = '#050805',
+    // Transparent so the TV sits on the site's dither paper in both themes.
+    // (The old near-black value hid the dark-grey light-theme text.)
+    background = 'transparent',
   } = options;
 
 const scene = new THREE.Scene();
@@ -26,9 +27,14 @@ scene.background = new THREE.Color(0x000000);
   const { tv, screenMat } = buildTV();
   scene.add(tv);
 
-  const key= new THREE.DirectionalLight(0xffffff,4);
-  key.position.set(5,2,-4);
+  // Key light in front and to the upper left, so the cabinet's front, top and
+  // side faces get different brightness (= different characters in ASCII).
+  // The camera is at z = +10, so a light at negative z only lights the back.
+  const key = new THREE.DirectionalLight(0xffffff, 4);
+  key.position.set(-4, 4, 6);
+  scene.add(key);
 
+  // Rim light from behind/right, to separate the TV's edge from the background.
   const rim = new THREE.DirectionalLight(0xffffff, 0.8);
   rim.position.set(5, 2, -4);
   scene.add(rim);
@@ -55,7 +61,7 @@ const noiseCanvas = document.createElement('canvas');
 noiseCanvas.width=45;
 noiseCanvas.height=36;
 const nctx = noiseCanvas.getContext('2d');
-const noiseImg = nctx.createImageData(noiseCanvas.width,noiseCanvas,height);
+const noiseImg = nctx.createImageData(noiseCanvas.width, noiseCanvas.height);
 
 const noiseTex = new THREE.CanvasTexture(noiseCanvas);
   noiseTex.magFilter = THREE.NearestFilter;

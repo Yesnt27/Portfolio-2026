@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AsciiTV from "@/components/ascii-tv/AsciiTV";
 import IndexMenu from "@/components/home/IndexMenu";
 import WorkList from "@/components/home/WorkList";
 import LocalClock from "@/components/site/LocalClock";
@@ -58,8 +59,14 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* Right side intentionally left blank for now (the hero collage was
-              removed; content to come). lg:min-h above keeps the space reserved. */}
+          {/* ASCII TV in the old hero collage's slot: right-aligned to the
+              column, same 676.6 x 547.2 box, so lg:min-h above still fits it.
+              Below lg it sits in the flow between the title and the intro.
+              z-20: the title and intro wrappers (z-10) are full-width blocks, so
+              without it they sit over the TV and swallow its click-to-power. */}
+          <div className="rise-in relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none">
+            <AsciiTV />
+          </div>
 
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms] lg:mt-[20px]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>
