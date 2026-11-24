@@ -64,7 +64,12 @@ export default function HomePage() {
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms] lg:mt-[20px]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>
             <div className="mt-[33px] max-w-[222px] lg:mt-[20px] space-y-[20px] font-serif text-[16.5px] font-medium leading-[20px] text-copy">
-              <p>Kenny is a designer who uses stunning visuals and intuitive interactions to create thoughtful products.</p>
+              {/* Highlighted like selected text (::selection in globals.css): ink block, paper text,
+                  so it inverts in dark mode. clone keeps each line's block whole if it wraps. */}
+              <p>
+                <mark className="bg-ink px-px text-paper [box-decoration-break:clone]">Kenny is a designer</mark> who uses
+                stunning visuals and intuitive interactions to create thoughtful products.
+              </p>
               <p>Building things through disciplinary visual mediums in tandem with code.</p>
             </div>
           </div>
