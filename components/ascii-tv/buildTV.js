@@ -6,6 +6,9 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
+// Pure blue: nothing else in the scene (wood, grey plastic, metal) comes close.
+export const SCREEN_KEY = 0x0000ff;
+
 export function buildTV() {
   const tv = new THREE.Group();
 
@@ -15,13 +18,10 @@ export function buildTV() {
   const darkPlastic = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.6 });
   const metal = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.6, roughness: 0.3 });
 
-  // The screen glows by itself (emissive), so it is always the brightest area.
-  // Its emissiveMap gets a "static" texture later (see createAsciiTV.js).
-  const screenMat = new THREE.MeshStandardMaterial({
-    color: 0x000000,
-    emissive: 0xffffff,
-    emissiveIntensity: 1,
-  });
+  // The screen is drawn in a pure "key" colour. MeshBasicMaterial is unlit, so
+  // the lights never change it. AsciiScreenEffect.js looks for this colour and
+  // paints those cells as solid black glass instead of characters.
+  const screenMat = new THREE.MeshBasicMaterial({ color: SCREEN_KEY });
 
   // ---- 1. Cabinet (the main body) ---------------------------------------
   const W = 3.2, H = 2.4, D = 2.2; // width, height, depth
