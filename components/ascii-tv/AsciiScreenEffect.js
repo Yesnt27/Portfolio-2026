@@ -5,7 +5,8 @@
 // painted as a solid block of `screenColor` instead of a character.
 //
 // The sizing maths match AsciiEffect at scale 1 / 'low' string resolution,
-// so the cabinet looks exactly as it did with the stock effect.
+// except the letter-spacing, which is measured so each character is exactly
+// one image pixel wide (see below).
 
 const htmlEscapes = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
 const escapeHTML = (s) => s.replace(/[&<>]/g, (ch) => htmlEscapes[ch]);
@@ -27,7 +28,15 @@ export class AsciiScreenEffect {
     // across, and one row per two image pixels down (characters are ~2:1 tall).
     const fontSize = 2 / resolution;
     const lineHeight = 2 / resolution;
-    const letterSpacing = -1;
+    const font = 'courier new, monospace';
+    // AsciiEffect uses a fixed -1px, which makes each character slightly wider
+    // than the image pixel it stands for (~4% at this size), so the text drifts
+    // right of the real 3D geometry. Measure the font instead, so a character
+    // is exactly 1/resolution px wide and the HTML screen pinned on top
+    // (CSS3DRenderer) lines up with the ASCII one.
+    const measure = document.createElement('canvas').getContext('2d');
+    measure.font = `${fontSize}px ${font}`;
+    const letterSpacing = 1 / resolution - measure.measureText('M').width;
 
     const chars = charSet.split('').map(escapeHTML);
     const maxIdx = chars.length - 1;
@@ -43,7 +52,7 @@ export class AsciiScreenEffect {
       padding: '0',
       overflow: 'hidden',
       letterSpacing: `${letterSpacing}px`,
-      fontFamily: 'courier new, monospace',
+      fontFamily: font,
       fontSize: `${fontSize}px`,
       lineHeight: `${lineHeight}px`,
       textAlign: 'left',

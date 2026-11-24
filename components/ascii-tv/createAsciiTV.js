@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { AsciiScreenEffect } from './AsciiScreenEffect.js';
 import { buildTV } from './buildTV.js';
+import { createScreen, SCREEN_H, SCREEN_W } from './createScreen.js';
 
 export function createAsciiTV(container, options = {}) {
   const {
@@ -27,7 +29,7 @@ scene.background = new THREE.Color(0x000000);
   const renderer = new THREE.WebGLRenderer({ antialias: false });
 
   // ---- STEP 2: The model --------------------------------------------------
-  const { tv } = buildTV();
+  const { tv, screenRect } = buildTV();
   scene.add(tv);
 
   // Key light in front and to the upper left, so the cabinet's front, top and
@@ -59,15 +61,35 @@ scene.background = new THREE.Color(0x000000);
   const themeObserver = new MutationObserver(applyTheme);
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   el.setAttribute('aria-hidden', 'true'); // screen readers skip the wall of symbols
+  el.style.pointerEvents = 'none';        // only the screen (below) takes the pointer
   container.appendChild(el);
+
+  // ---- The screen content (Figma 740:1094) --------------------------------
+  // Real HTML (dithered canvases + video) on top of the ASCII. CSS3DRenderer
+  // uses the same camera, and the screen is a child of the TV group, so it
+  // sways and turns with the TV, sitting exactly on the 3D screen.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const screen = createScreen({ reduceMotion });
+  const screenObject = new CSS3DObject(screen.element);
+  screenObject.position.set(screenRect.x, screenRect.y, screenRect.z);
+  // 1 CSS px of the design → world units (the 418 × 325 frame fills the screen).
+  screenObject.scale.set(screenRect.width / SCREEN_W, screenRect.height / SCREEN_H, 1);
+  tv.add(screenObject);
+
+  const cssRenderer = new CSS3DRenderer();
+  Object.assign(cssRenderer.domElement.style, { position: 'absolute', inset: '0', pointerEvents: 'none' });
+  container.appendChild(cssRenderer.domElement);
 
   // ---- STEP 6b: Interaction ----------------------------------------------
   // Mouse position → a small target rotation. Each frame we ease toward it.
   const target = { x: 0, y: 0 };
   function onPointerMove(e) {
     const r = container.getBoundingClientRect();
-    const nx = ((e.clientX - r.left) / r.width) * 2 - 1;  // -1 … 1
-    const ny = ((e.clientY - r.top) / r.height) * 2 - 1;  // -1 … 1
+    // Clamped: the listener is on the whole window, and without the clamp a
+    // pointer far to the left (e.g. over the title) turned the TV ~70°.
+    const clamp = (v) => Math.max(-1, Math.min(1, v));
+    const nx = clamp(((e.clientX - r.left) / r.width) * 2 - 1);  // -1 … 1
+    const ny = clamp(((e.clientY - r.top) / r.height) * 2 - 1);  // -1 … 1
     target.y = nx * 0.4;   // turn left/right
     target.x = ny * 0.15;  // tilt up/down (smaller, looks more natural)
   }
@@ -83,6 +105,14 @@ scene.background = new THREE.Color(0x000000);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     effect.setSize(w, h);
+    cssRenderer.setSize(w, h);
+
+    // How big one design pixel of the screen ends up on the page (CSS px), so
+    // the dither blocks never shrink below one CSS pixel.
+    const distance = camera.position.z - screenRect.z;
+    const pxPerUnit = h / (2 * distance * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+    screen.setScale((screenRect.width * pxPerUnit) / SCREEN_W);
+
     renderOnce();
   }
   const ro = new ResizeObserver(resize);
@@ -94,6 +124,7 @@ scene.background = new THREE.Color(0x000000);
 
   function renderOnce() {
     effect.render(scene, camera);
+    cssRenderer.render(scene, camera);
   }
 
   function tick(timestamp) {
@@ -114,15 +145,17 @@ scene.background = new THREE.Color(0x000000);
       timer.reset(); // reset delta so the TV doesn't "jump" after a pause
       frameId = requestAnimationFrame(tick);
     }
+    screen.play();
   }
   function stop() {
     if (frameId !== null) cancelAnimationFrame(frameId);
     frameId = null;
+    screen.pause();
   }
 
   // ---- STEP 7: Performance + accessibility --------------------------------
-  // Respect "reduce motion": show one still frame, no loop.
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Respect "reduce motion" (read above): one still frame, no loop, and the
+  // video shows its poster.
 
   // Pause rendering when the TV is scrolled off screen.
   const io = new IntersectionObserver(([entry]) => {
@@ -149,6 +182,8 @@ scene.background = new THREE.Color(0x000000);
     });
     timer.dispose();
     renderer.dispose();
+    screen.dispose();
+    cssRenderer.domElement.remove();
     el.remove();
   };
 }

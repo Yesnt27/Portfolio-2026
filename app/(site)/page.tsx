@@ -63,8 +63,10 @@ export default function HomePage() {
               column, same 676.6 x 547.2 box, so lg:min-h above still fits it.
               Below lg it sits in the flow between the title and the intro.
               z-20: the title and intro wrappers (z-10) are full-width blocks, so
-              without it they sit over the TV and swallow its click-to-power. */}
-          <div className="rise-in relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none">
+              without it they sit over the TV and swallow the screen's hover.
+              pointer-events-none: only the screen takes the pointer, so the
+              box's empty margins never block the title. */}
+          <div className="rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:right-0 lg:top-0 lg:my-0 lg:w-[50.04%] lg:max-w-none">
             <AsciiTV />
           </div>
 

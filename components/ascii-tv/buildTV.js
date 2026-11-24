@@ -103,5 +103,9 @@ export function buildTV() {
   // Lift the whole TV so it's visually centred (antenna on top makes it top-heavy).
   tv.position.y = -0.4;
 
-  return { tv, screenMat };
+  // Where the screen sits inside the TV group, so the HTML screen content
+  // (createScreen.js) can be pinned on top of it.
+  const screenRect = { x: screenX, y: 0, z: front + 0.01, width: screenW, height: screenH };
+
+  return { tv, screenMat, screenRect };
 }
