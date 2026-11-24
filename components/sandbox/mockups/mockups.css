@@ -54,23 +54,36 @@
 }
 
 /*
-  C2, "file drawer": portrait windows standing edge to edge in a flat
-  4 x 2 wall (both rows' top and bottom edges line up).
-  Hovering a box pulls it up out of its slot like a file out of a drawer:
-  the slot behind shows as a recess, the box rises, tilts and grows over
-  the row above, and its two neighbours lean away, pivoting at their base.
+  C2, "file drawer": portrait windows in two rows of four, fanned out like
+  a hand of cards. Each box turns with its slot (Figma 30 / 15 degrees
+  counterclockwise on the left, mirrored on the right), and the bottom row
+  rides 60px up over the top row.
+  Hovering a box pulls it up out of its slot like a file out of a drawer,
+  along its own tilt: the slot behind shows as a recess, the box rises and
+  grows over the row above, and its two neighbours lean away, pivoting at
+  their base. The fan uses the `rotate` property so it stacks under the
+  hover's `transform` instead of being replaced by it.
 */
 .mk-drawer-row {
   display: flex;
   justify-content: center;
 }
+.mk-drawer-row + .mk-drawer-row {
+  margin-top: calc(-1 * clamp(20px, 3.97vw, 60px));
+}
 
 .mk-cell {
+  --rot: 0deg;
   position: relative;
   flex: none;
   width: min(19.84vw, 300px); /* 300px on the 1512 frame */
+  rotate: var(--rot);
   outline: none;
 }
+.mk-cell:nth-child(1) { --rot: -30deg; }
+.mk-cell:nth-child(2) { --rot: -15deg; }
+.mk-cell:nth-child(3) { --rot: 15deg; }
+.mk-cell:nth-child(4) { --rot: 30deg; }
 
 /* The slot a box sits in; only seen once the box lifts out of it. */
 .mk-cell::before {
@@ -85,7 +98,9 @@
 .mk-cell .mk-win {
   position: relative;
   border-radius: 6px;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.1),
+    0 12px 24px -16px rgb(0 0 0 / 0.45);
   transform-origin: 50% 100%;
   transition:
     transform 420ms var(--ease-snap),
