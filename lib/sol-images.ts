@@ -1,10 +1,19 @@
 const sol = "/images/sol";
 
 export const solImages = {
-  /* Redesign (Figma frame 571:90). WebP derivatives of the Figma source fills. */
+  /* Redesign (Figma frames 571:90 and 689:2028). WebP derivatives of the
+     Figma source fills, cropped as each box shows them. */
   appIcon: `${sol}/app-icon-final.webp`,
-  planet: `${sol}/planet-orbit.webp`,
   useCases: `${sol}/use-cases.webp`,
+  /* Glowy Soul loop for the "planet 1" slot (components/projects/GlowySoul.tsx):
+     soft globs only; the rings and grain are drawn on the page. */
+  glowySoul: {
+    sources: [
+      { src: `${sol}/glowy-soul.av1.mp4`, type: 'video/mp4; codecs="av01.0.04M.08"' },
+      { src: `${sol}/glowy-soul.mp4`, type: "video/mp4" },
+    ],
+    poster: `${sol}/glowy-soul-poster.webp`,
+  },
   glowWide: `${sol}/glow-wide.webp`,
   glowTall: `${sol}/glow-tall.webp`,
   earpieceSide: `${sol}/earpiece-side.webp`,
@@ -28,7 +37,8 @@ export const solImages = {
   preview: `${sol}/sol-preview.mp4`,
   previewPoster: `${sol}/sol-preview-poster.webp`,
 
-  /* Previous layout's assets (still on disk). */
+  /* Previous layouts' assets (still on disk). */
+  planet: `${sol}/planet-orbit.webp`,
   projectTitle: `${sol}/sol_project_title.png`,
   mindMap: `${sol}/mind-map.png`,
   researchDiagram1: `${sol}/research-diagram-1.png`,

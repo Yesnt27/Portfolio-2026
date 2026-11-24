@@ -1,5 +1,15 @@
 import type { CSSProperties } from "react";
-import { CaseHero, CaseShell, CaseVideo, CropImage, Indent, MetaGrid, NextProject, TocSection } from "@/components/projects/case-parts";
+import {
+  CaseHero,
+  CaseShell,
+  CaseVideo,
+  CropImage,
+  Indent,
+  LearningCard,
+  MetaGrid,
+  NextProject,
+  TocSection,
+} from "@/components/projects/case-parts";
 import PosterParallax from "@/components/projects/PosterParallax";
 import SiteHeader from "@/components/site/SiteHeader";
 import Reveal from "@/components/ui/Reveal";
@@ -22,7 +32,10 @@ const toc = [
   { id: "learnings", label: "Key Learnings" },
 ];
 
-const heading = "font-serif text-[24px] leading-[normal] text-ink";
+/* Same text colours as the Sol page: section headings and body copy in copy grey (#4e4e4e),
+   "Key Learnings" in ink. Colour is kept out of `type` so each heading gets exactly one. */
+const type = "font-serif text-[24px] leading-[normal]";
+const heading = `${type} text-copy`;
 const body = "font-mono text-[16.5px] leading-[normal]";
 
 /* 1 Figma px inside the 1195px-wide poster row (container query units). */
@@ -82,24 +95,6 @@ function PosterRow() {
   );
 }
 
-function LearningCard({ index, title, glyphs, children }: { index: number; title: string; glyphs: number; children: string }) {
-  return (
-    <Reveal delay={index * 120} className="learning-card relative aspect-[421/351] w-full max-w-[421px] overflow-hidden border border-faint bg-card-soft">
-      <div className="absolute left-[13%] top-[23%] right-[10%] flex flex-col">
-        <p className="font-serif text-[16.5px] leading-[normal] text-ink">
-          {index + 1}. {title}
-        </p>
-        <div className="mt-[12px] flex gap-[14px]">
-          <span aria-hidden="true" className="whitespace-pre font-pixel text-[16.5px] leading-[normal] text-ink">
-            {Array.from({ length: glyphs }, () => "▞").join("\n")}
-          </span>
-          <p className="max-w-[254px] pt-[2px] font-mono text-[12px] leading-[normal] text-copy">{children}</p>
-        </div>
-      </div>
-    </Reveal>
-  );
-}
-
 export default function FuorisaloneProject({ project }: { project: Project }) {
   return (
     <>
@@ -126,7 +121,7 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
                   {
                     label: "Team",
                     value: (
-                      <span className="block leading-[35px] text-ink">
+                      <span className="block leading-[35px] text-copy">
                         5 design coordinators (Me)
                         <br />
                         No designated roles
@@ -135,8 +130,8 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
                       </span>
                     ),
                   },
-                  { label: "Timeline", value: <span className="text-ink">March 2026 - April 2026</span> },
-                  { label: "Tools", value: <span className="text-ink">Figma</span> },
+                  { label: "Timeline", value: <span className="text-copy">March 2026 - April 2026</span> },
+                  { label: "Tools", value: <span className="text-copy">Figma</span> },
                 ]}
               />
             </div>
@@ -144,7 +139,7 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
 
           <TocSection id="ideation" label="Ideation">
             <Indent x={274} className="mt-[63px]">
-              <p className={`${body} max-w-[711px] text-ink`}>
+              <p className={`${body} max-w-[711px] text-copy`}>
                 Experimental website for visitors of Fuorisalone design district 2024 and encapsulating all its exhibits with
                 concise UX/UI design.
               </p>
@@ -204,7 +199,7 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
             </Indent>
             <Indent x={478} className="mt-[55px]">
               <h2 className={heading}>Prototypes and testing</h2>
-              <p className={`${body} mt-[23px] max-w-[861px] text-ink`}>
+              <p className={`${body} mt-[23px] max-w-[861px] text-copy`}>
                 After many long hours of iteration and wireframes, building from our previous ideas, I consolidated our
                 principles and brought them to life with an initial prototype, to see how things would look like in practice
                 and prepared for feedback from users.
@@ -237,7 +232,7 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
             </Indent>
             <Indent x={415} className="mt-[37px]">
               <h2 className={`${heading} max-w-[976px]`}>Implementation and Website flow</h2>
-              <div className={`${body} mt-[28px] max-w-[888px] space-y-[21px] text-ink`}>
+              <div className={`${body} mt-[28px] max-w-[888px] space-y-[21px] text-copy`}>
                 <p>
                   After taking in feedback about our initial prototype being the problem that users would have to figure out
                   which interactions to choose first and how to get to them easier, we had to find a way to make that
@@ -254,7 +249,7 @@ export default function FuorisaloneProject({ project }: { project: Project }) {
 
           <TocSection id="learnings" label="Key Learnings">
             <Indent x={310} className="mt-[90px]">
-              <h2 className={`${heading} max-w-[160px]`}>Key Learnings</h2>
+              <h2 className={`${type} max-w-[160px] text-ink`}>Key Learnings</h2>
               <div className="mt-[25px] grid max-w-[892px] gap-[50px] sm:grid-cols-2">
                 <LearningCard index={0} title="Take your time." glyphs={5}>
                   Styling and aesthetic are all aspects that take a good amount of time and research, and if you leave out the

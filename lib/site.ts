@@ -12,9 +12,9 @@ export const resume = {
 export const socialLinks = [
   { label: "Github", href: "https://github.com/Yesnt27" },
   { label: "Instagram", href: "https://www.instagram.com/kennynguyen27/" },
-  { label: "Discord", href: "https://discord.com" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/kenny-nguyen-3ab52622a/" },
   { label: "Email", href: "mailto:kennynguyen2726@gmail.com" },
+  { label: "X", href: "https://x.com/KennyNguye74746" },
 ] as const;
 
 export type NavKey = "resume" | "projects" | "about" | "sandbox";

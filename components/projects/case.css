@@ -36,6 +36,61 @@
   box-shadow: 0 22px 40px -22px rgb(0 0 0 / 0.55);
 }
 
+/*
+  Glowy Soul rings and grain (components/projects/GlowySoul.tsx).
+  The bright ring is a conic gradient masked down to a ~1.2px circle; its
+  stops are 0.62 + 0.28 cos(angle - 227.5deg) of the ring colour, the same
+  highlight the original animation drew, and the whole ring turns once per
+  12s loop.
+*/
+.glowy-ring {
+  border-radius: 50%;
+  background: conic-gradient(
+    rgb(93 91 94) 0deg,
+    rgb(77 75 77) 30deg,
+    rgb(75 73 76) 60deg,
+    rgb(90 88 91) 90deg,
+    rgb(116 114 117) 120deg,
+    rgb(148 144 149) 150deg,
+    rgb(176 172 177) 180deg,
+    rgb(192 188 194) 210deg,
+    rgb(194 189 196) 240deg,
+    rgb(179 175 181) 270deg,
+    rgb(153 149 154) 300deg,
+    rgb(121 119 123) 330deg,
+    rgb(93 91 94) 360deg
+  );
+  mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - 1.8px),
+    #000 calc(100% - 1.2px),
+    #000 calc(100% - 0.6px),
+    transparent 100%
+  );
+  animation: glowy-turn 12s linear infinite;
+}
+
+@keyframes glowy-turn {
+  to {
+    rotate: 1turn;
+  }
+}
+
+/* Film grain: a 256px noise tile at half size (one grain per device pixel on
+   retina), nudged to a new spot 8 times a second so it shimmers like film. */
+.glowy-grain {
+  background: url("/images/sol/grain.png") 0 0 / 128px 128px;
+  image-rendering: pixelated;
+  opacity: 0.45;
+  animation: glowy-grain 1s steps(8) infinite;
+}
+
+@keyframes glowy-grain {
+  to {
+    background-position: 384px 896px;
+  }
+}
+
 /* Key-learning cards. */
 .learning-card {
   transition:

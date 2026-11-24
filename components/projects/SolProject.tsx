@@ -1,15 +1,16 @@
 import type { CSSProperties } from "react";
-import { CaseHero, CaseShell, CropImage, Indent, MetaGrid, NextProject, TocSection } from "@/components/projects/case-parts";
+import { CaseHero, CaseShell, CropImage, Indent, LearningCard, MetaGrid, NextProject, TocSection } from "@/components/projects/case-parts";
+import GlowySoul from "@/components/projects/GlowySoul";
 import SiteHeader from "@/components/site/SiteHeader";
 import Reveal from "@/components/ui/Reveal";
 import { solImages } from "@/lib/sol-images";
 import type { Project } from "@/lib/projects";
 
 /*
-  Sol / Figbuild 2026 — Figma frame 571:90 (1512 x 10765).
-  Copy column at x=286; the final-app panels sit 10px further in (x=296).
-  Every phone, panel and render keeps its Figma geometry as percentages of
-  its box, so the compositions scale as a unit.
+  Sol / Figbuild 2026 — Figma frame 689:2028 (1512 x 9387).
+  Copy column at x=286; "The Solution" and "Key Learnings" sit at x=292, their
+  panels at x=294. Every phone, panel and render keeps its Figma geometry as
+  percentages of its box, so the compositions scale as a unit.
 */
 
 const { screens } = solImages;
@@ -21,10 +22,10 @@ const toc = [
   { id: "learnings", label: "Key Learnings" },
 ];
 
-const heading = "font-mono text-[16.5px] font-bold leading-[normal] text-copy";
+/* Figma text styles: "Heading 1" (Bogart 24) and "geist body" (Geist Mono 16.5). */
+const type = "font-serif text-[24px] leading-[normal]";
+const heading = `${type} text-copy`;
 const body = "font-mono text-[16.5px] leading-[normal] text-copy";
-const cta =
-  "group inline-flex items-baseline gap-[0.25em] font-sans leading-[normal] text-copy transition-colors hover:text-ink";
 
 type Layer = { src: string; box: CSSProperties; crop?: CSSProperties; radius?: string };
 
@@ -101,23 +102,119 @@ function PhonesOverGlow() {
   );
 }
 
-function Screen({ src, alt, box, radius }: { src: string; alt: string; box: CSSProperties; radius: string }) {
+/*
+  A screen inside a coloured panel (Figma 689:2136 / 689:2144): placed and
+  rounded as percentages of the panel, with the frame's thin outline.
+*/
+type Box = { left: number; top: number; width: number; height: number };
+
+function PanelScreen({ src, alt, box, panel, radius, outline }: {
+  src: string;
+  alt: string;
+  box: Box;
+  panel: { width: number; height: number };
+  radius: number;
+  outline: string;
+}) {
+  const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
       loading="lazy"
-      className="absolute object-cover shadow-[0_14px_30px_-16px_rgba(0,0,0,0.7)] transition-transform duration-500 ease-snap hover:-translate-y-1.5"
-      style={{ ...box, borderRadius: radius }}
+      decoding="async"
+      className="absolute object-cover transition-transform duration-500 ease-snap hover:-translate-y-1.5"
+      style={{
+        left: pct(box.left, panel.width),
+        top: pct(box.top, panel.height),
+        width: pct(box.width, panel.width),
+        height: pct(box.height, panel.height),
+        borderRadius: `${pct(radius, box.width)} / ${pct(radius, box.height)}`,
+        border: `1px solid ${outline}`,
+      }}
     />
   );
 }
 
-export default function SolProject({ project }: { project: Project }) {
-  const pitch = project.links.find((link) => link.label.toLowerCase().includes("pitch"))?.href ?? "#";
-  const prototype = project.links.find((link) => link.label.toLowerCase().includes("prototype"))?.href ?? "#";
+/* Three Sol screens on the amber panel (Figma 689:2136, 964 x 648). */
+function AmberPanel() {
+  const panel = { width: 964, height: 648 };
+  const screen = { panel, radius: 38.303, outline: "#4e4e4e" };
+  return (
+    <div className="relative aspect-[964/648] w-full max-w-[964px] overflow-hidden border-[1.277px] border-black bg-[#e4aa53]">
+      <PanelScreen
+        {...screen}
+        src={screens.homeAlt}
+        alt="Sol home screen with the day's orbit visual"
+        box={{ left: 43.41, top: 31.13, width: 269.474, height: 585.872 }}
+      />
+      <PanelScreen
+        {...screen}
+        src={screens.home}
+        alt="Sol home screen, evening state"
+        box={{ left: 343.45, top: 26.03, width: 271.926, height: 591.201 }}
+      />
+      <PanelScreen
+        {...screen}
+        src={screens.insights}
+        alt="Sol insights screen summarising behaviour patterns"
+        box={{ left: 644.77, top: 26.03, width: 273.151, height: 593.866 }}
+      />
+    </div>
+  );
+}
 
+/* Weekly + comparison screens (Figma 689:2144, 444 x 567) beside the earbuds
+   floating over the sol4 gradient (689:2147, 484 x 567). */
+function ScreensAndEarbuds() {
+  const panel = { width: 444, height: 567 };
+  const screen = { panel, radius: 18.449, outline: "#3a3a3a" };
+  return (
+    <div className="grid max-w-[965px] gap-[37px] sm:grid-cols-[444fr_484fr]">
+      <div className="relative aspect-[444/567] overflow-hidden border-[0.615px] border-black bg-[#c47d58]">
+        <PanelScreen
+          {...screen}
+          src={screens.weeklyDark}
+          alt="Sol weekly cognitive chart screen"
+          box={{ left: 21.53, top: 29.52, width: 187.572, height: 506.725 }}
+        />
+        <PanelScreen
+          {...screen}
+          src={screens.comparison}
+          alt="Sol comparison screen with two weeks side by side"
+          box={{ left: 233.69, top: 29.52, width: 187.572, height: 506.725 }}
+        />
+      </div>
+      <div className="relative aspect-[484/567] overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={solImages.glowTall} alt="" loading="lazy" decoding="async" className="absolute inset-0 size-full" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={solImages.earbudLeft}
+          alt="Sol earbud, front view"
+          loading="lazy"
+          className="earbud absolute"
+          style={{ left: "0.839%", top: "10.037%", width: "54.658%", height: "79.429%" }}
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={solImages.earbudRight}
+          alt="Sol earbud, mirrored pair"
+          loading="lazy"
+          className="earbud absolute [animation-delay:-2.5s]"
+          style={{ left: "46.525%", top: "4.302%", width: "55.09%", height: "88.031%" }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* Card copy block placement in the Sol frame (Figma 689:2343): "1." at x=68,
+   y=82 of the 421 x 351 card; ▞ column and copy 22px below; copy at x=99. */
+const SOL_CARD = { left: "16.152%", top: "23.362%", titleGap: 22, textGap: 21, textWidth: 259 };
+
+export default function SolProject({ project }: { project: Project }) {
   return (
     <>
       <SiteHeader active="projects" compact />
@@ -125,9 +222,9 @@ export default function SolProject({ project }: { project: Project }) {
         <CaseHero sources={[{ src: solImages.demoVideo, type: "video/mp4" }]} label="Sol demo video" />
 
         <CaseShell toc={toc}>
-          <Indent x={286} as="header" reveal={false} className="pt-[clamp(64px,9.9vw,150px)]">
-            <div className="flex flex-wrap items-start gap-x-[clamp(24px,7vw,136px)] gap-y-6">
-              <h1 className="rise-in pt-[18px] font-serif text-[clamp(48px,5.3vw,80px)] leading-[1.522] tracking-[-0.01em] text-copy">
+          <Indent x={286} as="header" reveal={false} className="pt-[clamp(56px,8.73vw,132px)]">
+            <div className="flex flex-wrap items-start gap-x-[clamp(24px,7.4vw,112px)] gap-y-6">
+              <h1 className="rise-in pt-[18px] font-serif text-[clamp(48px,5.3vw,80px)] leading-[1.522] tracking-[-0.01em] text-ink">
                 {project.title}
               </h1>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -141,7 +238,7 @@ export default function SolProject({ project }: { project: Project }) {
             </div>
             <div className="mt-[79px] max-w-[1061px]">
               <MetaGrid
-                template="429fr 319fr 313fr"
+                template="405fr 295fr 313fr"
                 columns={[
                   {
                     label: "Team",
@@ -155,7 +252,7 @@ export default function SolProject({ project }: { project: Project }) {
                   {
                     label: "Tools",
                     value: (
-                      <span className="flex flex-col gap-[10px] text-ink">
+                      <span className="flex flex-col gap-[10px]">
                         <span>Figma</span>
                         <span>Figma Make</span>
                         <span>After Effects</span>
@@ -178,24 +275,9 @@ export default function SolProject({ project }: { project: Project }) {
           </Indent>
 
           <TocSection id="ideation" label="Ideation">
-            <Indent x={286} className="mt-[155px]">
-              <h2 className="max-w-[429px] font-serif text-[24px] leading-[normal] text-copy">The Case for Quantification</h2>
-            </Indent>
-
-            <Indent x={286} className="mt-[clamp(120px,23vw,347px)]">
-              <p className="font-serif text-[24px] leading-[normal] text-faint">The Problem</p>
-              <a href={pitch} target="_blank" rel="noopener noreferrer" className={`${cta} mt-[32px] text-[clamp(36px,4vw,60px)]`}>
-                View the pitch video
-                <span aria-hidden="true" className="transition-transform duration-300 ease-snap group-hover:translate-x-2">
-                  →
-                </span>
-              </a>
-              <p className={`${body} mt-[65px] max-w-[903px]`}>
-                Sol is an app for tracking and logging various aspects of our mental state. It acts as an extension of our
-                body&rsquo;s sensory experience of metacognition - our awareness of aspects of our thinking such as
-                cognitive states, stress levels, and emotional intensity.
-              </p>
-              <p className={`${body} mt-[29px] max-w-[1052px]`}>
+            <Indent x={286} className="mt-[150px]">
+              <h2 className={`${heading} max-w-[429px]`}>The Case for Quantification</h2>
+              <p className={`${body} mt-[44px] max-w-[958px]`}>
                 Industrial technology freed people from needing physical labour to survive, leading many to compensate by
                 exercising at gyms and monitoring their fitness. A similar shift is now happening with mental labour as AI
                 takes over cognitive tasks. Given this shift, we proposed a tool to help people monitor their mental
@@ -203,49 +285,50 @@ export default function SolProject({ project }: { project: Project }) {
               </p>
             </Indent>
 
-            <Indent x={286} className="mt-[clamp(120px,24.7vw,374px)]">
-              <CropImage
-                src={solImages.planet}
-                alt="Sol's first homepage concept: a planet orbited by rings of thought"
-                ratio="429 / 419"
-                className="w-full max-w-[429px]"
-              />
+            <Indent x={286} className="mt-[106px]">
+              <figure className="max-w-[739px]">
+                <figcaption className={`${body} max-w-[731px]`}>
+                  Fig. The concept reflects the mind as a dynamic system of thoughts, emotions, and stress that shift in
+                  patterns over time.
+                </figcaption>
+                <GlowySoul className="mt-[10px]" />
+              </figure>
             </Indent>
 
-            <Indent x={286} className="mt-[186px]">
-              <h3 className={heading}>Defining a theme</h3>
-              <p className={`${body} mt-[18px] max-w-[748px]`}>
-                Sol takes its name from the sun, the soul, and the cyclical passage of time represented by sols on Mars.
-                The concept reflects the mind as a dynamic system of thoughts, emotions, and stress that shift in patterns
-                over time.
+            <Indent x={286} className="mt-[71px]">
+              <h2 className={heading}>The Idea</h2>
+              <p className={`${body} mt-[31px] max-w-[840px]`}>
+                Sol is an app for tracking and logging various aspects of our mental state. It acts as an extension of our
+                body&rsquo;s sensory experience of metacognition - our awareness of aspects of our thinking such as
+                cognitive states, stress levels, and emotional intensity.
               </p>
             </Indent>
           </TocSection>
 
           <TocSection id="research" label="Research">
-            <Indent x={286} className="mt-[200px]">
-              <h3 className={heading}>Turning observations into verifiable insights</h3>
-              <p className={`${body} mt-[32px] max-w-[678px]`}>
+            <Indent x={286} className="mt-[122px]">
+              <h2 className={heading}>Turning observations into verifiable insights</h2>
+              <p className={`${body} mt-[29px] max-w-[678px]`}>
                 Taking users feedback about usability of the app, I took the time to add real time changes that are
                 observable insights to reinforce the idea of the quantified self. In turn it helps give the user a sense
                 that solidifies their habit-building.
               </p>
             </Indent>
-            <Indent x={286} className="mt-[59px]">
+            <Indent x={286} className="mt-[35px]">
               <PhonesOverGlow />
             </Indent>
           </TocSection>
 
           <TocSection id="iteration" label="Iteration">
-            <Indent x={286} className="mt-[39px]">
-              <h3 className={heading}>Prototypes and testing</h3>
-              <p className={`${body} mt-[11px] max-w-[893px]`}>
+            <Indent x={286} className="mt-[131px]">
+              <h2 className={heading}>Prototypes and testing</h2>
+              <p className={`${body} mt-[23px] max-w-[893px]`}>
                 I proposed a few ways that this solution could work in real-life, with considerations on practicality and
                 mobility stances. We also asked a few users what they would like to see in what this product could look
                 like based on its use cases.
               </p>
             </Indent>
-            <Indent x={286} className="mt-[70px]">
+            <Indent x={286} className="mt-[88px]">
               <CropImage
                 src={solImages.useCases}
                 alt="Case study scenarios showing how Sol fits into different people's days"
@@ -254,18 +337,22 @@ export default function SolProject({ project }: { project: Project }) {
               />
             </Indent>
 
-            <Indent x={286} className="mt-[43px]">
-              <h3 className={heading}>Information management</h3>
-              <ul className={`${body} mt-[8px] max-w-[1061px] leading-[30px]`}>
+            <Indent x={286} className="mt-[67px]">
+              <h2 className={heading}>Information management</h2>
+              <ul className="mt-[27px] max-w-[1061px] font-mono text-[16.5px] leading-[30px] text-copy">
                 <li>Serious analysis: Clear, consistent visualizations that reveal long-term behavioural patterns across time.</li>
                 <li>Simple + deep views: Quick summaries for daily reflection with optional detailed analytics.</li>
                 <li>Health alerts: Live tracking with notifications to flag positive progress or potential issues.</li>
               </ul>
             </Indent>
 
-            <Indent x={286} className="mt-[200px]">
-              <figure className="max-w-[1016px]">
-                <div className="grid gap-[38px] sm:grid-cols-[384fr_594fr]">
+            <Indent x={286} className="mt-[128px]">
+              {/* 1019 = the 1016 render row + its 3px shift right (x=289). */}
+              <figure className="max-w-[1019px]">
+                <figcaption className={body}>
+                  Some 3D renders of our physical earpiece product as a physical representation.
+                </figcaption>
+                <div className="mt-[26px] grid gap-[38px] sm:ml-[3px] sm:grid-cols-[384fr_594fr]">
                   <CropImage
                     src={solImages.earpieceSide}
                     alt="3D render of the Sol earpiece worn on a white mannequin head"
@@ -279,125 +366,61 @@ export default function SolProject({ project }: { project: Project }) {
                     className="border-[0.72px] border-line bg-[#4e3a6e]"
                   />
                 </div>
-                <figcaption className={`${body} mt-[32px] text-center`}>
-                  Some 3D renders of our physical earpiece product as a physical placeholder.
-                </figcaption>
               </figure>
             </Indent>
           </TocSection>
 
           <TocSection id="solution" label="The Solution">
-            <Indent x={286} className="mt-[49px]">
-              <h3 className={`${heading} max-w-[976px]`}>Observations, verifiable insights and self-reflection</h3>
-              <p className={`${body} mt-[27px] max-w-[939px]`}>
+            <Indent x={292} className="mt-[93px]">
+              <h2 className={`${heading} max-w-[976px]`}>Observations, verifiable insights and self-reflection</h2>
+              <p className={`${body} mt-[24px] max-w-[939px]`}>
                 To ground the product in real life use cases, I imagined how different users might interact with Sol
                 day-to-day. We made sure to include a working digital prototype to bring everything together.
               </p>
             </Indent>
 
-            <Indent x={296} className="mt-[140px]">
-              <a href={prototype} target="_blank" rel="noopener noreferrer" className={`${cta} text-[clamp(28px,2.65vw,40px)]`}>
-                View the final prototype
-                <span aria-hidden="true" className="transition-transform duration-300 ease-snap group-hover:translate-x-2">
-                  →
-                </span>
-              </a>
-
-              <div className="mt-[43px] grid max-w-[1069px] gap-[25px] md:grid-cols-[500.426fr_543.794fr]">
-                <div className="relative aspect-[500.426/664] overflow-hidden border-[0.693px] border-black bg-[#3a3a3a]">
-                  <Screen
-                    src={screens.weeklyDark}
-                    alt="Sol weekly cognitive chart screen"
-                    box={{ left: "4.85%", top: "5.01%", width: "42.24%", height: "86.01%" }}
-                    radius="9.83% / 3.64%"
-                  />
-                  <Screen
-                    src={screens.comparison}
-                    alt="Sol comparison screen with two weeks side by side"
-                    box={{ left: "52.63%", top: "5.01%", width: "42.24%", height: "86.01%" }}
-                    radius="9.83% / 3.64%"
-                  />
-                </div>
-                <div className="relative aspect-[543.794/664]">
-                  <CropImage
-                    src={solImages.glowTall}
-                    alt=""
-                    ratio="543.794 / 664"
-                    className="absolute inset-0 rounded-[29px]"
-                  />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={solImages.earbudLeft}
-                    alt="Sol earbud, front view"
-                    loading="lazy"
-                    className="earbud absolute"
-                    style={{ left: "0.84%", top: "9.63%", width: "54.66%", height: "76.2%" }}
-                  />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={solImages.earbudRight}
-                    alt="Sol earbud, mirrored pair"
-                    loading="lazy"
-                    className="earbud absolute [animation-delay:-2.5s]"
-                    style={{ left: "46.53%", top: "4.13%", width: "55.09%", height: "84.46%" }}
-                  />
-                </div>
-              </div>
-
-              <div className="relative mt-[33px] aspect-[755/526] w-full max-w-[755px] overflow-hidden border border-black bg-[#3a3a3a]">
-                <Screen
-                  src={screens.homeAlt}
-                  alt="Sol home screen with the day's orbit visual"
-                  box={{ left: "4.5%", top: "6.27%", width: "27.95%", height: "87.26%" }}
-                  radius="14% / 6.45%"
-                />
-                <Screen
-                  src={screens.home}
-                  alt="Sol home screen, evening state"
-                  box={{ left: "35.63%", top: "5.51%", width: "28.21%", height: "88.02%" }}
-                  radius="14% / 6.45%"
-                />
-                <Screen
-                  src={screens.insights}
-                  alt="Sol insights screen summarising behaviour patterns"
-                  box={{ left: "66.89%", top: "5.51%", width: "28.34%", height: "88.4%" }}
-                  radius="14% / 6.45%"
-                />
-              </div>
+            <Indent x={294} className="mt-[138px]">
+              <AmberPanel />
+            </Indent>
+            <Indent x={294} className="mt-[38px]">
+              <ScreensAndEarbuds />
             </Indent>
           </TocSection>
 
           <TocSection id="learnings" label="Key Learnings">
-            <Indent x={296} className="mt-[125px]">
-              <h3 className={body}>Key Learnings</h3>
-              <div className={`${body} mt-[77px] max-w-[980px] space-y-[21px]`}>
-                <p>
-                  Do the research! The concepts explored in this project were far from my expertise, so we had to consult
-                  a huge amount of academic sources to get the insights needed to build this project. This allowed for a
-                  research-backed project with informed design decisions.
-                </p>
-                <p>
+            <Indent x={292} className="mt-[56px]">
+              <h2 className={`${type} text-ink`}>Key Learnings</h2>
+            </Indent>
+            <Indent x={292} reveal={false} className="mt-[34px]">
+              <div className="grid max-w-[892px] gap-x-[50px] gap-y-6 sm:grid-cols-2">
+                <LearningCard index={0} title="Do the research!" glyphs={6} layout={SOL_CARD}>
+                  The concepts explored in this project were far from my expertise, so we had to consult a huge amount of
+                  academic sources to get the insights needed to build this project. This allowed for a research-backed
+                  project with informed design decisions.
+                </LearningCard>
+                <LearningCard index={1} title="Be pragmatic!" glyphs={6} layout={SOL_CARD}>
                   Be pragmatic! Using real-world use cases and actionable feedback, we were able to use resources such as
-                  Figma Make to create testable prototypes, focusing on what works best currently to adapt it in the
-                  future.
-                </p>
+                  Figma Make to create testable prototypes, focusing on what works best currently to adapt it in the future.
+                </LearningCard>
               </div>
             </Indent>
           </TocSection>
 
-          <div className="h-[69px]" />
+          <div className="h-[88px]" />
         </CaseShell>
 
         <NextProject
           href="/projects/fuorisalone"
           title="Fuorisalone Microsite 2025"
+          x={139}
+          rails={{ left: "6.25%", right: "94.45%", above: 429, below: 341 }}
           sources={[
             { src: "/images/fuorisalone/fuorisalone-preview.av1.mp4", type: 'video/mp4; codecs="av01.0.08M.08"' },
             { src: "/images/fuorisalone/fuorisalone-preview.mp4", type: "video/mp4" },
           ]}
           poster="/images/fuorisalone/fuorisalone-preview-poster.webp"
         />
-        <div aria-hidden="true" className="h-[138px]" />
+        <div aria-hidden="true" className="h-[67px]" />
       </main>
     </>
   );

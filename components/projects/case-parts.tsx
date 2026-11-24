@@ -162,7 +162,7 @@ export function CaseVideo({
 }
 
 /* Hairline that fades out at both ends, as in the Figma "Mask group" lines. */
-function FadeLine({ className = "" }: { className?: string }) {
+function FadeLine({ className = "", style }: { className?: string; style?: CSSProperties }) {
   return (
     <span
       aria-hidden="true"
@@ -170,37 +170,89 @@ function FadeLine({ className = "" }: { className?: string }) {
       style={{
         background:
           "linear-gradient(180deg, transparent 0%, var(--color-ink) 37.5%, var(--color-ink) 64.4%, transparent 100%)",
+        ...style,
       }}
     />
   );
 }
 
 /*
-  "Next project" (Figma 571:169–571:185 / 561:140–562:166): label at x=127,
-  a full-bleed rule, a 1245 x 650 white card with the next case study playing
-  in it, another rule. Two fading hairlines frame the block at x=78 / x=1412.
+  A numbered key-learning card (Figma 561:… fuorisalone, 689:2343 / 689:2347
+  sol): "1. Title" in the serif, then a column of ▞ glyphs beside the copy.
+  `layout` places that block inside the 421 x 351 card (percentages of the
+  card, px gaps); the default is the Fuorisalone card.
 */
+type LearningLayout = { left: string; top: string; titleGap: number; textGap: number; textWidth: number };
+const FUORISALONE_CARD: LearningLayout = { left: "13%", top: "23%", titleGap: 12, textGap: 14, textWidth: 254 };
+
+export function LearningCard({
+  index,
+  title,
+  glyphs,
+  children,
+  layout = FUORISALONE_CARD,
+}: {
+  index: number;
+  title: string;
+  glyphs: number;
+  children: string;
+  layout?: LearningLayout;
+}) {
+  return (
+    <Reveal delay={index * 120} className="learning-card relative aspect-[421/351] w-full max-w-[421px] overflow-hidden border border-faint bg-card-soft">
+      <div className="absolute right-[10%] flex flex-col" style={{ left: layout.left, top: layout.top }}>
+        <p className="font-serif text-[16.5px] leading-[normal] text-ink">
+          {index + 1}. {title}
+        </p>
+        <div className="flex" style={{ marginTop: layout.titleGap, gap: layout.textGap }}>
+          <span aria-hidden="true" className="whitespace-pre font-pixel text-[16.5px] leading-[normal] text-ink">
+            {Array.from({ length: glyphs }, () => "▞").join("\n")}
+          </span>
+          <p className="pt-[2px] font-mono text-[12px] leading-[normal] text-copy" style={{ maxWidth: layout.textWidth }}>
+            {children}
+          </p>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+/*
+  "Next project" (Figma 571:169–571:185 / 561:140–562:166 / 689:2072–689:2088):
+  label at x (127 by default), a full-bleed rule, a 1245 x 650 white card with
+  the next case study playing in it, another rule. Two fading hairlines frame
+  the block; `rails` sets where they sit (left/right as % of the 1512 frame,
+  how far they reach above and below the block).
+*/
+type Rails = { left: string; right: string; above: number; below: number };
+const DEFAULT_RAILS: Rails = { left: "5.16%", right: "93.39%", above: 430, below: 120 };
+
 export function NextProject({
   href,
   title,
   sources,
   poster,
+  x = 127,
+  rails = DEFAULT_RAILS,
 }: {
   href: string;
   title: string;
   sources: VideoSource[];
   poster?: string;
+  x?: number;
+  rails?: Rails;
 }) {
+  const indent = { ["--x" as string]: fx(x) } as CSSProperties;
   return (
     <section aria-labelledby="next-project" className="relative">
-      <div aria-hidden="true" className="absolute inset-x-0 -top-[430px] bottom-[-120px] max-md:hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 max-md:hidden" style={{ top: -rails.above, bottom: -rails.below }}>
         <div className="relative mx-auto h-full max-w-frame">
-          <FadeLine className="inset-y-0 left-[5.16%]" />
-          <FadeLine className="inset-y-0 left-[93.39%]" />
+          <FadeLine className="inset-y-0" style={{ left: rails.left }} />
+          <FadeLine className="inset-y-0" style={{ left: rails.right }} />
         </div>
       </div>
 
-      <div className="mx-auto max-w-frame px-5 md:pl-[clamp(20px,8.4vw,127px)]">
+      <div className="mx-auto max-w-frame px-5 md:pl-(--x)" style={indent}>
         <Link
           id="next-project"
           href={href}
@@ -213,7 +265,7 @@ export function NextProject({
         </Link>
       </div>
       <div className="mt-[34px] border-t border-line" />
-      <div className="mx-auto max-w-frame px-5 py-[34px] md:pl-[clamp(20px,8.4vw,127px)]">
+      <div className="mx-auto max-w-frame px-5 py-[34px] md:pl-(--x)" style={indent}>
         <Link
           href={href}
           aria-label={`Next project: ${title}`}
