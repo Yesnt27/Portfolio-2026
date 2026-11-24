@@ -1,0 +1,37 @@
+/* Title bar text for sandbox windows (components/sandbox/GlitchCaption.tsx). */
+
+.glitch-text {
+  white-space: pre;
+}
+
+.glitch-line {
+  display: flex;
+  min-width: 0;
+}
+
+.glitch-line > .glitch-text {
+  min-width: 0;
+}
+
+/* The "_" waiting to type: it blinks like a terminal cursor at rest and
+   holds solid while the title types in or glitches out. */
+.glitch-caret {
+  flex: none;
+  animation: glitch-caret 1.06s steps(1, end) infinite;
+}
+
+.glitch-caret[data-typing] {
+  animation: none;
+}
+
+@keyframes glitch-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch-caret {
+    animation: none;
+  }
+}

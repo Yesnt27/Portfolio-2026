@@ -136,6 +136,3 @@
   gap: 1.2em;
   font-size: clamp(10px, 0.86vw, 13px);
 }
-.mk-glitch {
-  white-space: pre;
-}

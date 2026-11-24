@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import GlitchCaption from "@/components/sandbox/mockups/GlitchCaption";
+import GlitchCaption from "@/components/sandbox/GlitchCaption";
 import Window from "@/components/sandbox/mockups/Window";
 import type { SandboxItem } from "@/lib/sandbox";
 
