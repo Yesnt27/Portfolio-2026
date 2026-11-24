@@ -1,5 +1,15 @@
 import type { CSSProperties } from "react";
-import { CaseHero, CaseShell, CaseVideo, CropImage, Indent, MetaGrid, NextProject, TocSection } from "@/components/projects/case-parts";
+import {
+  CaseHero,
+  CaseShell,
+  CaseVideo,
+  CropImage,
+  Indent,
+  LearningCard,
+  MetaGrid,
+  NextProject,
+  TocSection,
+} from "@/components/projects/case-parts";
 import PosterParallax from "@/components/projects/PosterParallax";
 import SiteHeader from "@/components/site/SiteHeader";
 import Reveal from "@/components/ui/Reveal";
@@ -77,24 +87,6 @@ function PosterRow() {
             </div>
           );
         })}
-      </div>
-    </Reveal>
-  );
-}
-
-function LearningCard({ index, title, glyphs, children }: { index: number; title: string; glyphs: number; children: string }) {
-  return (
-    <Reveal delay={index * 120} className="learning-card relative aspect-[421/351] w-full max-w-[421px] overflow-hidden border border-faint bg-card-soft">
-      <div className="absolute left-[13%] top-[23%] right-[10%] flex flex-col">
-        <p className="font-serif text-[16.5px] leading-[normal] text-ink">
-          {index + 1}. {title}
-        </p>
-        <div className="mt-[12px] flex gap-[14px]">
-          <span aria-hidden="true" className="whitespace-pre font-pixel text-[16.5px] leading-[normal] text-ink">
-            {Array.from({ length: glyphs }, () => "▞").join("\n")}
-          </span>
-          <p className="max-w-[254px] pt-[2px] font-mono text-[12px] leading-[normal] text-copy">{children}</p>
-        </div>
       </div>
     </Reveal>
   );
