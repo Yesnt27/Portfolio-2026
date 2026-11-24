@@ -55,7 +55,7 @@
 
 /*
   C2, "file drawer": portrait windows in two rows of four, fanned out like
-  a hand of cards. Each box turns in place (Figma 20 / 10 degrees
+  a hand of cards. Each box turns in place (Figma 10 / 5 degrees
   counterclockwise on the left, mirrored on the right), and the bottom row
   rides 60px up over the top row.
   Hovering a box pulls it up like a file out of a drawer, along its own
@@ -79,10 +79,10 @@
   rotate: var(--rot);
   outline: none;
 }
-.mk-cell:nth-child(1) { --rot: -20deg; }
-.mk-cell:nth-child(2) { --rot: -10deg; }
-.mk-cell:nth-child(3) { --rot: 10deg; }
-.mk-cell:nth-child(4) { --rot: 20deg; }
+.mk-cell:nth-child(1) { --rot: -10deg; }
+.mk-cell:nth-child(2) { --rot: -5deg; }
+.mk-cell:nth-child(3) { --rot: 5deg; }
+.mk-cell:nth-child(4) { --rot: 10deg; }
 
 .mk-cell .mk-win {
   position: relative;
