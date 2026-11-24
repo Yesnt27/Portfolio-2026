@@ -76,7 +76,10 @@ export function buildTV() {
   base.position.set(0, H / 2, -0.2);
   tv.add(base);
 
-  const rodLength = 2.0;
+  // Length of each rod. Shorter = a lower antenna (2.0 was the original;
+  // the tips follow automatically). The cabinet doesn't move when this
+  // changes, so a shorter antenna just leaves more room above the TV.
+  const rodLength = 1.3;
   for (const side of [-1, 1]) {
     const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, rodLength, 8), metal);
     // Move the rod's pivot to its bottom end so it rotates around the base.
