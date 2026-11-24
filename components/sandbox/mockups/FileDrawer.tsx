@@ -8,8 +8,8 @@ import type { SandboxItem } from "@/lib/sandbox";
 /*
   MOCKUP ONLY (branch claude/sandbox-window-mockups).
   C2: two rows of four portrait windows, fanned like a hand of cards, the
-  bottom row overlapping the top (styles: .mk-cell in mockups.css). The bar
-  sits at the bottom of each window (Figma 709:848).
+  bottom row overlapping the top (styles: .mk-cell in mockups.css). Each
+  window has the newer 709:848 label bar, kept at the top of the window.
 
   One box is "pulled out" at a time. Pointer, keyboard focus and a tap all
   set it, so the lift (data-active) and the title's glitch reveal always
@@ -42,7 +42,8 @@ export default function FileDrawer({ items }: { items: SandboxItem[] }) {
                 <Window
                   item={item}
                   ratio={300 / 385}
-                  barAt="bottom"
+                  barAt="top"
+                  labelBar
                   caption={<GlitchCaption title={item.title} year={item.year} on={on} />}
                 />
               </div>

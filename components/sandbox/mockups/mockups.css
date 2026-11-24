@@ -62,7 +62,7 @@
   it up like a file out of a drawer, along its own tilt: the box rises and
   grows over the row above (nothing is drawn where it sat), its two
   neighbours lean away, pivoting at their base, and the title glitches in
-  along the bottom bar (GlitchCaption). The fan uses the `rotate` property so it stacks under the
+  along the bar at the top (GlitchCaption). The fan uses the `rotate` property so it stacks under the
   hover's `transform` instead of being replaced by it.
 */
 .mk-drawer-row {
@@ -124,11 +124,12 @@
 }
 
 /*
-  The newer Figma 709:848 window: the bar runs along the bottom, under the
-  media, about an eighth of the window's height. FileDrawer leaves it blank
-  until a box is pulled out, then GlitchCaption types the title in.
+  The newer Figma 709:848 label bar: about an eighth of the window's height,
+  title on the left and year on the right, no "---". C2 keeps it at the top
+  of the window. FileDrawer leaves it blank until a box is pulled out, then
+  GlitchCaption types the title in.
 */
-.mk-bar-bottom {
+.mk-bar-label {
   height: 12%;
   min-height: 24px;
   padding-inline: 6%;
