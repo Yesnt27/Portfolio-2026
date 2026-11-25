@@ -41,10 +41,10 @@ export default function HomePage() {
             <IndexMenu className="mt-[57px] lg:mt-[36px]" />
           </div>
 
-          <div className="rise-in flex items-start gap-[clamp(20px,3.6vw,54px)] [--rise-delay:80ms] md:-mt-[20px]">
-            <div className="pt-[7px] max-sm:hidden">
-              <ThemeToggle size="sm" />
-            </div>
+          {/* Theme switch beside the suit icons; on phones it drops under them
+              (column-reverse) so the row fits next to the name. */}
+          <div className="rise-in flex items-center gap-[clamp(16px,3vw,46px)] [--rise-delay:80ms] max-sm:flex-col-reverse max-sm:items-end max-sm:gap-[12px] md:-mt-[20px]">
+            <ThemeToggle />
             <SuitNav variant="icons" />
           </div>
         </header>

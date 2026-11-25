@@ -59,20 +59,17 @@ export default function SiteHeader({ active, compact = false, showToggle = true 
           >
             Kenny Nguyen
           </Link>
-          <SuitNav active={active} className="rise-in [--rise-delay:80ms]" />
+          {/* The theme switch lives in the bar, left of the nav, so it never
+              sits on top of page content (heroes, videos). */}
+          <div className="rise-in flex items-center gap-[clamp(16px,3vw,46px)] [--rise-delay:80ms]">
+            {showToggle && <ThemeToggle />}
+            <SuitNav active={active} />
+          </div>
         </div>
         <div className="h-[2px] bg-line-strong" />
       </header>
 
       <div aria-hidden="true" className={compact ? "h-[78px]" : "h-[128px]"} />
-
-      {showToggle && (
-        <div className="relative mx-auto max-w-frame">
-          <div className="absolute right-[clamp(20px,3.4vw,51px)] top-[clamp(20px,4.1vw,62px)] z-10 max-sm:origin-top-right max-sm:scale-75">
-            <ThemeToggle />
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -16,18 +16,18 @@ function applyTheme(theme: Theme) {
 }
 
 /*
-  The "Light" switch from the Figma frames (component 501:6194): a #d9d9d9
-  track with a dark knob parked on the left. Knob geometry is the component's
-  own insets (5.5px sides, 10.5% top/bottom, 45% wide). Dark mode slides it
-  across and swaps the palette tokens in globals.css.
+  The "Light" switch from the Figma frames (component 501:6194), sized down to
+  sit in the navbar: a card-grey track with a dark knob that carries the name
+  of the current mode ("Light" on the left, "Dark" once it slides across).
+  Knob geometry is the component's own insets (3.37% sides, 10.5% top/bottom,
+  45.23% wide), so 106.1% of its width lands it the same inset from the right.
+
+  Knob position and label follow html[data-theme] through the `dark:` variant,
+  not React state: the head script in app/layout.tsx sets the saved theme
+  before first paint, so a dark-mode visitor never sees the knob or the label
+  start on "Light" and jump.
 */
-export default function ThemeToggle({
-  size = "md",
-  className = "",
-}: {
-  size?: "sm" | "md";
-  className?: string;
-}) {
+export default function ThemeToggle({ className = "" }: { className?: string }) {
   const [theme, setTheme] = useState<Theme>("light");
   const [ready, setReady] = useState(false);
 
@@ -40,7 +40,6 @@ export default function ThemeToggle({
   }, []);
 
   const dark = theme === "dark";
-  const dims = size === "sm" ? "h-[35px] w-[118px]" : "h-[48px] w-[164px]";
 
   return (
     <button
@@ -54,15 +53,17 @@ export default function ThemeToggle({
         setTheme(next);
         applyTheme(next);
       }}
-      className={`group relative block shrink-0 bg-card transition-colors duration-300 ${dims} ${className}`}
+      className={`group relative block h-[26px] w-[86px] shrink-0 bg-card transition-colors duration-300 ${className}`}
     >
       <span
         aria-hidden="true"
-        className={`absolute top-[10.5%] bottom-[10.5%] left-[3.37%] w-[45.23%] bg-line group-hover:scale-y-[0.86] group-active:scale-x-[1.08] ${
+        className={`absolute top-[10.5%] bottom-[10.5%] left-[3.37%] grid w-[45.23%] translate-x-0 place-items-center bg-line font-pixel text-[11px] leading-none text-paper group-hover:scale-y-[0.86] group-active:scale-x-[1.08] dark:translate-x-[106.1%] dark:text-ink ${
           ready ? "transition-[translate,scale,background-color] duration-500 ease-snap" : ""
         }`}
-        style={{ translate: dark ? "106.1% 0" : "0 0" }}
-      />
+      >
+        <span className="dark:hidden">Light</span>
+        <span className="hidden dark:inline">Dark</span>
+      </span>
     </button>
   );
 }
