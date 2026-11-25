@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+"use client";
 
-export default function AsciiTV({className,...options}){
+import { useEffect, useRef } from "react";
+import "./ascii-tv.css";
+
+export default function AsciiTV({ className = "", ...options }) {
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -26,8 +29,10 @@ export default function AsciiTV({className,...options}){
         ref={containerRef}
         className={className}
         role="img"
-        aria-label="Old television drawn in ASCII characters"
-        style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', cursor: 'pointer' }}
+        aria-label="Old television drawn in ASCII characters, showing the Frends Ga-lore app icon and a Peak Prep walkthrough"
+        // pointer-events: none so the empty parts of the box never block the
+        // page; the screen itself opts back in for its hover (ascii-tv.css).
+        style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', pointerEvents: 'none' }}
         />
     );
     }

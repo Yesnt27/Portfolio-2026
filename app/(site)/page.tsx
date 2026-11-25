@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AsciiTV from "@/components/ascii-tv/AsciiTV";
 import IndexMenu from "@/components/home/IndexMenu";
 import WorkList from "@/components/home/WorkList";
 import LocalClock from "@/components/site/LocalClock";
@@ -58,8 +59,29 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* Right side intentionally left blank for now (the hero collage was
-              removed; content to come). lg:min-h above keeps the space reserved. */}
+          {/* ASCII TV. To resize it on laptops/desktops, change the three
+              settings at the start of the className below:
+                --tv-size   how wide the TV's box is, as a % of the content
+                            column (70% = this design; 50% was the original).
+                --tv-bleed  how far the box runs past the window's right
+                            edge, as a fraction of its own width. The TV sits
+                            inside the box with empty margins, so 0.28 cuts off
+                            only the TV's knob side; 0.22 shows the whole TV.
+                --tv-lift   how far it's raised above the title row. Raise it
+                            for a bigger TV so the legs stay on the first screen.
+              On phones/tablets (below lg) it's max-w-[560px] instead.
+
+              How it works: right = (100% - 100vw) / 2 lines the box up with
+              the window's right edge (100% = column width), then
+              size × bleed pushes it past. body has overflow-x: clip, so
+              nothing scrolls sideways.
+              z-20: the title and intro wrappers (z-10) are full-width blocks, so
+              without it they sit over the TV and swallow the screen's hover.
+              pointer-events-none: only the screen takes the pointer, so the
+              box's empty margins never block the title. */}
+          <div className="lg:[--tv-size:90%] lg:[--tv-bleed:0.28] lg:[--tv-lift:300px] rise-in pointer-events-none relative z-20 mx-auto my-10 aspect-[676.6/547.2] w-full max-w-[560px] [--rise-delay:400ms] lg:absolute lg:top-[calc(-1*var(--tv-lift))] lg:right-[calc((100%_-_100vw)/2_-_var(--tv-size)*var(--tv-bleed))] lg:my-0 lg:w-[var(--tv-size)] lg:max-w-none">
+            <AsciiTV />
+          </div>
 
           <div className="rise-in relative z-10 ml-[6px] mt-[29px] [--rise-delay:340ms] lg:mt-[20px]">
             <p className="font-serif text-[40px] leading-none text-copy">Hey!</p>

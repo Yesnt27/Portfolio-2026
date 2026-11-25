@@ -6,6 +6,9 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
+// Pure blue: nothing else in the scene (wood, grey plastic, metal) comes close.
+export const SCREEN_KEY = 0x0000ff;
+
 export function buildTV() {
   const tv = new THREE.Group();
 
@@ -15,13 +18,10 @@ export function buildTV() {
   const darkPlastic = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.6 });
   const metal = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.6, roughness: 0.3 });
 
-  // The screen glows by itself (emissive), so it is always the brightest area.
-  // Its emissiveMap gets a "static" texture later (see createAsciiTV.js).
-  const screenMat = new THREE.MeshStandardMaterial({
-    color: 0x000000,
-    emissive: 0xffffff,
-    emissiveIntensity: 1,
-  });
+  // The screen is drawn in a pure "key" colour. MeshBasicMaterial is unlit, so
+  // the lights never change it. AsciiScreenEffect.js looks for this colour and
+  // paints those cells as solid black glass instead of characters.
+  const screenMat = new THREE.MeshBasicMaterial({ color: SCREEN_KEY });
 
   // ---- 1. Cabinet (the main body) ---------------------------------------
   const W = 3.2, H = 2.4, D = 2.2; // width, height, depth
@@ -76,7 +76,10 @@ export function buildTV() {
   base.position.set(0, H / 2, -0.2);
   tv.add(base);
 
-  const rodLength = 2.0;
+  // Length of each rod. Shorter = a lower antenna (2.0 was the original;
+  // the tips follow automatically). The cabinet doesn't move when this
+  // changes, so a shorter antenna just leaves more room above the TV.
+  const rodLength = 1.3;
   for (const side of [-1, 1]) {
     const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, rodLength, 8), metal);
     // Move the rod's pivot to its bottom end so it rotates around the base.
@@ -103,5 +106,9 @@ export function buildTV() {
   // Lift the whole TV so it's visually centred (antenna on top makes it top-heavy).
   tv.position.y = -0.4;
 
-  return { tv, screenMat };
+  // Where the screen sits inside the TV group, so the HTML screen content
+  // (createScreen.js) can be pinned on top of it.
+  const screenRect = { x: screenX, y: 0, z: front + 0.01, width: screenW, height: screenH };
+
+  return { tv, screenMat, screenRect };
 }

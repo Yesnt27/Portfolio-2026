@@ -1,0 +1,63 @@
+/* ASCII TV screen (components/ascii-tv/createScreen.js), Figma frame 740:1094.
+   Sizes are the design's pixels; createAsciiTV.js warps the whole screen onto
+   the TV. It has no background of its own: the ASCII TV's black glass shows
+   through behind the frames. */
+
+.tv-screen {
+  overflow: hidden;
+  pointer-events: auto; /* the rest of the TV box lets clicks through */
+}
+
+/* One canvas pixel per dither block. The frames are tilted, so hard-edged
+   scaling of the small blocks can't line up with the screen's pixel grid and
+   beats into stripes; the default smooth scaling keeps the dither grain
+   without them. */
+.tv-dither {
+  display: block;
+}
+
+/* Tilted frames: a flex-centred box with the rotated content inside, as in
+   the Figma layers. */
+.tv-frame {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Departure Mono's card timing (departuremono.com, #ephemera-items):
+     hesitates for the first third, then glides out and settles softly.
+     The same curve plays back when the pointer leaves. */
+  transition: transform 1s cubic-bezier(1, 0.05, 0.48, 0.99);
+}
+
+.tv-frame__tilt {
+  flex: none;
+  overflow: hidden;
+}
+
+/* Hovering the screen eases both frames in toward its centre and straightens
+   them a little: the icon comes in from the left, the video up from the
+   bottom right. */
+.tv-screen:hover .tv-frame--icon {
+  transform: translate(40px, -4px) rotate(4deg);
+}
+
+.tv-screen:hover .tv-frame--video {
+  transform: translate(-28px, -52px) rotate(-4deg);
+}
+
+/* The <video> only feeds the dithered canvas. */
+.tv-screen__source {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv-frame {
+    transition: none;
+  }
+}
