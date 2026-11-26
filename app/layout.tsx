@@ -85,6 +85,7 @@ export default function RootLayout({
         <ScrollReveal />
         {/* Last in <body> so it blends over everything. */}
         <BlendCursor />
+        <Analytics />
       </body>
     </html>
   );
